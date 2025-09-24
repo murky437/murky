@@ -1,0 +1,10 @@
+services:
+  api:
+    build: ./api
+    container_name: murky_api
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./api:/app
+    environment:
+      ALLOWED_ORIGINS: http://localhost:5173;http://localhost:8081

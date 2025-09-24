@@ -1,0 +1,26 @@
+build
+    main
+    migrate
+database
+    db.sqlite3
+cmd
+    migrate
+        main.go
+deploy.sh
+main.go
+Dockerfile
+docker-compose.yml
+docker-compose.prod.yml
+
+
+
+deploy.sh:
+    - builds binaries
+    - creates deploy.json file
+        - timestamp
+        - last commit hash
+    - puts them into new_deployment dir
+    - syncs new_deployment dir to server
+    - runs switch_to_new_deployment.sh on server
+
+
