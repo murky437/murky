@@ -1,4 +1,4 @@
-package handlers
+package options
 
 import (
 	"murky_api/internal/config"
@@ -6,10 +6,10 @@ import (
 	"slices"
 )
 
-func OptionsHandler(config *config.Config) http.HandlerFunc {
+func Handler(conf *config.Config) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		origin := r.Header.Get("Origin")
-		if slices.Contains(config.AllowedOrigins, origin) {
+		if slices.Contains(conf.AllowedOrigins, origin) {
 			w.Header().Set("Access-Control-Allow-Origin", origin)
 		}
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
