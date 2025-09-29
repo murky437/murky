@@ -12,6 +12,7 @@ const (
 	ContentTypeNotJsonMessage  = "Content-Type must be application/json"
 	InvalidJsonMessage         = "Invalid JSON"
 	InternalServerErrorMessage = "Internal server error"
+	UnauthorizedMessage        = "Unauthorized"
 )
 
 type GeneralErrorResponse struct {
@@ -51,4 +52,8 @@ func WriteInvalidJsonResponse(w http.ResponseWriter) {
 
 func WriteValidationErrorResponse(w http.ResponseWriter, validationResult validation.Result) {
 	WriteJsonResponse(w, http.StatusUnprocessableEntity, ValidationErrorResponse(validationResult))
+}
+
+func WriteUnauthorizedResponse(w http.ResponseWriter) {
+	WriteJsonResponse(w, http.StatusUnauthorized, GeneralErrorResponse{Message: UnauthorizedMessage})
 }

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log"
 	"murky_api/internal/constants"
+	"murky_api/internal/jwt"
 	"murky_api/internal/model"
 	"murky_api/internal/routing"
 	"murky_api/internal/validation"
@@ -39,7 +40,7 @@ func CreateTokens(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		accessToken, err := createAccessToken(req.Username, time.Now().UTC().Add(15*time.Minute))
+		accessToken, err := jwt.CreateAccessToken(*user, time.Now().UTC().Add(15*time.Minute))
 		if err != nil {
 			log.Println(err)
 			routing.WriteInternalServerErrorResponse(w)
@@ -47,7 +48,7 @@ func CreateTokens(db *sql.DB) http.HandlerFunc {
 		}
 		expiresAt := time.Now().UTC().Add(time.Hour * 24 * 30)
 
-		refreshTokenString, err := createRefreshToken(req.Username, expiresAt)
+		refreshTokenString, err := jwt.CreateRefreshToken(req.Username, expiresAt)
 		if err != nil {
 			log.Println(err)
 			routing.WriteInternalServerErrorResponse(w)

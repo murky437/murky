@@ -52,8 +52,8 @@ func TestCreateTokensValidationError(t *testing.T) {
 	err := json.Unmarshal(rr.Body.Bytes(), &resp)
 	require.NoError(t, err)
 
-	require.Equal(t, []string{"Must not be blank"}, resp.FieldErrors["username"])
-	require.Equal(t, []string{"Must not be blank"}, resp.FieldErrors["password"])
+	require.Equal(t, []string{"Must not be blank."}, resp.FieldErrors["username"])
+	require.Equal(t, []string{"Must not be blank."}, resp.FieldErrors["password"])
 }
 
 func TestCreateTokensUserNotFound(t *testing.T) {

@@ -1,1 +1,0 @@
-INSERT OR IGNORE INTO user (username, password) VALUES ('user', '$2a$10$U6X7NnivCljkduExJ9vqt.fqEGQrjxBczds1EbPrQjmLEw0eyUs9K');

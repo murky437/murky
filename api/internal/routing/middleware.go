@@ -1,12 +1,17 @@
 package routing
 
 import (
+	"context"
+	"database/sql"
+	context2 "murky_api/internal/context"
+	"murky_api/internal/jwt"
 	"net/http"
+	"strings"
 )
 
-type middleware func(http.HandlerFunc) http.HandlerFunc
+type Middleware func(http.HandlerFunc) http.HandlerFunc
 
-func Chain(h http.HandlerFunc, m ...middleware) http.HandlerFunc {
+func Chain(h http.HandlerFunc, m ...Middleware) http.HandlerFunc {
 	for i := 0; i < len(m); i++ {
 		h = m[i](h)
 	}
@@ -20,5 +25,32 @@ func RequireJSON(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 		next(w, r)
+	}
+}
+
+func RequireAuth(db *sql.DB) Middleware {
+	return func(next http.HandlerFunc) http.HandlerFunc {
+		return func(w http.ResponseWriter, r *http.Request) {
+			auth := r.Header.Get("Authorization")
+			if !strings.HasPrefix(auth, "Bearer ") || len(auth) <= 7 {
+				WriteUnauthorizedResponse(w)
+				return
+			}
+			tokenStr := strings.TrimPrefix(auth, "Bearer ")
+			claims, err := jwt.ParseAccessToken(tokenStr)
+			if err != nil {
+				WriteUnauthorizedResponse(w)
+				return
+			}
+			var exists bool
+			err = db.QueryRow("SELECT EXISTS(SELECT 1 FROM user WHERE username = ?)", claims.Username).Scan(&exists)
+			if err != nil || !exists {
+				WriteUnauthorizedResponse(w)
+				return
+			}
+
+			ctx := context.WithValue(r.Context(), context2.AccessToken, claims)
+			next(w, r.WithContext(ctx))
+		}
 	}
 }

@@ -1,7 +1,7 @@
 package validation
 
 const (
-	NotBlankMessage = "Must not be blank"
+	NotBlankMessage = "Must not be blank."
 )
 
 type Result struct {

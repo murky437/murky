@@ -10,17 +10,17 @@ type CreateTokensRequest struct {
 	Password string `json:"password"`
 }
 
-func (createTokensRequest *CreateTokensRequest) Validate() *validation.Result {
+func (request *CreateTokensRequest) Validate() *validation.Result {
 	result := &validation.Result{
 		GeneralErrors: []string{},
 		FieldErrors:   make(map[string][]string),
 	}
 
-	if strings.TrimSpace(createTokensRequest.Username) == "" {
+	if strings.TrimSpace(request.Username) == "" {
 		result.FieldErrors["username"] = append(result.FieldErrors["username"], validation.NotBlankMessage)
 	}
 
-	if strings.TrimSpace(createTokensRequest.Password) == "" {
+	if strings.TrimSpace(request.Password) == "" {
 		result.FieldErrors["password"] = append(result.FieldErrors["password"], validation.NotBlankMessage)
 	}
 
