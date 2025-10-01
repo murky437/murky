@@ -27,9 +27,31 @@ func SaveProject(db *sql.DB, project Project, userId int) (Project, error) {
 	return project, nil
 }
 
-func IsProjectSlugUnique(db *sql.DB, slug string) (bool, error) {
+func UpdateProject(db *sql.DB, currentSlug string, project Project) error {
+	_, err := db.Exec("UPDATE project SET title = ?, slug = ? WHERE slug = ?", project.Title, project.Slug, currentSlug)
+	return err
+}
+
+type SlugCheckOptions struct {
+	CurrentSlug string
+}
+
+func IsProjectSlugUnique(db *sql.DB, slug string, opts SlugCheckOptions) (bool, error) {
+	var (
+		query string
+		args  []any
+	)
+
+	if opts.CurrentSlug != "" {
+		query = "SELECT COUNT(1) FROM project WHERE slug = ? AND slug != ?"
+		args = []any{slug, opts.CurrentSlug}
+	} else {
+		query = "SELECT COUNT(1) FROM project WHERE slug = ?"
+		args = []any{slug}
+	}
+
 	var count int
-	err := db.QueryRow("SELECT COUNT(1) FROM project WHERE slug = ?", slug).Scan(&count)
+	err := db.QueryRow(query, args...).Scan(&count)
 	if err != nil {
 		return false, err
 	}
@@ -58,4 +80,16 @@ func GetProjectsByUserId(db *sql.DB, userId int) ([]Project, error) {
 		projects = append(projects, p)
 	}
 	return projects, rows.Err()
+}
+
+func GetProjectByUserIdAndSlug(db *sql.DB, userId int, slug string) (Project, error) {
+	var p Project
+	err := db.QueryRow(`
+		SELECT p.id, p.title, p.slug
+		FROM project p
+		JOIN user_project up ON up.project_id = p.id
+		WHERE up.user_id = ? AND p.slug = ?
+	`, userId, slug).Scan(&p.Id, &p.Title, &p.Slug)
+
+	return p, err
 }

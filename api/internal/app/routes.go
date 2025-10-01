@@ -19,6 +19,9 @@ func NewMux(c *Container) *http.ServeMux {
 	})
 	protectedMux.HandleFunc("POST /projects", routing.Chain(project.CreateProject(c.Db), routing.RequireJSON))
 	protectedMux.HandleFunc("GET /projects", project.GetProjectList(c.Db))
+	protectedMux.HandleFunc("GET /projects/{slug}", project.GetProject(c.Db))
+	protectedMux.HandleFunc("PUT /projects/{slug}", routing.Chain(project.UpdateProject(c.Db), routing.RequireJSON))
+	// TODO: delete endpoint
 
 	mux.HandleFunc("/", routing.Chain(
 		protectedMux.ServeHTTP,

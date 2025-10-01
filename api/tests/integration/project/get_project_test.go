@@ -14,8 +14,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestGetProjectListUnauthorized(t *testing.T) {
-	req := httptest.NewRequest(http.MethodGet, "/projects", nil)
+func TestGetProjectUnauthorized(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "/projects/1", nil)
 	rr := httptest.NewRecorder()
 
 	c := app.NewTestContainer(t)
@@ -25,11 +25,26 @@ func TestGetProjectListUnauthorized(t *testing.T) {
 	require.Equal(t, http.StatusUnauthorized, rr.Code)
 }
 
-func TestGetProjectListSuccess(t *testing.T) {
+func TestGetOtherUserProjectNotFound(t *testing.T) {
 	token, err := jwt.CreateAccessToken(model.User{Id: 1, Username: "user"}, time.Now().Add(time.Hour))
 	require.NoError(t, err)
 
-	req := httptest.NewRequest(http.MethodGet, "/projects", nil)
+	req := httptest.NewRequest(http.MethodGet, "/projects/project-4", nil)
+	req.Header.Add("Authorization", "Bearer "+token)
+	rr := httptest.NewRecorder()
+
+	c := app.NewTestContainer(t)
+	defer c.Close()
+	app.NewMux(c).ServeHTTP(rr, req)
+
+	require.Equal(t, http.StatusNotFound, rr.Code)
+}
+
+func TestGetProjectSuccess(t *testing.T) {
+	token, err := jwt.CreateAccessToken(model.User{Id: 1, Username: "user"}, time.Now().Add(time.Hour))
+	require.NoError(t, err)
+
+	req := httptest.NewRequest(http.MethodGet, "/projects/project-1", nil)
 	req.Header.Add("Authorization", "Bearer "+token)
 	rr := httptest.NewRecorder()
 
@@ -39,13 +54,12 @@ func TestGetProjectListSuccess(t *testing.T) {
 
 	require.Equal(t, http.StatusOK, rr.Code)
 
-	var resp project.ListResponse
+	var resp project.GetResponse
 	err = json.Unmarshal(rr.Body.Bytes(), &resp)
 	require.NoError(t, err)
 
-	require.Equal(t, []project.ListItem{
-		project.ListItem{Title: "Project 1", Slug: "project-1"},
-		project.ListItem{Title: "Project 2", Slug: "project-2"},
-		project.ListItem{Title: "Project 3", Slug: "project-3"},
-	}, resp.Data)
+	require.Equal(t, project.GetResponse{
+		Title: "Project 1",
+		Slug:  "project-1",
+	}, resp)
 }

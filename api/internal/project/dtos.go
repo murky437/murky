@@ -7,12 +7,12 @@ import (
 	"strings"
 )
 
-type CreateProjectRequest struct {
+type CreateRequest struct {
 	Title string `json:"title"`
 	Slug  string `json:"slug"`
 }
 
-func (request *CreateProjectRequest) Validate(db *sql.DB) *validation.Result {
+func (request *CreateRequest) Validate(db *sql.DB) *validation.Result {
 	result := &validation.Result{
 		GeneralErrors: []string{},
 		FieldErrors:   make(map[string][]string),
@@ -26,7 +26,7 @@ func (request *CreateProjectRequest) Validate(db *sql.DB) *validation.Result {
 		result.FieldErrors["slug"] = append(result.FieldErrors["slug"], validation.NotBlankMessage)
 	}
 
-	if isUnique, _ := model.IsProjectSlugUnique(db, request.Slug); !isUnique {
+	if isUnique, _ := model.IsProjectSlugUnique(db, request.Slug, model.SlugCheckOptions{}); !isUnique {
 		result.FieldErrors["slug"] = append(
 			result.FieldErrors["slug"],
 			"A project with this slug already exists. Slug must be unique.",
@@ -40,16 +40,59 @@ func (request *CreateProjectRequest) Validate(db *sql.DB) *validation.Result {
 	return nil
 }
 
-type CreateProjectResponse struct {
+type CreateResponse struct {
 	Title string `json:"title"`
 	Slug  string `json:"slug"`
 }
 
-type ProjectListResponse struct {
-	Data []ProjectListItem `json:"data"`
+type ListResponse struct {
+	Data []ListItem `json:"data"`
 }
 
-type ProjectListItem struct {
+type ListItem struct {
+	Title string `json:"title"`
+	Slug  string `json:"slug"`
+}
+
+type GetResponse struct {
+	Title string `json:"title"`
+	Slug  string `json:"slug"`
+}
+
+type UpdateRequest struct {
+	Title string `json:"title"`
+	Slug  string `json:"slug"`
+}
+
+func (request *UpdateRequest) Validate(db *sql.DB, currentSlug string) *validation.Result {
+	result := &validation.Result{
+		GeneralErrors: []string{},
+		FieldErrors:   make(map[string][]string),
+	}
+
+	if strings.TrimSpace(request.Title) == "" {
+		result.FieldErrors["title"] = append(result.FieldErrors["title"], validation.NotBlankMessage)
+	}
+
+	if strings.TrimSpace(request.Slug) == "" {
+		result.FieldErrors["slug"] = append(result.FieldErrors["slug"], validation.NotBlankMessage)
+	}
+
+	if isUnique, _ := model.IsProjectSlugUnique(db, request.Slug, model.SlugCheckOptions{CurrentSlug: currentSlug}); !isUnique {
+		result.FieldErrors["slug"] = append(
+			result.FieldErrors["slug"],
+			"A project with this slug already exists. Slug must be unique.",
+		)
+	}
+
+	if len(result.GeneralErrors) > 0 || len(result.FieldErrors) > 0 {
+		return result
+	}
+
+	return nil
+}
+
+type UpdateResponse struct {
 	Title string `json:"title"`
 	Slug  string `json:"slug"`
 }

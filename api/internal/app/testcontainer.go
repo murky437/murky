@@ -60,7 +60,8 @@ func setupTestDatabase(t *testing.T) *sql.DB {
 }
 
 func insertBaseTestData(db *sql.DB, t *testing.T) {
-	// user:pass
+	// password = "pass"
+	
 	res, err := db.Exec(`INSERT INTO user (username, password) VALUES ('user', '$2a$10$U6X7NnivCljkduExJ9vqt.fqEGQrjxBczds1EbPrQjmLEw0eyUs9K')`)
 	require.NoError(t, err)
 	userId, err := res.LastInsertId()
@@ -73,6 +74,21 @@ func insertBaseTestData(db *sql.DB, t *testing.T) {
 		require.NoError(t, err)
 
 		_, err = db.Exec(`INSERT INTO user_project (user_id, project_id) VALUES (?, ?)`, userId, projectId)
+		require.NoError(t, err)
+	}
+
+	res, err = db.Exec(`INSERT INTO user (username, password) VALUES ('user2', '$2a$10$U6X7NnivCljkduExJ9vqt.fqEGQrjxBczds1EbPrQjmLEw0eyUs9K')`)
+	require.NoError(t, err)
+	user2Id, err := res.LastInsertId()
+	require.NoError(t, err)
+
+	for i := 4; i <= 6; i++ {
+		res, err := db.Exec(`INSERT INTO project (title, slug) VALUES (?, ?)`, fmt.Sprintf("Project %d", i), fmt.Sprintf("project-%d", i))
+		require.NoError(t, err)
+		projectId, err := res.LastInsertId()
+		require.NoError(t, err)
+
+		_, err = db.Exec(`INSERT INTO user_project (user_id, project_id) VALUES (?, ?)`, user2Id, projectId)
 		require.NoError(t, err)
 	}
 }
