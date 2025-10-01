@@ -127,7 +127,7 @@ func TestUpdateProjectSuccess(t *testing.T) {
 
 	require.Equal(t, http.StatusOK, rr.Code)
 
-	var resp project.CreateResponse
+	var resp project.UpdateResponse
 	err = json.Unmarshal(rr.Body.Bytes(), &resp)
 	require.NoError(t, err)
 

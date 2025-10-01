@@ -10,7 +10,7 @@ import (
 	"net/http"
 )
 
-func CreateProject(db *sql.DB) http.HandlerFunc {
+func Create(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user := context.GetCurrentUser(r)
 
@@ -48,7 +48,7 @@ func CreateProject(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-func GetProjectList(db *sql.DB) http.HandlerFunc {
+func GetList(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user := context.GetCurrentUser(r)
 
@@ -73,7 +73,7 @@ func GetProjectList(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-func GetProject(db *sql.DB) http.HandlerFunc {
+func Get(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user := context.GetCurrentUser(r)
 
@@ -92,7 +92,7 @@ func GetProject(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-func UpdateProject(db *sql.DB) http.HandlerFunc {
+func Update(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user := context.GetCurrentUser(r)
 		currentSlug := r.PathValue("slug")
@@ -132,5 +132,19 @@ func UpdateProject(db *sql.DB) http.HandlerFunc {
 		}
 
 		routing.WriteJsonResponse(w, http.StatusOK, resp)
+	}
+}
+
+func Delete(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		user := context.GetCurrentUser(r)
+
+		rowsDeleted, err := model.DeleteProjectByUserIdAndSlug(db, user.Id, r.PathValue("slug"))
+		if err != nil || rowsDeleted == 0 {
+			routing.WriteNotFoundResponse(w)
+			return
+		}
+
+		routing.WriteJsonResponse(w, http.StatusNoContent, nil)
 	}
 }

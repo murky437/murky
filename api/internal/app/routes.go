@@ -17,11 +17,11 @@ func NewMux(c *Container) *http.ServeMux {
 	protectedMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		routing.WriteNotFoundResponse(w)
 	})
-	protectedMux.HandleFunc("POST /projects", routing.Chain(project.CreateProject(c.Db), routing.RequireJSON))
-	protectedMux.HandleFunc("GET /projects", project.GetProjectList(c.Db))
-	protectedMux.HandleFunc("GET /projects/{slug}", project.GetProject(c.Db))
-	protectedMux.HandleFunc("PUT /projects/{slug}", routing.Chain(project.UpdateProject(c.Db), routing.RequireJSON))
-	// TODO: delete endpoint
+	protectedMux.HandleFunc("POST /projects", routing.Chain(project.Create(c.Db), routing.RequireJSON))
+	protectedMux.HandleFunc("GET /projects", project.GetList(c.Db))
+	protectedMux.HandleFunc("GET /projects/{slug}", project.Get(c.Db))
+	protectedMux.HandleFunc("PUT /projects/{slug}", routing.Chain(project.Update(c.Db), routing.RequireJSON))
+	protectedMux.HandleFunc("DELETE /projects/{slug}", project.Delete(c.Db))
 
 	mux.HandleFunc("/", routing.Chain(
 		protectedMux.ServeHTTP,

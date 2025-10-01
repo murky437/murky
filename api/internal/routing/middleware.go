@@ -3,7 +3,7 @@ package routing
 import (
 	"context"
 	"database/sql"
-	context2 "murky_api/internal/context"
+	mycontext "murky_api/internal/context"
 	"murky_api/internal/jwt"
 	"net/http"
 	"strings"
@@ -49,7 +49,7 @@ func RequireAuth(db *sql.DB) Middleware {
 				return
 			}
 
-			ctx := context.WithValue(r.Context(), context2.AccessToken, claims)
+			ctx := context.WithValue(r.Context(), mycontext.AccessToken, claims)
 			next(w, r.WithContext(ctx))
 		}
 	}

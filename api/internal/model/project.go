@@ -93,3 +93,19 @@ func GetProjectByUserIdAndSlug(db *sql.DB, userId int, slug string) (Project, er
 
 	return p, err
 }
+
+func DeleteProjectByUserIdAndSlug(db *sql.DB, userId int, slug string) (int64, error) {
+	res, err := db.Exec(`
+		DELETE FROM project
+		WHERE id IN (
+			SELECT p.id
+			FROM project p
+			JOIN user_project up ON up.project_id = p.id
+			WHERE up.user_id = ? AND p.slug = ?
+		)
+	`, userId, slug)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
+}
