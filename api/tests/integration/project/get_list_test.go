@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestGetProjectListUnauthorized(t *testing.T) {
+func TestGetListUnauthorized(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "/projects", nil)
 	rr := httptest.NewRecorder()
 
@@ -25,7 +25,7 @@ func TestGetProjectListUnauthorized(t *testing.T) {
 	require.Equal(t, http.StatusUnauthorized, rr.Code)
 }
 
-func TestGetProjectListSuccess(t *testing.T) {
+func TestGetListSuccess(t *testing.T) {
 	token, err := jwt.CreateAccessToken(model.User{Id: 1, Username: "user"}, time.Now().Add(time.Hour))
 	require.NoError(t, err)
 

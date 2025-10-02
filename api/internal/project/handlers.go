@@ -27,12 +27,12 @@ func Create(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		project := model.Project{
+		project := model.ProjectBasic{
 			Title: req.Title,
 			Slug:  req.Slug,
 		}
 
-		project, err = model.SaveProject(db, project, user.Id)
+		project, err = model.CreateProject(db, project, user.Id)
 		if err != nil {
 			log.Println(err)
 			routing.WriteInternalServerErrorResponse(w)
@@ -77,15 +77,14 @@ func Get(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user := context.GetCurrentUser(r)
 
-		project, err := model.GetProjectByUserIdAndSlug(db, user.Id, r.PathValue("slug"))
+		project, err := model.GetProjectNotesByUserIdAndSlug(db, user.Id, r.PathValue("slug"))
 		if err != nil {
 			routing.WriteNotFoundResponse(w)
 			return
 		}
 
 		resp := GetResponse{
-			Title: project.Title,
-			Slug:  project.Slug,
+			Notes: project.Notes,
 		}
 
 		routing.WriteJsonResponse(w, http.StatusOK, resp)
@@ -126,12 +125,7 @@ func Update(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		resp := UpdateResponse{
-			Title: project.Title,
-			Slug:  project.Slug,
-		}
-
-		routing.WriteJsonResponse(w, http.StatusOK, resp)
+		routing.WriteJsonResponse(w, http.StatusNoContent, nil)
 	}
 }
 
@@ -142,6 +136,37 @@ func Delete(db *sql.DB) http.HandlerFunc {
 		rowsDeleted, err := model.DeleteProjectByUserIdAndSlug(db, user.Id, r.PathValue("slug"))
 		if err != nil || rowsDeleted == 0 {
 			routing.WriteNotFoundResponse(w)
+			return
+		}
+
+		routing.WriteJsonResponse(w, http.StatusNoContent, nil)
+	}
+}
+
+func UpdateNotes(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		user := context.GetCurrentUser(r)
+		currentSlug := r.PathValue("slug")
+
+		projectNotes, err := model.GetProjectNotesByUserIdAndSlug(db, user.Id, currentSlug)
+		if err != nil {
+			routing.WriteNotFoundResponse(w)
+			return
+		}
+
+		var req UpdateNotesRequest
+		err = json.NewDecoder(r.Body).Decode(&req)
+		if err != nil {
+			routing.WriteInvalidJsonResponse(w)
+			return
+		}
+
+		projectNotes.Notes = req.Notes
+
+		err = model.UpdateProjectNotes(db, currentSlug, projectNotes)
+		if err != nil {
+			log.Println(err)
+			routing.WriteInternalServerErrorResponse(w)
 			return
 		}
 

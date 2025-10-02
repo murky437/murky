@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestDeleteProjectUnauthorized(t *testing.T) {
+func TestDeleteUnauthorized(t *testing.T) {
 	req := httptest.NewRequest(http.MethodDelete, "/projects/project-1", nil)
 	rr := httptest.NewRecorder()
 
@@ -24,7 +24,7 @@ func TestDeleteProjectUnauthorized(t *testing.T) {
 	require.Equal(t, http.StatusUnauthorized, rr.Code)
 }
 
-func TestDeleteProjectSuccess(t *testing.T) {
+func TestDeleteSuccess(t *testing.T) {
 	token, err := jwt.CreateAccessToken(model.User{Id: 1, Username: "user"}, time.Now().Add(time.Hour))
 	require.NoError(t, err)
 
@@ -42,7 +42,7 @@ func TestDeleteProjectSuccess(t *testing.T) {
 	require.ErrorIs(t, err, sql.ErrNoRows)
 }
 
-func TestDeleteOtherUserProjectNotFound(t *testing.T) {
+func TestDeleteOtherUserNotFound(t *testing.T) {
 	token, err := jwt.CreateAccessToken(model.User{Id: 1, Username: "user"}, time.Now().Add(time.Hour))
 	require.NoError(t, err)
 

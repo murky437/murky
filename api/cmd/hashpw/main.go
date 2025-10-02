@@ -10,7 +10,7 @@ import (
 
 func main() {
 	if len(os.Args) < 2 {
-		log.Fatal("usage: hashpw main.go <password>")
+		log.Fatal("usage: hashpw <password>")
 	}
 	password := os.Args[1]
 

@@ -55,8 +55,7 @@ type ListItem struct {
 }
 
 type GetResponse struct {
-	Title string `json:"title"`
-	Slug  string `json:"slug"`
+	Notes string `json:"notes"`
 }
 
 type UpdateRequest struct {
@@ -92,7 +91,6 @@ func (request *UpdateRequest) Validate(db *sql.DB, currentSlug string) *validati
 	return nil
 }
 
-type UpdateResponse struct {
-	Title string `json:"title"`
-	Slug  string `json:"slug"`
+type UpdateNotesRequest struct {
+	Notes string `json:"notes"`
 }

@@ -2,13 +2,17 @@ package model
 
 import "database/sql"
 
-type Project struct {
+type ProjectBasic struct {
 	Id    int
 	Title string
 	Slug  string
 }
 
-func SaveProject(db *sql.DB, project Project, userId int) (Project, error) {
+type ProjectNotes struct {
+	Notes string
+}
+
+func CreateProject(db *sql.DB, project ProjectBasic, userId int) (ProjectBasic, error) {
 	res, err := db.Exec("INSERT INTO project (title, slug) VALUES (?, ?)", project.Title, project.Slug)
 	if err != nil {
 		return project, err
@@ -27,8 +31,28 @@ func SaveProject(db *sql.DB, project Project, userId int) (Project, error) {
 	return project, nil
 }
 
-func UpdateProject(db *sql.DB, currentSlug string, project Project) error {
-	_, err := db.Exec("UPDATE project SET title = ?, slug = ? WHERE slug = ?", project.Title, project.Slug, currentSlug)
+func UpdateProject(db *sql.DB, currentSlug string, project ProjectBasic) error {
+	_, err := db.Exec(`
+		UPDATE project 
+		SET title = :title, slug = :slug
+		WHERE slug = :currentSlug
+	`,
+		sql.Named("title", project.Title),
+		sql.Named("slug", project.Slug),
+		sql.Named("currentSlug", currentSlug),
+	)
+	return err
+}
+
+func UpdateProjectNotes(db *sql.DB, currentSlug string, project ProjectNotes) error {
+	_, err := db.Exec(`
+		UPDATE project 
+		SET notes = :notes
+		WHERE slug = :currentSlug
+	`,
+		sql.Named("notes", project.Notes),
+		sql.Named("currentSlug", currentSlug),
+	)
 	return err
 }
 
@@ -58,7 +82,7 @@ func IsProjectSlugUnique(db *sql.DB, slug string, opts SlugCheckOptions) (bool, 
 	return count == 0, nil
 }
 
-func GetProjectsByUserId(db *sql.DB, userId int) ([]Project, error) {
+func GetProjectsByUserId(db *sql.DB, userId int) ([]ProjectBasic, error) {
 	rows, err := db.Query(`
 		SELECT p.id, p.title, p.slug
 		FROM project p
@@ -71,9 +95,9 @@ func GetProjectsByUserId(db *sql.DB, userId int) ([]Project, error) {
 	}
 	defer rows.Close()
 
-	var projects []Project
+	var projects []ProjectBasic
 	for rows.Next() {
-		var p Project
+		var p ProjectBasic
 		if err := rows.Scan(&p.Id, &p.Title, &p.Slug); err != nil {
 			return nil, err
 		}
@@ -82,14 +106,26 @@ func GetProjectsByUserId(db *sql.DB, userId int) ([]Project, error) {
 	return projects, rows.Err()
 }
 
-func GetProjectByUserIdAndSlug(db *sql.DB, userId int, slug string) (Project, error) {
-	var p Project
+func GetProjectByUserIdAndSlug(db *sql.DB, userId int, slug string) (ProjectBasic, error) {
+	var p ProjectBasic
 	err := db.QueryRow(`
 		SELECT p.id, p.title, p.slug
 		FROM project p
 		JOIN user_project up ON up.project_id = p.id
 		WHERE up.user_id = ? AND p.slug = ?
 	`, userId, slug).Scan(&p.Id, &p.Title, &p.Slug)
+
+	return p, err
+}
+
+func GetProjectNotesByUserIdAndSlug(db *sql.DB, userId int, slug string) (ProjectNotes, error) {
+	var p ProjectNotes
+	err := db.QueryRow(`
+		SELECT p.notes
+		FROM project p
+		JOIN user_project up ON up.project_id = p.id
+		WHERE up.user_id = ? AND p.slug = ?
+	`, userId, slug).Scan(&p.Notes)
 
 	return p, err
 }

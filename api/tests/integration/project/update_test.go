@@ -2,6 +2,7 @@ package project
 
 import (
 	"bytes"
+	"database/sql"
 	"encoding/json"
 	"murky_api/internal/app"
 	"murky_api/internal/jwt"
@@ -17,8 +18,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestCreateProjectUnauthorized(t *testing.T) {
-	req := httptest.NewRequest(http.MethodPost, "/projects", nil)
+func TestUpdateUnauthorized(t *testing.T) {
+	req := httptest.NewRequest(http.MethodPut, "/projects/project-1", nil)
 	rr := httptest.NewRecorder()
 
 	c := app.NewTestContainer(t)
@@ -28,11 +29,11 @@ func TestCreateProjectUnauthorized(t *testing.T) {
 	require.Equal(t, http.StatusUnauthorized, rr.Code)
 }
 
-func TestCreateProjectInvalidContentType(t *testing.T) {
+func TestUpdateInvalidContentType(t *testing.T) {
 	token, err := jwt.CreateAccessToken(model.User{Id: 1, Username: "user"}, time.Now().Add(time.Hour))
 	require.NoError(t, err)
 
-	req := httptest.NewRequest(http.MethodPost, "/projects", nil)
+	req := httptest.NewRequest(http.MethodPut, "/projects/project-1", nil)
 	req.Header.Add("Authorization", "Bearer "+token)
 	rr := httptest.NewRecorder()
 
@@ -43,11 +44,11 @@ func TestCreateProjectInvalidContentType(t *testing.T) {
 	require.Equal(t, http.StatusUnsupportedMediaType, rr.Code)
 }
 
-func TestCreateProjectInvalidJson(t *testing.T) {
+func TestUpdateInvalidJson(t *testing.T) {
 	token, err := jwt.CreateAccessToken(model.User{Id: 1, Username: "user"}, time.Now().Add(time.Hour))
 	require.NoError(t, err)
 
-	req := httptest.NewRequest(http.MethodPost, "/projects", strings.NewReader("{]"))
+	req := httptest.NewRequest(http.MethodPut, "/projects/project-1", strings.NewReader("{]"))
 	req.Header.Add("Authorization", "Bearer "+token)
 	req.Header.Set("Content-Type", "application/json")
 	rr := httptest.NewRecorder()
@@ -59,11 +60,11 @@ func TestCreateProjectInvalidJson(t *testing.T) {
 	require.Equal(t, http.StatusBadRequest, rr.Code)
 }
 
-func TestCreateProjectValidationError(t *testing.T) {
+func TestUpdateValidationError(t *testing.T) {
 	token, err := jwt.CreateAccessToken(model.User{Id: 1, Username: "user"}, time.Now().Add(time.Hour))
 	require.NoError(t, err)
 
-	req := httptest.NewRequest(http.MethodPost, "/projects", strings.NewReader("{}"))
+	req := httptest.NewRequest(http.MethodPut, "/projects/project-1", strings.NewReader("{}"))
 	req.Header.Add("Authorization", "Bearer "+token)
 	req.Header.Set("Content-Type", "application/json")
 	rr := httptest.NewRecorder()
@@ -82,15 +83,15 @@ func TestCreateProjectValidationError(t *testing.T) {
 	require.Equal(t, []string{"Must not be blank."}, resp.FieldErrors["slug"])
 }
 
-func TestCreateProjectNotUniqueSlugError(t *testing.T) {
+func TestUpdateNotUniqueSlugError(t *testing.T) {
 	token, err := jwt.CreateAccessToken(model.User{Id: 1, Username: "user"}, time.Now().Add(time.Hour))
 	require.NoError(t, err)
 
-	body := project.CreateRequest{Title: "Test Project", Slug: "project-1"}
+	body := project.UpdateRequest{Title: "Test Project", Slug: "project-2"}
 	bodyJson, err := json.Marshal(body)
 	require.NoError(t, err)
 
-	req := httptest.NewRequest(http.MethodPost, "/projects", bytes.NewReader(bodyJson))
+	req := httptest.NewRequest(http.MethodPut, "/projects/project-1", bytes.NewReader(bodyJson))
 	req.Header.Add("Authorization", "Bearer "+token)
 	req.Header.Set("Content-Type", "application/json")
 	rr := httptest.NewRecorder()
@@ -108,15 +109,15 @@ func TestCreateProjectNotUniqueSlugError(t *testing.T) {
 	require.Equal(t, []string{"A project with this slug already exists. Slug must be unique."}, resp.FieldErrors["slug"])
 }
 
-func TestCreateProjectSuccess(t *testing.T) {
+func TestUpdateSuccess(t *testing.T) {
 	token, err := jwt.CreateAccessToken(model.User{Id: 1, Username: "user"}, time.Now().Add(time.Hour))
 	require.NoError(t, err)
 
-	body := project.CreateRequest{Title: "Test Project", Slug: "test-project"}
+	body := project.UpdateRequest{Title: "Test Project", Slug: "test-project"}
 	bodyJson, err := json.Marshal(body)
 	require.NoError(t, err)
 
-	req := httptest.NewRequest(http.MethodPost, "/projects", bytes.NewReader(bodyJson))
+	req := httptest.NewRequest(http.MethodPut, "/projects/project-1", bytes.NewReader(bodyJson))
 	req.Header.Add("Authorization", "Bearer "+token)
 	req.Header.Set("Content-Type", "application/json")
 	rr := httptest.NewRecorder()
@@ -125,12 +126,32 @@ func TestCreateProjectSuccess(t *testing.T) {
 	defer c.Close()
 	app.NewMux(c).ServeHTTP(rr, req)
 
-	require.Equal(t, http.StatusOK, rr.Code)
+	require.Equal(t, http.StatusNoContent, rr.Code)
 
-	var resp project.CreateResponse
-	err = json.Unmarshal(rr.Body.Bytes(), &resp)
+	p, err := model.GetProjectByUserIdAndSlug(c.Db, 1, "project-1")
+	require.ErrorIs(t, err, sql.ErrNoRows)
+	p, err = model.GetProjectByUserIdAndSlug(c.Db, 1, "test-project")
+	require.NoError(t, err)
+	require.Equal(t, p.Title, "Test Project")
+	require.Equal(t, p.Slug, "test-project")
+}
+
+func TestUpdateOtherUserNotFound(t *testing.T) {
+	token, err := jwt.CreateAccessToken(model.User{Id: 1, Username: "user"}, time.Now().Add(time.Hour))
 	require.NoError(t, err)
 
-	require.Equal(t, body.Title, resp.Title)
-	require.Equal(t, body.Slug, resp.Slug)
+	body := project.UpdateRequest{Title: "Test Project", Slug: "test-project"}
+	bodyJson, err := json.Marshal(body)
+	require.NoError(t, err)
+
+	req := httptest.NewRequest(http.MethodPut, "/projects/project-4", bytes.NewReader(bodyJson))
+	req.Header.Add("Authorization", "Bearer "+token)
+	req.Header.Set("Content-Type", "application/json")
+	rr := httptest.NewRecorder()
+
+	c := app.NewTestContainer(t)
+	defer c.Close()
+	app.NewMux(c).ServeHTTP(rr, req)
+
+	require.Equal(t, http.StatusNotFound, rr.Code)
 }
