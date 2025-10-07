@@ -2,7 +2,6 @@ package app
 
 import (
 	"murky_api/internal/auth"
-	"murky_api/internal/options"
 	"murky_api/internal/project"
 	"murky_api/internal/routing"
 	"net/http"
@@ -10,8 +9,10 @@ import (
 
 func NewMux(c *Container) *http.ServeMux {
 	mux := http.NewServeMux()
-	mux.HandleFunc("OPTIONS /", options.Handler(c.Config))
-	mux.HandleFunc("POST /auth/create-tokens", routing.Chain(auth.CreateTokens(c.Db), routing.RequireJSON))
+	mux.HandleFunc("POST /auth/create-tokens", routing.Chain(
+		auth.CreateTokens(c.Db),
+		routing.RequireJSON,
+		routing.CorsMiddleware(c.Config)))
 
 	protectedMux := http.NewServeMux()
 	protectedMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -27,6 +28,7 @@ func NewMux(c *Container) *http.ServeMux {
 	mux.HandleFunc("/", routing.Chain(
 		protectedMux.ServeHTTP,
 		routing.RequireAuth(c.Db),
+		routing.CorsMiddleware(c.Config),
 	))
 
 	return mux

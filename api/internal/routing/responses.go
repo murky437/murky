@@ -27,9 +27,11 @@ type ValidationErrorResponse struct {
 func WriteJsonResponse(w http.ResponseWriter, status int, content any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
-	err := json.NewEncoder(w).Encode(content)
-	if err != nil {
-		log.Println(err)
+	if content != nil {
+		err := json.NewEncoder(w).Encode(content)
+		if err != nil {
+			log.Println(err)
+		}
 	}
 	return
 }

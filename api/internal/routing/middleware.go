@@ -3,9 +3,11 @@ package routing
 import (
 	"context"
 	"database/sql"
+	"murky_api/internal/config"
 	mycontext "murky_api/internal/context"
 	"murky_api/internal/jwt"
 	"net/http"
+	"slices"
 	"strings"
 )
 
@@ -51,6 +53,26 @@ func RequireAuth(db *sql.DB) Middleware {
 
 			ctx := context.WithValue(r.Context(), mycontext.AccessToken, claims)
 			next(w, r.WithContext(ctx))
+		}
+	}
+}
+
+func CorsMiddleware(conf *config.Config) Middleware {
+	return func(next http.HandlerFunc) http.HandlerFunc {
+		return func(w http.ResponseWriter, r *http.Request) {
+			origin := r.Header.Get("Origin")
+			if slices.Contains(conf.AllowedOrigins, origin) {
+				w.Header().Set("Access-Control-Allow-Origin", origin)
+			}
+
+			if r.Method == http.MethodOptions {
+				w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+				w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+				w.WriteHeader(http.StatusNoContent)
+				return
+			}
+
+			next(w, r)
 		}
 	}
 }
