@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import {useParams} from "@tanstack/react-router";
 import {useMutation, useQuery} from "@tanstack/react-query";
 import {getProjectNotes, updateProjectNotes} from "../../api/project.tsx";
+import styles from './OpenNotesPage.module.css'
 
 function OpenNotesPage() {
     const {slug} = useParams({from: '/_auth/notes/$slug'});
@@ -16,19 +17,23 @@ function OpenNotesPage() {
         if (fetchedNotes !== undefined) {
             setNotes(fetchedNotes);
         }
-    }, [fetchedNotes]);
+    }, [fetchedNotes, slug]);
 
     const updateNotesMutation = useMutation({
         mutationFn: (newNotes: string) => updateProjectNotes(slug, {notes: newNotes})
     });
 
     useEffect(() => {
-        const t = setTimeout(() => updateNotesMutation.mutate(notes), 300);
+        const t = setTimeout(() => {
+            if (notes !== fetchedNotes) {
+                updateNotesMutation.mutate(notes);
+            }
+        }, 300);
         return () => clearTimeout(t);
-    }, [notes]);
+    }, [notes, slug]);
 
     return (
-        <div className="notes-content">
+        <div className={styles.content}>
             <textarea
                 value={notes}
                 onChange={(e) => {

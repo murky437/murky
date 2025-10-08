@@ -31,4 +31,36 @@ async function updateProjectNotes(slug: string, request: UpdateProjectNotesReque
     });
 }
 
-export {getProjectList, getProjectNotes, updateProjectNotes};
+interface CreateProjectRequest {
+    title: string
+    slug: string
+}
+
+async function createProject(request: CreateProjectRequest): Promise<void> {
+    return apiFetch(`/projects`, {
+        method: 'POST',
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(request),
+    })
+}
+
+interface UpdateProjectRequest {
+    title: string
+    slug: string
+}
+
+async function updateProject(slug: string, request: UpdateProjectRequest): Promise<void> {
+    return apiFetch(`/projects/${slug}`, {
+        method: 'PUT',
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(request),
+    })
+}
+
+async function deleteProject(slug: string): Promise<void> {
+    return apiFetch(`/projects/${slug}`, {
+        method: 'DELETE'
+    })
+}
+
+export {getProjectList, getProjectNotes, updateProjectNotes, createProject, updateProject, deleteProject};

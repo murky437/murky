@@ -1,5 +1,6 @@
 import {useAuth} from "../context/AuthContext.tsx";
 import {useRouter} from "@tanstack/react-router";
+import styles from './LogoutButton.module.css'
 
 function LogoutButton() {
     const auth = useAuth()
@@ -11,7 +12,7 @@ function LogoutButton() {
         })
     };
 
-    return <button className="logout-button" onClick={handleLogout}>Logout</button>;
+    return <button className={styles.logoutButton} onClick={handleLogout}>Logout</button>;
 }
 
 export {LogoutButton};

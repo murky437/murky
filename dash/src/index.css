@@ -1,10 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
 
 :root {
-    --color-bg: #212121;
-    --color-bg-dark: #181818;
-    --color-fg: #e8e8e8;
-    --color-fg-dark: #a8a8a8;
+    --color-black-18: #181818;
+    --color-black-21: #212121;
+    --color-black-28: #282828;
+    --color-black-40: #404040;
+    --color-white-e8: #e8e8e8;
+    --color-white-a8: #a8a8a8;
     --color-form-error: var(--color-red);
     --color-form-input-bg: #282828;
     --color-form-input-fg: #e8e8e8;
@@ -28,133 +30,12 @@ html, body {
 }
 
 body {
-    background-color: var(--color-bg);
-    color: var(--color-fg);
+    background-color: var(--color-black-21);
+    color: var(--color-white-e8);
     font-family: "Open Sans", sans-serif;
     font-size: 16px;
 }
 
-.login-page {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-
-    .login-form {
-        padding: 2rem;
-        width: 100%;
-        max-width: 240px;
-        box-sizing: border-box;
-
-        input {
-            width: 100%;
-            background-color: var(--color-form-input-bg);
-            color: var(--color-form-input-fg);
-            border: none;
-            margin-top: 15px;
-            font-family: inherit;
-            padding: 10px;
-            font-size: inherit;
-            outline: none;
-
-            &:focus {
-                outline: 1px dashed var(--color-brown);
-            }
-
-            &::placeholder {
-                color: var(--color-form-input-placeholder);
-                font-size: inherit;
-            }
-        }
-
-        .general-errors {
-            font-size: 14px;
-            color: var(--color-form-error);
-            margin: 0 10px;
-        }
-
-        .input-error {
-            font-size: 12px;
-            color: var(--color-form-error);
-            margin: 5px 10px 0;
-        }
-
-        button {
-            padding: 10px;
-            margin-top: 15px;
-            width: 50%;
-            border: none;
-            cursor: pointer;
-            background-color: var(--color-yellow);
-            color: var(--color-bg);
-            font-size: 14px;
-            font-weight: bold;
-
-            &:focus {
-                outline: 1px dashed var(--color-yellow);
-            }
-        }
-    }
-}
-
-.sidebar {
-    display: flex;
-    flex-direction: column;
-    width: 200px;
-    background-color: var(--color-bg-dark);
-    padding: 20px;
-
-    ul {
-        flex: 1;
-        list-style: none;
-        margin: 0;
-        padding: 0;
-
-        li {
-            a {
-                text-decoration: none;
-                color: inherit;
-                font-size: 14px;
-                color: var(--color-fg-dark);
-
-                &:hover, &.active {
-                    cursor: pointer;
-                    text-decoration: underline;
-                    color: var(--color-fg);
-                }
-            }
-        }
-    }
-
-    .logout-button {
-        padding: 10px;
-        margin-top: 20px;
-        width: 100%;
-        border: none;
-        cursor: pointer;
-        background-color: var(--color-brown);
-        color: var(--color-bg);
-        font-size: 14px;
-        font-weight: bold;
-
-        &:focus {
-            outline: 1px dashed var(--color-brown);
-        }
-    }
-}
-
-.notes-content {
-    flex: 1;
-    padding: 20px;
-
-    textarea {
-        background-color: var(--color-bg);
-        border: none;
-        color: var(--color-fg);
-        font-family: Consolas, monospace;
-        font-size: inherit;
-        outline: none;
-        width: 100%;
-        height: 100%;
-    }
+input, button {
+    font-family: "Open Sans";
 }

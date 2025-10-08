@@ -1,0 +1,15 @@
+.content {
+    flex: 1;
+    padding: 20px;
+
+    textarea {
+        background-color: var(--color-black-21);
+        border: none;
+        color: var(--color-white-e8);
+        font-family: Consolas, monospace;
+        font-size: inherit;
+        outline: none;
+        width: 100%;
+        height: 100%;
+    }
+}

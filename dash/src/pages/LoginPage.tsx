@@ -4,6 +4,9 @@ import {isGeneralError, isValidationError} from "../api/api.ts";
 import {useAuth} from "../context/AuthContext.tsx";
 import {useNavigate, useRouter, useSearch} from "@tanstack/react-router";
 import {createTokens} from "../api/auth.tsx";
+import {FieldError} from "../components/FieldError.tsx";
+import {GeneralErrors} from "../components/GeneralErrors.tsx";
+import styles from './LoginPage.module.css'
 
 function LoginPage() {
     const auth = useAuth()
@@ -44,48 +47,27 @@ function LoginPage() {
     };
 
     return (
-        <div className="login-page">
-            <form onSubmit={handleSubmit} className="login-form">
-                {generalErrors.length > 0 && (
-                    <div className="general-errors">
-                        {generalErrors.map((error, idx) => (
-                            <div key={idx} className="error-text">{error}</div>
-                        ))}
-                    </div>
-                )}
-                <div className="form-group">
-                    <input
-                        type="text"
-                        value={username}
-                        onChange={e => setUsername(e.target.value)}
-                        placeholder="Username"
-                        autoFocus
-                    />
-                    <FieldError fieldErrors={fieldErrors.username}/>
-                </div>
-                <div className="form-group">
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={e => setPassword(e.target.value)}
-                        placeholder="Password"
-                    />
-                    <FieldError fieldErrors={fieldErrors.password}/>
-                </div>
+        <div className={styles.wrapper}>
+            <form onSubmit={handleSubmit}>
+                <GeneralErrors errors={generalErrors} />
+                <input
+                    type="text"
+                    value={username}
+                    onChange={e => setUsername(e.target.value)}
+                    placeholder="Username"
+                    autoFocus
+                />
+                <FieldError fieldErrors={fieldErrors.username}/>
+                <input
+                    type="password"
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    placeholder="Password"
+                />
+                <FieldError fieldErrors={fieldErrors.password}/>
                 <button type="submit" disabled={loading}>Login</button>
             </form>
         </div>
-    );
-}
-
-function FieldError({fieldErrors}: { fieldErrors?: string[] }) {
-    if (!fieldErrors || fieldErrors.length === 0) return null;
-    return (
-        <>
-            {fieldErrors.map((err, idx) => (
-                <div key={idx} className="input-error">{err}</div>
-            ))}
-        </>
     );
 }
 
