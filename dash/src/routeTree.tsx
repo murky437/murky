@@ -62,17 +62,26 @@ const notes = createRoute({
     getParentRoute: () => _auth,
     path: '/notes',
     loader: async ({location}) => {
-        try {
-            const projects = await getProjectList();
+        if (location.pathname === '/notes') {
+            try {
+                const projects = await getProjectList();
+                const lastOpenProjectSlug = localStorage.getItem("lastOpenProjectSlug");
+                const found = projects.find(p => p.slug === lastOpenProjectSlug)
 
-            if (location.pathname === '/notes' && projects.length > 0) {
-                return redirect({to: '/notes/$slug', params: {slug: projects[0].slug}})
+                if (found) {
+                    return redirect({to: '/notes/$slug', params: {slug: lastOpenProjectSlug}});
+                }
+
+                if (projects.length > 0) {
+                    return redirect({to: '/notes/$slug', params: {slug: projects[0].slug}})
+                }
+
+                return {initialProjects: projects};
+            } catch (err) {
+                return {initialProjects: []};
             }
-
-            return {initialProjects: projects};
-        } catch (err) {
-            return {initialProjects: []};
         }
+        return {initialProjects: []};
     },
     component: NotesBasePage
 })

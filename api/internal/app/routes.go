@@ -13,6 +13,9 @@ func NewMux(c *Container) *http.ServeMux {
 		auth.CreateTokens(c.Db),
 		routing.RequireJSON,
 		routing.CorsMiddleware(c.Config)))
+	mux.HandleFunc("POST /auth/refresh", routing.Chain(
+		auth.RefreshAccessToken(c.Db),
+		routing.CorsMiddleware(c.Config)))
 
 	protectedMux := http.NewServeMux()
 	protectedMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {

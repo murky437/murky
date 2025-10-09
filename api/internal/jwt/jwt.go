@@ -79,3 +79,22 @@ func ParseAccessToken(tokenStr string) (*AccessTokenClaims, error) {
 
 	return claims, nil
 }
+
+func ParseRefreshToken(tokenStr string) (*RefreshTokenClaims, error) {
+	token, err := jwt.ParseWithClaims(tokenStr, &RefreshTokenClaims{}, func(t *jwt.Token) (any, error) {
+		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method")
+		}
+		return refreshTokenSecret, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	claims, ok := token.Claims.(*RefreshTokenClaims)
+	if !ok || !token.Valid {
+		return nil, fmt.Errorf("invalid token")
+	}
+
+	return claims, nil
+}

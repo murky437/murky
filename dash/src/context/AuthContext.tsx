@@ -1,5 +1,6 @@
 import {createContext, type ReactNode, useCallback, useContext, useEffect, useState} from "react";
-import {setApiToken} from "../api/api.ts";
+import {setApiToken, setOnTokenRefresh} from "../api/api.ts";
+import {emitAuthInvalid} from "../utils/authEvents.ts";
 
 interface AuthContext {
     isAuthenticated: boolean
@@ -44,6 +45,14 @@ function AuthProvider({children}: { children: ReactNode }) {
         const storedToken = getStoredToken()
         setToken(storedToken)
         setApiToken(storedToken)
+
+        setOnTokenRefresh((newToken) => {
+            setStoredToken(newToken);
+            setToken(newToken);
+            if (!newToken) {
+                emitAuthInvalid()
+            }
+        });
     }, [])
 
     return (

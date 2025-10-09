@@ -126,5 +126,4 @@ func TestCreateTokensSuccess(t *testing.T) {
 	require.NoError(t, err)
 
 	require.NotEmpty(t, resp.AccessToken)
-	require.NotEmpty(t, resp.RefreshToken)
 }

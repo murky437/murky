@@ -64,6 +64,8 @@ func CorsMiddleware(conf *config.Config) Middleware {
 			if slices.Contains(conf.AllowedOrigins, origin) {
 				w.Header().Set("Access-Control-Allow-Origin", origin)
 			}
+			
+			w.Header().Set("Access-Control-Allow-Credentials", "true")
 
 			if r.Method == http.MethodOptions {
 				w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")

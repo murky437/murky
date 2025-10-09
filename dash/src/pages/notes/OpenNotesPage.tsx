@@ -8,6 +8,10 @@ function OpenNotesPage() {
     const {slug} = useParams({from: '/_auth/notes/$slug'});
     const [notes, setNotes] = useState("");
 
+    useEffect(() => {
+        localStorage.setItem("lastOpenProjectSlug", slug);
+    }, [slug]);
+
     const {data: fetchedNotes} = useQuery({
         queryKey: ["projectNotes", slug],
         queryFn: () => getProjectNotes(slug)

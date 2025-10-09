@@ -14,9 +14,9 @@
         li {
             a {
                 text-decoration: none;
-                color: inherit;
                 font-size: 14px;
                 color: var(--color-white-a8);
+                user-select: none;
 
                 &:hover, &[class="active"] {
                     cursor: pointer;

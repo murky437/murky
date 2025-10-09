@@ -1,10 +1,11 @@
-import {StrictMode} from 'react'
+import {StrictMode, useEffect} from 'react'
 import './index.css'
 import {createRouter, RouterProvider} from "@tanstack/react-router";
 import {createRoot} from "react-dom/client";
 import {AuthProvider, useAuth} from "./context/AuthContext.tsx";
 import {routeTree} from "./routeTree.tsx";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
+import {onAuthInvalid} from "./utils/authEvents.ts";
 
 const router = createRouter({
     routeTree: routeTree,
@@ -32,6 +33,11 @@ function App() {
 
 function InnerApp() {
     const auth = useAuth()
+    useEffect(() => {
+        return onAuthInvalid(() => {
+            router.invalidate();
+        });
+    }, []);
     return <RouterProvider router={router} context={{auth: auth}}/>
 }
 

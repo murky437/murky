@@ -32,6 +32,9 @@ func (request *CreateTokensRequest) Validate() *validation.Result {
 }
 
 type CreateTokensResponse struct {
-	AccessToken  string `json:"accessToken"`
-	RefreshToken string `json:"refreshToken"`
+	AccessToken string `json:"accessToken"`
+}
+
+type RefreshAccessTokenResponse struct {
+	AccessToken string `json:"accessToken"`
 }

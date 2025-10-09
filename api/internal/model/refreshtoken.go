@@ -1,6 +1,9 @@
 package model
 
-import "database/sql"
+import (
+	"database/sql"
+	"errors"
+)
 
 type RefreshToken struct {
 	Id        int
@@ -17,4 +20,17 @@ func SaveRefreshToken(db *sql.DB, refreshToken RefreshToken) error {
 	}
 
 	return nil
+}
+
+func FindRefreshTokenByJwt(db *sql.DB, jwt string) (*RefreshToken, error) {
+	query := "SELECT id, user_id, jwt, expires_at FROM refresh_token WHERE jwt = ? LIMIT 1"
+	row := db.QueryRow(query, jwt)
+
+	var token RefreshToken
+	err := row.Scan(&token.Id, &token.UserId, &token.Jwt, &token.ExpiresAt)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, nil
+	}
+
+	return &token, err
 }

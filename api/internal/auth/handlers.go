@@ -40,13 +40,13 @@ func CreateTokens(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		accessToken, err := jwt.CreateAccessToken(*user, time.Now().UTC().Add(15*time.Minute))
+		accessToken, err := jwt.CreateAccessToken(*user, time.Now().UTC().Add(constants.AccessTokenDuration))
 		if err != nil {
 			log.Println(err)
 			routing.WriteInternalServerErrorResponse(w)
 			return
 		}
-		expiresAt := time.Now().UTC().Add(time.Hour * 24 * 30)
+		expiresAt := time.Now().UTC().Add(constants.RefreshTokenDuration)
 
 		refreshTokenString, err := jwt.CreateRefreshToken(req.Username, expiresAt)
 		if err != nil {
@@ -67,10 +67,66 @@ func CreateTokens(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		// TODO: set refresh token httponly cookie
+		http.SetCookie(w, &http.Cookie{
+			Name:     "refresh_token",
+			Value:    refreshTokenString,
+			Path:     "/",
+			HttpOnly: true,
+			Secure:   false,
+			SameSite: http.SameSiteLaxMode,
+			Expires:  expiresAt,
+		})
+
 		resp := CreateTokensResponse{
-			AccessToken:  accessToken,
-			RefreshToken: refreshTokenString,
+			AccessToken: accessToken,
+		}
+
+		routing.WriteJsonResponse(w, http.StatusOK, resp)
+	}
+}
+
+func RefreshAccessToken(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		cookie, err := r.Cookie("refresh_token")
+
+		if err != nil || cookie.Value == "" {
+			routing.WriteUnauthorizedResponse(w)
+			return
+		}
+
+		claims, err := jwt.ParseRefreshToken(cookie.Value)
+		if err != nil {
+			routing.WriteUnauthorizedResponse(w)
+			return
+		}
+
+		user, err := model.FindUserByUsername(db, claims.Username)
+		if err != nil || user == nil {
+			routing.WriteUnauthorizedResponse(w)
+			return
+		}
+
+		dbToken, err := model.FindRefreshTokenByJwt(db, cookie.Value)
+		if err != nil || dbToken == nil {
+			routing.WriteUnauthorizedResponse(w)
+			return
+		}
+
+		expiresAt, err := time.Parse(constants.SqliteDateFormat, dbToken.ExpiresAt)
+		if err != nil || time.Now().After(expiresAt) {
+			routing.WriteUnauthorizedResponse(w)
+			return
+		}
+
+		newAccessToken, err := jwt.CreateAccessToken(*user, time.Now().UTC().Add(constants.AccessTokenDuration))
+		if err != nil {
+			log.Println(err)
+			routing.WriteInternalServerErrorResponse(w)
+			return
+		}
+
+		resp := RefreshAccessTokenResponse{
+			AccessToken: newAccessToken,
 		}
 
 		routing.WriteJsonResponse(w, http.StatusOK, resp)
