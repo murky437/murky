@@ -10,9 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@lezer/highlight": "^1.2.1",
+    "@replit/codemirror-vim": "^6.3.0",
     "@tanstack/react-query": "^5.90.2",
     "@tanstack/react-router": "^1.132.41",
     "@tanstack/react-router-devtools": "^1.132.41",
+    "@uiw/codemirror-themes": "^4.25.2",
+    "@uiw/react-codemirror": "^4.9.5",
     "arktype": "^2.1.22",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
