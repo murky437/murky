@@ -1,6 +1,6 @@
 interface Project {
-    title: string;
-    slug: string;
+  title: string;
+  slug: string;
 }
 
-export type {Project};
+export type { Project };
