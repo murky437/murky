@@ -1,15 +1,15 @@
-import {LogoutButton} from "./LogoutButton.tsx";
 import {Link, useLoaderData} from "@tanstack/react-router";
 import {useQuery, useQueryClient} from "@tanstack/react-query";
 import {getProjectList} from "../api/project.tsx";
 import type {Project} from "../types/project.ts";
 import * as React from "react";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {EditProjectModal} from "./modal/EditProjectModal.tsx";
 import {AddProjectModal} from "./modal/AddProjectModal.tsx";
 import {ProjectContextMenu} from "./contextmenu/ProjectContextMenu.tsx";
 import {SidebarContextMenu} from "./contextmenu/SidebarContextMenu.tsx";
 import styles from './Sidebar.module.css'
+import {SettingsContextMenu} from "./contextmenu/SettingsContextMenu.tsx";
 
 function Sidebar() {
     const queryClient = useQueryClient();
@@ -22,6 +22,22 @@ function Sidebar() {
         initialData: initialProjects
     })
 
+    useEffect(() => {
+        const handleBlur = () => closeMenus();
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "Escape") closeMenus();
+        };
+
+        window.addEventListener("blur", handleBlur);
+        window.addEventListener("keydown", handleKeyDown);
+
+        return () => {
+            window.removeEventListener("blur", handleBlur);
+            window.removeEventListener("keydown", handleKeyDown);
+        };
+    }, []);
+
+
     const [sidebarContextMenu, setSidebarContextMenu] = useState<{ x: number; y: number } | null>(null);
     const [projectContextMenu, setProjectContextMenu] = useState<{
         x: number;
@@ -31,32 +47,42 @@ function Sidebar() {
     const [editingProject, setEditingProject] = useState<Project | null>(null);
     const [isAddOpen, setAddOpen] = useState(false);
 
+    const [settingsContextMenu, setSettingsContextMenu] = useState<{ x: number; y: number } | null>(null);
+
     const openSidebarContextMenu = (e: React.MouseEvent) => {
         e.preventDefault();
+        closeMenus();
         setSidebarContextMenu({x: e.clientX, y: e.clientY});
-        setProjectContextMenu(null);
     }
 
     const openProjectContextMenu = (e: React.MouseEvent, project: Project) => {
         e.preventDefault();
         e.stopPropagation();
+        closeMenus();
         setProjectContextMenu({x: e.clientX, y: e.clientY, project});
-        setSidebarContextMenu(null);
+    }
+
+    const openSettingsContextMenu = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        closeMenus();
+        setSettingsContextMenu({x: e.clientX, y: e.clientY});
     }
 
     const closeMenus = () => {
         setSidebarContextMenu(null);
         setProjectContextMenu(null);
+        setSettingsContextMenu(null);
     }
 
     const openEditModal = (p: Project) => {
+        closeMenus();
         setEditingProject(p);
-        setProjectContextMenu(null);
     }
 
     const openAddModal = () => {
+        closeMenus();
         setAddOpen(true);
-        setSidebarContextMenu(null);
     }
 
     const closeEditModal = () => {
@@ -83,7 +109,16 @@ function Sidebar() {
                         </li>
                     ))}
                 </ul>
-                <LogoutButton/>
+                <div>
+                    <div className={styles.settings} onClick={(e) => openSettingsContextMenu(e)}>☰</div>
+                </div>
+                {settingsContextMenu && (
+                    <SettingsContextMenu
+                        x={settingsContextMenu.x}
+                        y={settingsContextMenu.y}
+                        onClose={closeMenus}
+                    />
+                )}
                 {projectContextMenu && (
                     <ProjectContextMenu
                         x={projectContextMenu.x}

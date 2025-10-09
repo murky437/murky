@@ -1,4 +1,5 @@
 import {type ReactNode, useEffect, useRef} from "react";
+import styles from './ContextMenu.module.css'
 
 interface Props {
     x: number;
@@ -22,6 +23,7 @@ function ContextMenu({x, y, onClose, children}: Props) {
         <div
             ref={ref}
             style={{position: "absolute", top: y, left: x}}
+            className={styles.wrapper}
         >
             {children}
         </div>
