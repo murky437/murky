@@ -1,0 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
+:root {
+    --color-black-18: #181818;
+    --color-black-21: #212121;
+    --color-black-28: #282828;
+    --color-black-40: #404040;
+    --color-white-e8: #e8e8e8;
+    --color-white-a8: #a8a8a8;
+    --color-form-error: var(--color-red);
+    --color-form-input-bg: #282828;
+    --color-form-input-fg: #e8e8e8;
+    --color-form-input-placeholder: #666666;
+    --color-meta-green: #80a37c;
+    --color-red: #fb4934;
+    --color-yellow: #fabd2f;
+    --color-lightyellow: #edc990;
+    --color-brown: #665c54;
+    --color-purple: #c8899a;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--color-black-21);
+    color: var(--color-white-e8);
+    font-family: 'Open Sans', sans-serif;
+    font-size: 16px;
+}
+
+input,
+button {
+    font-family: 'Open Sans', sans-serif;
+}
+
+#app {
+    display: flex;
+    height: 100vh;
+}
