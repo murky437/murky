@@ -1,4 +1,33 @@
 .wrap {
     flex: 1;
     padding: 0 20px;
+
+    :global(.cm-activeLine) {
+        background-color: #ffffff11;
+    }
+
+    :global(.cm-activeLineGutter) {
+        background-color: #ffffff11;
+    }
+
+    :global(.cm-gutters) {
+        background-color: unset;
+        border: none;
+    }
+
+    :global(.cm-cursor) {
+        border-left-color: var(--color-red);
+    }
+
+    :global(.cm-editor):not(:global(.cm-focused)) :global(.cm-fat-cursor) {
+        outline: solid 1px var(--color-red);
+    }
+
+    :global(.cm-fat-cursor) {
+        background: var(--color-red);
+    }
+
+    :global(.cm-selectionBackground) {
+        background: #ffffff55 !important;
+    }
 }

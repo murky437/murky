@@ -5,11 +5,13 @@ import { vim } from '@replit/codemirror-vim';
 import { EditorState } from '@codemirror/state';
 import { getProjectNotes, updateProjectNotes } from '../api/project.ts';
 import { debounce } from '../util/debounce.ts';
+import { keymap } from '@codemirror/view';
+import { indentWithTab } from '@codemirror/commands';
 
-function NotesEditor() {
-  let slug = m.route.param('slug');
-  let editor: EditorView;
+function NotesEditor(): m.Component {
+  let slug: string;
   let fetchedNotes: string | null = null;
+  let editorView: EditorView;
 
   const updateNotes = debounce(async (slug: string, notes: string) => {
     await updateProjectNotes(slug, { notes: notes });
@@ -17,10 +19,11 @@ function NotesEditor() {
 
   return {
     oncreate: function (vnode) {
-      editor = new EditorView({
+      editorView = new EditorView({
         state: EditorState.create({
           extensions: [
             basicSetup,
+            keymap.of([indentWithTab]),
             vim(),
             EditorView.updateListener.of(e => {
               if (e.docChanged) {
@@ -31,7 +34,6 @@ function NotesEditor() {
                   fetchedNotes = null;
                   return;
                 }
-
                 updateNotes(slug, doc);
               }
             }),
@@ -41,13 +43,14 @@ function NotesEditor() {
       });
     },
     onupdate: function () {
+      editorView.focus();
       slug = m.route.param('slug');
       getProjectNotes(slug).then(notes => {
         fetchedNotes = notes;
-        editor.dispatch({
+        editorView.dispatch({
           changes: {
             from: 0,
-            to: editor.state.doc.length,
+            to: editorView.state.doc.length,
             insert: notes,
           },
         });
@@ -56,7 +59,7 @@ function NotesEditor() {
     view: function () {
       return m(`.${styles.wrap}`);
     },
-  } as m.Component;
+  };
 }
 
 export { NotesEditor };

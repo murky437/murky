@@ -1,0 +1,7 @@
+.generalErrors {
+    .errorText {
+        color: var(--color-red);
+        font-size: 14px;
+        margin-left: 10px;
+    }
+}

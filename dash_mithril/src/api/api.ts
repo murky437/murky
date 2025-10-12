@@ -1,17 +1,8 @@
+import { getAccessToken, setAccessToken } from '../auth/auth.ts';
+
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
-let token: string | null = null;
-
-const setApiToken = (newToken: string | null) => {
-  token = newToken;
-};
-
 let refreshPromise: Promise<boolean> | null = null;
-let onTokenRefresh: ((newToken: string | null) => void) | null = null;
-
-const setOnTokenRefresh = (cb: (token: string | null) => void) => {
-  onTokenRefresh = cb;
-};
 
 interface GeneralError {
   message: string;
@@ -78,13 +69,11 @@ async function refreshAccessToken(): Promise<boolean> {
 
       const data = (await res.json()) as { accessToken?: string };
       if (data.accessToken) {
-        setApiToken(data.accessToken);
-        onTokenRefresh?.(data.accessToken); // notify React
+        setAccessToken(data.accessToken);
         return true;
       }
     } catch {
-      setApiToken(null);
-      onTokenRefresh?.(null); // notify React
+      setAccessToken(null);
       return false;
     } finally {
       refreshPromise = null;
@@ -100,6 +89,8 @@ async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> 
     ...(options.headers as Record<string, string>),
   };
 
+  let token = getAccessToken();
+
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
@@ -111,8 +102,9 @@ async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> 
   });
 
   // Handle expired access token
-  if (res.status === 401) {
+  if (res.status === 401 && token) {
     const refreshed = await refreshAccessToken();
+    token = getAccessToken();
     if (refreshed && token) {
       headers['Authorization'] = `Bearer ${token}`;
       res = await fetch(`${API_BASE_URL}${path}`, {
@@ -128,4 +120,4 @@ async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> 
   return handleResponse<T>(res);
 }
 
-export { setApiToken, setOnTokenRefresh, apiFetch, isGeneralError, isValidationError };
+export { apiFetch, isGeneralError, isValidationError };
