@@ -113,7 +113,7 @@ func RefreshAccessToken(db *sql.DB) http.HandlerFunc {
 		}
 
 		expiresAt, err := time.Parse(constants.SqliteDateFormat, dbToken.ExpiresAt)
-		if err != nil || time.Now().After(expiresAt) {
+		if err != nil || time.Now().UTC().After(expiresAt) {
 			routing.WriteUnauthorizedResponse(w)
 			return
 		}

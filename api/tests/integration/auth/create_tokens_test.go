@@ -10,6 +10,7 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 )
@@ -111,12 +112,7 @@ func TestCreateTokensSuccess(t *testing.T) {
 	rr := httptest.NewRecorder()
 
 	c := app.NewTestContainer(t)
-	defer func(c *app.Container) {
-		err := c.Close()
-		if err != nil {
-			t.Fatal(err)
-		}
-	}(c)
+	defer c.Close()
 	app.NewMux(c).ServeHTTP(rr, req)
 
 	require.Equal(t, http.StatusOK, rr.Code)
@@ -126,4 +122,15 @@ func TestCreateTokensSuccess(t *testing.T) {
 	require.NoError(t, err)
 
 	require.NotEmpty(t, resp.AccessToken)
+
+	cookie, err := http.ParseSetCookie(rr.Header().Get("Set-Cookie"))
+	require.NoError(t, err)
+
+	require.Equal(t, "refresh_token", cookie.Name)
+	require.Equal(t, "/", cookie.Path)
+	require.Equal(t, true, cookie.HttpOnly)
+	require.Equal(t, false, cookie.Secure) // TODO: change this to test for true
+	require.Equal(t, http.SameSiteLaxMode, cookie.SameSite)
+	require.Greater(t, cookie.Expires, time.Now().UTC().Add(time.Hour*24*7).Add(-time.Minute))
+
 }
