@@ -2,6 +2,7 @@ import { ContextMenu } from './ContextMenu.tsx';
 import { type Component, createEffect } from 'solid-js';
 import { auth } from '../../auth/auth.ts';
 import { createMutable } from 'solid-js/store';
+import { deleteRefreshToken } from '../../api/auth.tsx';
 
 interface Props {
   x: number;
@@ -21,7 +22,8 @@ const SettingsContextMenu: Component<Props> = props => {
     state.y = props.y - menuHeight < 0 ? props.y : props.y - menuHeight;
   });
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await deleteRefreshToken();
     auth.setAccessToken(null);
   };
 

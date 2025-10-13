@@ -72,7 +72,7 @@ func CreateTokens(db *sql.DB) http.HandlerFunc {
 			Value:    refreshTokenString,
 			Path:     "/",
 			HttpOnly: true,
-			Secure:   false,
+			Secure:   false, // TODO: set to secure based on env (dev = false, prod = true)
 			SameSite: http.SameSiteLaxMode,
 			Expires:  expiresAt,
 		})
@@ -130,5 +130,31 @@ func RefreshAccessToken(db *sql.DB) http.HandlerFunc {
 		}
 
 		routing.WriteJsonResponse(w, http.StatusOK, resp)
+	}
+}
+
+func DeleteRefreshToken(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		cookie, err := r.Cookie("refresh_token")
+
+		if err != nil || cookie.Value == "" {
+			routing.WriteJsonResponse(w, http.StatusNoContent, nil)
+			return
+		}
+
+		err = model.DeleteRefreshToken(db, cookie.Value)
+		if err != nil {
+			routing.WriteInternalServerErrorResponse(w)
+			return
+		}
+
+		http.SetCookie(w, &http.Cookie{
+			Name:     "refresh_token",
+			Value:    "",
+			Path:     "/",
+			HttpOnly: true,
+			MaxAge:   -1})
+
+		routing.WriteJsonResponse(w, http.StatusNoContent, nil)
 	}
 }

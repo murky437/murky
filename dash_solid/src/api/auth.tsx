@@ -10,11 +10,26 @@ interface CreateTokensResponse {
 }
 
 async function createTokens(request: CreateTokensRequest): Promise<CreateTokensResponse> {
-  return apiFetch<CreateTokensResponse>(`/auth/create-tokens`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(request),
-  });
+  return apiFetch<CreateTokensResponse>(
+    `/auth/create-tokens`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request),
+    },
+    false
+  );
 }
 
-export { createTokens };
+async function deleteRefreshToken(): Promise<void> {
+  await apiFetch(
+    `/auth/delete-refresh-token`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    },
+    false
+  );
+}
+
+export { createTokens, deleteRefreshToken };

@@ -60,7 +60,7 @@ async function refreshAccessToken(): Promise<boolean> {
 
   refreshPromise = (async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/auth/refresh`, {
+      const res = await fetch(`${API_BASE_URL}/auth/refresh-access-token`, {
         method: 'POST',
         credentials: 'include', // send HttpOnly cookie
       });
@@ -86,12 +86,20 @@ async function refreshAccessToken(): Promise<boolean> {
   return refreshPromise;
 }
 
-async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
+async function apiFetch<T>(
+  path: string,
+  options: RequestInit = {},
+  requireAuth = true
+): Promise<T> {
   const headers: Record<string, string> = {
     ...(options.headers as Record<string, string>),
   };
 
   const token = auth.getAccessToken();
+
+  if (requireAuth && !token) {
+    throw { message: 'Unauthorized' } as GeneralError;
+  }
 
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;

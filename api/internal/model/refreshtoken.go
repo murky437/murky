@@ -15,11 +15,7 @@ type RefreshToken struct {
 func SaveRefreshToken(db *sql.DB, refreshToken RefreshToken) error {
 	query := "INSERT INTO refresh_token(user_id, jwt, expires_at) VALUES (?,?,?)"
 	_, err := db.Exec(query, refreshToken.UserId, refreshToken.Jwt, refreshToken.ExpiresAt)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 func FindRefreshTokenByJwt(db *sql.DB, jwt string) (*RefreshToken, error) {
@@ -33,4 +29,10 @@ func FindRefreshTokenByJwt(db *sql.DB, jwt string) (*RefreshToken, error) {
 	}
 
 	return &token, err
+}
+
+func DeleteRefreshToken(db *sql.DB, jwt string) error {
+	query := "DELETE FROM refresh_token WHERE jwt = ?"
+	_, err := db.Exec(query, jwt)
+	return err
 }
