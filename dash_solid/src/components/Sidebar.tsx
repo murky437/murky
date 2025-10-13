@@ -8,13 +8,12 @@ import { ProjectContextMenu } from './contextmenu/ProjectContextMenu.tsx';
 import { SidebarContextMenu } from './contextmenu/SidebarContextMenu.tsx';
 import { EditProjectModal } from './modal/EditProjectModal.tsx';
 import { AddProjectModal } from './modal/AddProjectModal.tsx';
-import { getProjectList } from '../api/project.tsx';
+import { notes } from '../store/notes.ts';
 
 type ContextMenuState = 'Closed' | 'Sidebar' | 'Settings' | 'Project';
 
 const Sidebar: Component = () => {
   const state = createMutable({
-    projects: [] as Project[],
     contextMenu: {
       state: 'Closed' as ContextMenuState,
       pos: { x: 0, y: 0 },
@@ -57,7 +56,7 @@ const Sidebar: Component = () => {
   };
 
   const loadProjects = async () => {
-    state.projects = await getProjectList();
+    await notes.loadProjectsFromServer();
   };
 
   createEffect(async () => {
@@ -68,7 +67,7 @@ const Sidebar: Component = () => {
     <>
       <div class={styles.wrapper} onContextMenu={e => setContextMenu(e, 'Sidebar')}>
         <ul>
-          <For each={state.projects}>
+          <For each={notes.getProjects()}>
             {project => (
               <li onContextMenu={e => setContextMenu(e, 'Project', project)}>
                 <A href={`/notes/${project.slug}`}>{project.title}</A>
