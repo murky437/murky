@@ -19,12 +19,23 @@ services:
 #    command: npm run dev -- --host 0.0.0.0 --port 5137
 #    environment:
 #      VITE_API_URL: http://localhost:8080
+#  dash:
+#    image: node:24
+#    container_name: murky_dash_mithril
+#    working_dir: /app
+#    volumes:
+#      - ./dash_mithril:/app
+#    ports:
+#      - "5137:5137"
+#    command: npm run dev -- --host 0.0.0.0 --port 5137
+#    environment:
+#      VITE_API_URL: http://localhost:8080
   dash:
     image: node:24
-    container_name: murky_dash_mithril
+    container_name: murky_dash_solid
     working_dir: /app
     volumes:
-      - ./dash_mithril:/app
+      - ./dash_solid:/app
     ports:
       - "5137:5137"
     command: npm run dev -- --host 0.0.0.0 --port 5137
