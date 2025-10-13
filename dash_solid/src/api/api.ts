@@ -1,4 +1,5 @@
 import { auth } from '../auth/auth.ts';
+import { isObject } from '../util/types.ts';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -13,17 +14,18 @@ interface ValidationError {
   fieldErrors: Record<string, string[]>;
 }
 
-function isValidationError(err: any): err is ValidationError {
+function isValidationError(err: unknown): err is ValidationError {
   return (
-    typeof err === 'object' &&
-    err !== null &&
+    isObject(err) &&
+    'generalErrors' in err &&
     Array.isArray(err.generalErrors) &&
+    'fieldErrors' in err &&
     typeof err.fieldErrors === 'object'
   );
 }
 
-function isGeneralError(err: any): err is GeneralError {
-  return typeof err === 'object' && err !== null && typeof err.message === 'string';
+function isGeneralError(err: unknown): err is GeneralError {
+  return isObject(err) && 'message' in err && typeof err.message === 'string';
 }
 
 async function handleResponse<T>(res: Response): Promise<T> {
