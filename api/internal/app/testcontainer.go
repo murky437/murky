@@ -11,6 +11,7 @@ import (
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/sqlite"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/stretchr/testify/require"
 )
 
@@ -61,7 +62,6 @@ func setupTestDatabase(t *testing.T) *sql.DB {
 
 func insertBaseTestData(db *sql.DB, t *testing.T) {
 	// password = "pass"
-	
 	res, err := db.Exec(`INSERT INTO user (username, password) VALUES ('user', '$2a$10$U6X7NnivCljkduExJ9vqt.fqEGQrjxBczds1EbPrQjmLEw0eyUs9K')`)
 	require.NoError(t, err)
 	userId, err := res.LastInsertId()

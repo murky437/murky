@@ -4,9 +4,7 @@ import (
 	"database/sql"
 	"log"
 	"murky_api/internal/config"
-	"murky_api/internal/constants"
 
-	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "modernc.org/sqlite"
 )
 
@@ -17,15 +15,15 @@ type Container struct {
 
 func NewContainer() *Container {
 	conf := config.NewConfig()
-	db := setupDatabase()
+	db := setupDatabase(conf)
 	return &Container{
 		Config: conf,
 		Db:     db,
 	}
 }
 
-func setupDatabase() *sql.DB {
-	db, err := sql.Open("sqlite", constants.DbFilePath)
+func setupDatabase(conf *config.Config) *sql.DB {
+	db, err := sql.Open("sqlite", conf.DbFilePath)
 	if err != nil {
 		log.Fatal(err)
 	}

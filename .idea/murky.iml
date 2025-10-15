@@ -7,7 +7,12 @@
   </component>
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/.idea/dataSources" />
+      <excludeFolder url="file://$MODULE_DIR$/api/build" />
       <excludeFolder url="file://$MODULE_DIR$/api/tmp" />
+      <excludeFolder url="file://$MODULE_DIR$/deploy/api" />
+      <excludeFolder url="file://$MODULE_DIR$/deploy/dash" />
+      <excludeFolder url="file://$MODULE_DIR$/server" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

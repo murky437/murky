@@ -1,0 +1,25 @@
+:8081 {
+    reverse_proxy localhost:8080
+
+    log {
+        output file ./server/api/logs/access.log {
+            roll_size 10mb
+            roll_keep 5
+            roll_keep_for 720h
+        }
+    }
+}
+
+:8082 {
+    root * ./server/dash/deployments/current
+    try_files {path} /index.html
+    file_server
+
+    log {
+        output file ./server/dash/logs/access.log {
+            roll_size 10mb
+            roll_keep 5
+            roll_keep_for 720h
+        }
+    }
+}

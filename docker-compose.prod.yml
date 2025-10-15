@@ -1,0 +1,17 @@
+services:
+  api:
+    build:
+      context: ./api
+      target: prod_builder
+    container_name: murky_api_prod_builder
+    volumes:
+      - ./api/build:/app/build
+  dash:
+    image: node:24
+    container_name: murky_dash_prod_builder
+    working_dir: /app
+    volumes:
+      - ./dash:/app
+    command: npm run build
+    env_file:
+      - ./dash/.env.prod

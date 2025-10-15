@@ -1,0 +1,5 @@
+deployments
+database_backups
+migrations
+logs
+.env

@@ -1,0 +1,10 @@
+services:
+  api:
+    build: .
+    container_name: murky_api_prod
+    volumes:
+      - ./deployments/current:/app
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
