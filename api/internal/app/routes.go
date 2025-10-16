@@ -10,11 +10,11 @@ import (
 func NewMux(c *Container) *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.HandleFunc("POST /auth/create-tokens", routing.Chain(
-		auth.CreateTokens(c.Db),
+		auth.CreateTokens(c.Db, c.JwtService),
 		routing.RequireJSON,
 		routing.CorsMiddleware(c.Config)))
 	mux.HandleFunc("POST /auth/refresh-access-token", routing.Chain(
-		auth.RefreshAccessToken(c.Db),
+		auth.RefreshAccessToken(c.Db, c.JwtService),
 		routing.CorsMiddleware(c.Config)))
 	mux.HandleFunc("POST /auth/delete-refresh-token", routing.Chain(
 		auth.DeleteRefreshToken(c.Db),
@@ -33,7 +33,7 @@ func NewMux(c *Container) *http.ServeMux {
 
 	mux.HandleFunc("/", routing.Chain(
 		protectedMux.ServeHTTP,
-		routing.RequireAuth(c.Db),
+		routing.RequireAuth(c.Db, c.JwtService),
 		routing.CorsMiddleware(c.Config),
 	))
 

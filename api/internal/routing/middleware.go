@@ -30,7 +30,7 @@ func RequireJSON(next http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
-func RequireAuth(db *sql.DB) Middleware {
+func RequireAuth(db *sql.DB, jwtService jwt.Service) Middleware {
 	return func(next http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
 			auth := r.Header.Get("Authorization")
@@ -39,7 +39,7 @@ func RequireAuth(db *sql.DB) Middleware {
 				return
 			}
 			tokenStr := strings.TrimPrefix(auth, "Bearer ")
-			claims, err := jwt.ParseAccessToken(tokenStr)
+			claims, err := jwtService.ParseAccessToken(tokenStr)
 			if err != nil {
 				WriteUnauthorizedResponse(w)
 				return
@@ -64,7 +64,7 @@ func CorsMiddleware(conf *config.Config) Middleware {
 			if slices.Contains(conf.AllowedOrigins, origin) {
 				w.Header().Set("Access-Control-Allow-Origin", origin)
 			}
-			
+
 			w.Header().Set("Access-Control-Allow-Credentials", "true")
 
 			if r.Method == http.MethodOptions {

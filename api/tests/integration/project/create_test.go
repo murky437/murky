@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"murky_api/internal/app"
-	"murky_api/internal/jwt"
 	"murky_api/internal/model"
 	"murky_api/internal/project"
 	"murky_api/internal/routing"
@@ -29,22 +28,26 @@ func TestCreateUnauthorized(t *testing.T) {
 }
 
 func TestCreateInvalidContentType(t *testing.T) {
-	token, err := jwt.CreateAccessToken(model.User{Id: 1, Username: "user"}, time.Now().Add(time.Hour))
+	c := app.NewTestContainer(t)
+	defer c.Close()
+
+	token, err := c.JwtService.CreateAccessToken(model.User{Id: 1, Username: "user"}, time.Now().Add(time.Hour))
 	require.NoError(t, err)
 
 	req := httptest.NewRequest(http.MethodPost, "/projects", nil)
 	req.Header.Add("Authorization", "Bearer "+token)
 	rr := httptest.NewRecorder()
 
-	c := app.NewTestContainer(t)
-	defer c.Close()
 	app.NewMux(c).ServeHTTP(rr, req)
 
 	require.Equal(t, http.StatusUnsupportedMediaType, rr.Code)
 }
 
 func TestCreateInvalidJson(t *testing.T) {
-	token, err := jwt.CreateAccessToken(model.User{Id: 1, Username: "user"}, time.Now().Add(time.Hour))
+	c := app.NewTestContainer(t)
+	defer c.Close()
+
+	token, err := c.JwtService.CreateAccessToken(model.User{Id: 1, Username: "user"}, time.Now().Add(time.Hour))
 	require.NoError(t, err)
 
 	req := httptest.NewRequest(http.MethodPost, "/projects", strings.NewReader("{]"))
@@ -52,15 +55,16 @@ func TestCreateInvalidJson(t *testing.T) {
 	req.Header.Set("Content-Type", "application/json")
 	rr := httptest.NewRecorder()
 
-	c := app.NewTestContainer(t)
-	defer c.Close()
 	app.NewMux(c).ServeHTTP(rr, req)
 
 	require.Equal(t, http.StatusBadRequest, rr.Code)
 }
 
 func TestCreateValidationError(t *testing.T) {
-	token, err := jwt.CreateAccessToken(model.User{Id: 1, Username: "user"}, time.Now().Add(time.Hour))
+	c := app.NewTestContainer(t)
+	defer c.Close()
+
+	token, err := c.JwtService.CreateAccessToken(model.User{Id: 1, Username: "user"}, time.Now().Add(time.Hour))
 	require.NoError(t, err)
 
 	req := httptest.NewRequest(http.MethodPost, "/projects", strings.NewReader("{}"))
@@ -68,8 +72,6 @@ func TestCreateValidationError(t *testing.T) {
 	req.Header.Set("Content-Type", "application/json")
 	rr := httptest.NewRecorder()
 
-	c := app.NewTestContainer(t)
-	defer c.Close()
 	app.NewMux(c).ServeHTTP(rr, req)
 
 	require.Equal(t, http.StatusUnprocessableEntity, rr.Code)
@@ -83,7 +85,10 @@ func TestCreateValidationError(t *testing.T) {
 }
 
 func TestCreateNotUniqueSlugError(t *testing.T) {
-	token, err := jwt.CreateAccessToken(model.User{Id: 1, Username: "user"}, time.Now().Add(time.Hour))
+	c := app.NewTestContainer(t)
+	defer c.Close()
+
+	token, err := c.JwtService.CreateAccessToken(model.User{Id: 1, Username: "user"}, time.Now().Add(time.Hour))
 	require.NoError(t, err)
 
 	body := project.CreateRequest{Title: "Test Project", Slug: "project-1"}
@@ -95,8 +100,6 @@ func TestCreateNotUniqueSlugError(t *testing.T) {
 	req.Header.Set("Content-Type", "application/json")
 	rr := httptest.NewRecorder()
 
-	c := app.NewTestContainer(t)
-	defer c.Close()
 	app.NewMux(c).ServeHTTP(rr, req)
 
 	require.Equal(t, http.StatusUnprocessableEntity, rr.Code)
@@ -109,7 +112,10 @@ func TestCreateNotUniqueSlugError(t *testing.T) {
 }
 
 func TestCreateSuccess(t *testing.T) {
-	token, err := jwt.CreateAccessToken(model.User{Id: 1, Username: "user"}, time.Now().Add(time.Hour))
+	c := app.NewTestContainer(t)
+	defer c.Close()
+
+	token, err := c.JwtService.CreateAccessToken(model.User{Id: 1, Username: "user"}, time.Now().Add(time.Hour))
 	require.NoError(t, err)
 
 	body := project.CreateRequest{Title: "Test Project", Slug: "test-project"}
@@ -121,8 +127,6 @@ func TestCreateSuccess(t *testing.T) {
 	req.Header.Set("Content-Type", "application/json")
 	rr := httptest.NewRecorder()
 
-	c := app.NewTestContainer(t)
-	defer c.Close()
 	app.NewMux(c).ServeHTTP(rr, req)
 
 	require.Equal(t, http.StatusOK, rr.Code)

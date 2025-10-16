@@ -3,7 +3,6 @@ package project
 import (
 	"encoding/json"
 	"murky_api/internal/app"
-	"murky_api/internal/jwt"
 	"murky_api/internal/model"
 	"murky_api/internal/project"
 	"net/http"
@@ -26,30 +25,32 @@ func TestGetUnauthorized(t *testing.T) {
 }
 
 func TestGetOtherUserNotFound(t *testing.T) {
-	token, err := jwt.CreateAccessToken(model.User{Id: 1, Username: "user"}, time.Now().Add(time.Hour))
+	c := app.NewTestContainer(t)
+	defer c.Close()
+
+	token, err := c.JwtService.CreateAccessToken(model.User{Id: 1, Username: "user"}, time.Now().Add(time.Hour))
 	require.NoError(t, err)
 
 	req := httptest.NewRequest(http.MethodGet, "/projects/project-4", nil)
 	req.Header.Add("Authorization", "Bearer "+token)
 	rr := httptest.NewRecorder()
 
-	c := app.NewTestContainer(t)
-	defer c.Close()
 	app.NewMux(c).ServeHTTP(rr, req)
 
 	require.Equal(t, http.StatusNotFound, rr.Code)
 }
 
 func TestGetSuccess(t *testing.T) {
-	token, err := jwt.CreateAccessToken(model.User{Id: 1, Username: "user"}, time.Now().Add(time.Hour))
+	c := app.NewTestContainer(t)
+	defer c.Close()
+
+	token, err := c.JwtService.CreateAccessToken(model.User{Id: 1, Username: "user"}, time.Now().Add(time.Hour))
 	require.NoError(t, err)
 
 	req := httptest.NewRequest(http.MethodGet, "/projects/project-1", nil)
 	req.Header.Add("Authorization", "Bearer "+token)
 	rr := httptest.NewRecorder()
 
-	c := app.NewTestContainer(t)
-	defer c.Close()
 	app.NewMux(c).ServeHTTP(rr, req)
 
 	require.Equal(t, http.StatusOK, rr.Code)

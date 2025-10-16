@@ -5,7 +5,6 @@ import (
 	"murky_api/internal/app"
 	"murky_api/internal/auth"
 	"murky_api/internal/constants"
-	"murky_api/internal/jwt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -19,7 +18,7 @@ func TestRefreshAccessTokenSuccess(t *testing.T) {
 	defer c.Close()
 
 	expiresAt := time.Now().UTC().Add(time.Hour)
-	refreshToken, err := jwt.CreateRefreshToken("user", expiresAt)
+	refreshToken, err := c.JwtService.CreateRefreshToken("user", expiresAt)
 	require.NoError(t, err)
 	_, err = c.Db.Exec(
 		`INSERT INTO refresh_token (user_id, jwt, expires_at) VALUES (?, ?, ?)`,

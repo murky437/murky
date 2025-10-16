@@ -4,21 +4,25 @@ import (
 	"database/sql"
 	"log"
 	"murky_api/internal/config"
+	"murky_api/internal/jwt"
 
 	_ "modernc.org/sqlite"
 )
 
 type Container struct {
-	Config *config.Config
-	Db     *sql.DB
+	Config     *config.Config
+	Db         *sql.DB
+	JwtService jwt.Service
 }
 
 func NewContainer() *Container {
 	conf := config.NewConfig()
 	db := setupDatabase(conf)
+	jwtService := jwt.NewService(conf)
 	return &Container{
-		Config: conf,
-		Db:     db,
+		Config:     conf,
+		Db:         db,
+		JwtService: jwtService,
 	}
 }
 

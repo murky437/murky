@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"murky_api/internal/config"
+	"murky_api/internal/jwt"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -18,9 +19,11 @@ import (
 func NewTestContainer(t *testing.T) *Container {
 	conf := config.NewConfig()
 	db := setupTestDatabase(t)
+	jwtService := jwt.NewService(conf)
 	return &Container{
-		Config: conf,
-		Db:     db,
+		Config:     conf,
+		Db:         db,
+		JwtService: jwtService,
 	}
 }
 

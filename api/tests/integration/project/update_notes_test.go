@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"murky_api/internal/app"
-	"murky_api/internal/jwt"
 	"murky_api/internal/model"
 	"murky_api/internal/project"
 	"net/http"
@@ -28,22 +27,26 @@ func TestUpdateNotesUnauthorized(t *testing.T) {
 }
 
 func TestUpdateNotesInvalidContentType(t *testing.T) {
-	token, err := jwt.CreateAccessToken(model.User{Id: 1, Username: "user"}, time.Now().Add(time.Hour))
+	c := app.NewTestContainer(t)
+	defer c.Close()
+
+	token, err := c.JwtService.CreateAccessToken(model.User{Id: 1, Username: "user"}, time.Now().Add(time.Hour))
 	require.NoError(t, err)
 
 	req := httptest.NewRequest(http.MethodPut, "/projects/project-1/notes", nil)
 	req.Header.Add("Authorization", "Bearer "+token)
 	rr := httptest.NewRecorder()
 
-	c := app.NewTestContainer(t)
-	defer c.Close()
 	app.NewMux(c).ServeHTTP(rr, req)
 
 	require.Equal(t, http.StatusUnsupportedMediaType, rr.Code)
 }
 
 func TestUpdateNotesInvalidJson(t *testing.T) {
-	token, err := jwt.CreateAccessToken(model.User{Id: 1, Username: "user"}, time.Now().Add(time.Hour))
+	c := app.NewTestContainer(t)
+	defer c.Close()
+
+	token, err := c.JwtService.CreateAccessToken(model.User{Id: 1, Username: "user"}, time.Now().Add(time.Hour))
 	require.NoError(t, err)
 
 	req := httptest.NewRequest(http.MethodPut, "/projects/project-1", strings.NewReader("{]"))
@@ -51,15 +54,16 @@ func TestUpdateNotesInvalidJson(t *testing.T) {
 	req.Header.Set("Content-Type", "application/json")
 	rr := httptest.NewRecorder()
 
-	c := app.NewTestContainer(t)
-	defer c.Close()
 	app.NewMux(c).ServeHTTP(rr, req)
 
 	require.Equal(t, http.StatusBadRequest, rr.Code)
 }
 
 func TestUpdateNotesSuccess(t *testing.T) {
-	token, err := jwt.CreateAccessToken(model.User{Id: 1, Username: "user"}, time.Now().Add(time.Hour))
+	c := app.NewTestContainer(t)
+	defer c.Close()
+
+	token, err := c.JwtService.CreateAccessToken(model.User{Id: 1, Username: "user"}, time.Now().Add(time.Hour))
 	require.NoError(t, err)
 
 	body := project.UpdateNotesRequest{Notes: "asdasd"}
@@ -71,8 +75,6 @@ func TestUpdateNotesSuccess(t *testing.T) {
 	req.Header.Set("Content-Type", "application/json")
 	rr := httptest.NewRecorder()
 
-	c := app.NewTestContainer(t)
-	defer c.Close()
 	app.NewMux(c).ServeHTTP(rr, req)
 
 	require.Equal(t, http.StatusNoContent, rr.Code)
@@ -83,7 +85,10 @@ func TestUpdateNotesSuccess(t *testing.T) {
 }
 
 func TestUpdateOtherUserNotesNotFound(t *testing.T) {
-	token, err := jwt.CreateAccessToken(model.User{Id: 1, Username: "user"}, time.Now().Add(time.Hour))
+	c := app.NewTestContainer(t)
+	defer c.Close()
+
+	token, err := c.JwtService.CreateAccessToken(model.User{Id: 1, Username: "user"}, time.Now().Add(time.Hour))
 	require.NoError(t, err)
 
 	body := project.UpdateNotesRequest{Notes: "asd"}
@@ -95,8 +100,6 @@ func TestUpdateOtherUserNotesNotFound(t *testing.T) {
 	req.Header.Set("Content-Type", "application/json")
 	rr := httptest.NewRecorder()
 
-	c := app.NewTestContainer(t)
-	defer c.Close()
 	app.NewMux(c).ServeHTTP(rr, req)
 
 	require.Equal(t, http.StatusNotFound, rr.Code)

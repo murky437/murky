@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-func CreateTokens(db *sql.DB) http.HandlerFunc {
+func CreateTokens(db *sql.DB, jwtService jwt.Service) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req CreateTokensRequest
 		err := json.NewDecoder(r.Body).Decode(&req)
@@ -40,7 +40,7 @@ func CreateTokens(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		accessToken, err := jwt.CreateAccessToken(*user, time.Now().UTC().Add(constants.AccessTokenDuration))
+		accessToken, err := jwtService.CreateAccessToken(*user, time.Now().UTC().Add(constants.AccessTokenDuration))
 		if err != nil {
 			log.Println(err)
 			routing.WriteInternalServerErrorResponse(w)
@@ -48,7 +48,7 @@ func CreateTokens(db *sql.DB) http.HandlerFunc {
 		}
 		expiresAt := time.Now().UTC().Add(constants.RefreshTokenDuration)
 
-		refreshTokenString, err := jwt.CreateRefreshToken(req.Username, expiresAt)
+		refreshTokenString, err := jwtService.CreateRefreshToken(req.Username, expiresAt)
 		if err != nil {
 			log.Println(err)
 			routing.WriteInternalServerErrorResponse(w)
@@ -85,7 +85,7 @@ func CreateTokens(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-func RefreshAccessToken(db *sql.DB) http.HandlerFunc {
+func RefreshAccessToken(db *sql.DB, jwtService jwt.Service) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		cookie, err := r.Cookie("refresh_token")
 
@@ -94,7 +94,7 @@ func RefreshAccessToken(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		claims, err := jwt.ParseRefreshToken(cookie.Value)
+		claims, err := jwtService.ParseRefreshToken(cookie.Value)
 		if err != nil {
 			routing.WriteUnauthorizedResponse(w)
 			return
@@ -118,7 +118,7 @@ func RefreshAccessToken(db *sql.DB) http.HandlerFunc {
 			return
 		}
 
-		newAccessToken, err := jwt.CreateAccessToken(*user, time.Now().UTC().Add(constants.AccessTokenDuration))
+		newAccessToken, err := jwtService.CreateAccessToken(*user, time.Now().UTC().Add(constants.AccessTokenDuration))
 		if err != nil {
 			log.Println(err)
 			routing.WriteInternalServerErrorResponse(w)
