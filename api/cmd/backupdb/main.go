@@ -20,19 +20,20 @@ func main() {
 	dbPath := os.Args[1]
 	backupDir := os.Args[2]
 
-	timestamp := time.Now().Format("20060102150405")
+	err := os.MkdirAll(backupDir, 0755)
+	if err != nil {
+		log.Fatal("Error creating backup directory:", err)
+		return
+	}
+
+	timestamp := time.Now().Format("20060102T150405")
 	backupPath := filepath.Join(backupDir, timestamp+".sqlite3")
 
 	db, err := sql.Open("sqlite", dbPath)
 	if err != nil {
 		log.Fatal("Failed to open source DB:", err)
 	}
-	defer func(db *sql.DB) {
-		err := db.Close()
-		if err != nil {
-			log.Fatal("Failed to close DB:", err)
-		}
-	}(db)
+	defer db.Close()
 
 	_, err = db.Exec("VACUUM INTO ?", backupPath)
 	if err != nil {
