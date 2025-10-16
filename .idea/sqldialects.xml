@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="SqlDialectMappings">
-    <file url="file://$PROJECT_DIR$/api/internal/model/user.go" dialect="GenericSQL" />
-    <file url="file://$PROJECT_DIR$/api/migrations/20250928000001_create_refresh_token_table.up.sql" dialect="GenericSQL" />
-    <file url="file://$PROJECT_DIR$/api/migrations/20250929000000_create_project_table.up.sql" dialect="SQLite" />
-    <file url="PROJECT" dialect="SQLite" />
-  </component>
-</project>
