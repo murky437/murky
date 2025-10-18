@@ -1,6 +1,6 @@
 import styles from './Modal.module.css';
 import { Portal } from 'solid-js/web';
-import { onCleanup, type ParentComponent } from 'solid-js';
+import { onCleanup, onMount, type ParentComponent } from 'solid-js';
 
 interface Props {
   title: string;
@@ -15,11 +15,18 @@ const Modal: ParentComponent<Props> = props => {
       props.onClose();
     }
   };
-  document.addEventListener('mousedown', handleClickOutside);
 
-  onCleanup(() => {
-    document.removeEventListener('mousedown', handleClickOutside);
-  });
+  onMount(() => document.addEventListener('mousedown', handleClickOutside));
+  onCleanup(() => document.removeEventListener('mousedown', handleClickOutside));
+
+  const handleEscapeKeyPress = (e: KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      props.onClose();
+    }
+  };
+
+  onMount(() => window.addEventListener('keydown', handleEscapeKeyPress));
+  onCleanup(() => window.removeEventListener('keydown', handleEscapeKeyPress));
 
   return (
     <Portal>
