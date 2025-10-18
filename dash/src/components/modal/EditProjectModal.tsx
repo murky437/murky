@@ -5,7 +5,7 @@ import { isGeneralError, isValidationError } from '../../api/api.ts';
 import { FieldError } from '../FieldError.tsx';
 import styles from './Modal.module.css';
 import { GeneralErrors } from '../GeneralErrors.tsx';
-import type { Component } from 'solid-js';
+import { type Component, onMount } from 'solid-js';
 import { createMutable } from 'solid-js/store';
 import { useNavigate } from '@solidjs/router';
 
@@ -24,6 +24,7 @@ const EditProjectModal: Component<Props> = props => {
     loading: false,
   });
   const navigate = useNavigate();
+  let titleInputRef!: HTMLInputElement;
 
   const handleSubmit = async (e: SubmitEvent) => {
     e.preventDefault();
@@ -61,12 +62,16 @@ const EditProjectModal: Component<Props> = props => {
     }
   };
 
+  onMount(() => {
+    titleInputRef.focus();
+  });
+
   return (
     <Modal title="Edit project" onClose={props.onClose}>
       <form class={styles.form} onSubmit={handleSubmit}>
         <GeneralErrors errors={state.generalErrors} />
         <input
-          autofocus={true}
+          ref={titleInputRef}
           class={styles.input}
           value={state.title}
           onChange={e => (state.title = e.target.value)}

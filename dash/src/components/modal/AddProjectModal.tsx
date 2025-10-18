@@ -4,7 +4,7 @@ import styles from './Modal.module.css';
 import { isGeneralError, isValidationError } from '../../api/api.ts';
 import { GeneralErrors } from '../GeneralErrors.tsx';
 import { FieldError } from '../FieldError.tsx';
-import type { Component } from 'solid-js';
+import { type Component, onMount } from 'solid-js';
 import { createMutable } from 'solid-js/store';
 
 interface Props {
@@ -20,6 +20,7 @@ const AddProjectModal: Component<Props> = props => {
     fieldErrors: {} as Record<string, string[]>,
     loading: false,
   });
+  let titleInputRef!: HTMLInputElement;
 
   const handleSubmit = async (e: SubmitEvent) => {
     e.preventDefault();
@@ -45,12 +46,16 @@ const AddProjectModal: Component<Props> = props => {
     state.loading = false;
   };
 
+  onMount(() => {
+    titleInputRef.focus();
+  });
+
   return (
     <Modal title="Add project" onClose={props.onClose}>
       <form class={styles.form} onSubmit={handleSubmit}>
         <GeneralErrors errors={state.generalErrors} />
         <input
-          autofocus={true}
+          ref={titleInputRef}
           class={styles.input}
           value={state.title}
           onChange={e => (state.title = e.target.value)}
