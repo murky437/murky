@@ -1,6 +1,5 @@
 .wrapper {
     flex: 1;
-    padding: 0 20px;
 
     :global(.cm-editor) {
         height: 100%;

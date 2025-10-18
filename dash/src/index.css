@@ -19,6 +19,10 @@
   --color-purple: #c8899a;
 }
 
+:root {
+    color-scheme: dark;
+}
+
 html,
 body {
   margin: 0;
