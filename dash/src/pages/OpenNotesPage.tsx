@@ -47,7 +47,6 @@ const OpenNotesPage: Component = () => {
       }),
       parent: wrapperDiv,
     });
-    editorView.focus();
   });
 
   createEffect(() => {
@@ -60,6 +59,7 @@ const OpenNotesPage: Component = () => {
           insert: notes,
         },
       });
+      editorView?.focus();
     });
   });
 
