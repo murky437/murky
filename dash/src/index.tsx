@@ -8,7 +8,7 @@ import { LoginPage } from './components/pages/LoginPage.tsx';
 import { AuthGuard } from './components/pages/layout/AuthGuard.tsx';
 import { OpenNotesPage } from './components/pages/OpenNotesPage.tsx';
 import { NotesLayout } from './components/pages/layout/NotesLayout.tsx';
-import {RootLayout} from "./components/pages/layout/RootLayout.tsx";
+import { RootLayout } from './components/pages/layout/RootLayout.tsx';
 
 const root = document.getElementById('root');
 

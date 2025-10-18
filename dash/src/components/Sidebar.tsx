@@ -41,10 +41,12 @@ const Sidebar: Component = () => {
 
   const openAddModal = () => {
     state.isAddModalOpen = true;
+    closeMenus();
   };
 
   const openEditModal = () => {
     state.editModalProject = state.contextMenu.project;
+    closeMenus();
   };
 
   const closeAddModal = () => {
