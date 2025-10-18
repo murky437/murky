@@ -2,6 +2,10 @@
     flex: 1;
     padding: 0 20px;
 
+    :global(.cm-editor) {
+        height: 100%;
+    }
+
     :global(.cm-activeLine) {
         background-color: #ffffff11;
     }
