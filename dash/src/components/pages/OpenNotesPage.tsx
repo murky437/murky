@@ -5,11 +5,12 @@ import { vim } from '@replit/codemirror-vim';
 import { indentWithTab } from '@codemirror/commands';
 import { type Component, createEffect, onCleanup, onMount } from 'solid-js';
 import { getProjectNotes, updateProjectNotes } from '../../api/project.tsx';
-import { useParams } from '@solidjs/router';
+import { useNavigate, useParams } from '@solidjs/router';
 import { createMutable } from 'solid-js/store';
 import { debounce } from '../../util/debounce.ts';
 import { basicSetup } from 'codemirror';
 import { notes } from '../../store/notes.ts';
+import { NotesLayout } from '../NotesLayout.tsx';
 
 const OpenNotesPage: Component = () => {
   const state = createMutable({
@@ -18,6 +19,7 @@ const OpenNotesPage: Component = () => {
   let wrapperDiv!: HTMLDivElement;
   let editorView: EditorView | null = null;
   const params = useParams();
+  const navigate = useNavigate();
 
   const updateNotes = debounce(async (slug: string, notes: string) => {
     await updateProjectNotes(slug, { notes: notes });
@@ -50,17 +52,21 @@ const OpenNotesPage: Component = () => {
   });
 
   createEffect(() => {
-    getProjectNotes(params.slug).then(notes => {
-      state.fetchedNotes = notes;
-      editorView?.dispatch({
-        changes: {
-          from: 0,
-          to: editorView.state.doc.length,
-          insert: notes,
-        },
+    getProjectNotes(params.slug)
+      .then(notes => {
+        state.fetchedNotes = notes;
+        editorView?.dispatch({
+          changes: {
+            from: 0,
+            to: editorView.state.doc.length,
+            insert: notes,
+          },
+        });
+        editorView?.focus();
+      })
+      .catch(() => {
+        navigate(`/notes`, { replace: true });
       });
-      editorView?.focus();
-    });
   });
 
   createEffect(() => {
@@ -75,7 +81,11 @@ const OpenNotesPage: Component = () => {
     }
   });
 
-  return <div class={styles.wrapper} ref={wrapperDiv}></div>;
+  return (
+    <NotesLayout>
+      <div class={styles.wrapper} ref={wrapperDiv}></div>
+    </NotesLayout>
+  );
 };
 
 export { OpenNotesPage };

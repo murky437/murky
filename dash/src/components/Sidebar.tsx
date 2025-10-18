@@ -2,25 +2,26 @@ import { A } from '@solidjs/router';
 import styles from './Sidebar.module.css';
 import { createMutable } from 'solid-js/store';
 import type { Project } from '../types/project.ts';
-import { type Component, createEffect, For, Show } from 'solid-js';
+import { type Component, For, Show } from 'solid-js';
 import { SettingsContextMenu } from './contextmenu/SettingsContextMenu.tsx';
 import { ProjectContextMenu } from './contextmenu/ProjectContextMenu.tsx';
 import { SidebarContextMenu } from './contextmenu/SidebarContextMenu.tsx';
-import { EditProjectModal } from './modal/EditProjectModal.tsx';
-import { AddProjectModal } from './modal/AddProjectModal.tsx';
 import { notes } from '../store/notes.ts';
 
 type ContextMenuState = 'Closed' | 'Sidebar' | 'Settings' | 'Project';
 
-const Sidebar: Component = () => {
+interface Props {
+  openAddModal: () => void;
+  openEditModal: (project: Project | null) => void;
+}
+
+const Sidebar: Component<Props> = props => {
   const state = createMutable({
     contextMenu: {
       state: 'Closed' as ContextMenuState,
       pos: { x: 0, y: 0 },
       project: null as Project | null,
     },
-    editModalProject: null as Project | null,
-    isAddModalOpen: false,
   });
 
   const setContextMenu = (
@@ -40,30 +41,14 @@ const Sidebar: Component = () => {
   };
 
   const openAddModal = () => {
-    state.isAddModalOpen = true;
+    props.openAddModal();
     closeMenus();
   };
 
   const openEditModal = () => {
-    state.editModalProject = state.contextMenu.project;
+    props.openEditModal(state.contextMenu.project);
     closeMenus();
   };
-
-  const closeAddModal = () => {
-    state.isAddModalOpen = false;
-  };
-
-  const closeEditModal = () => {
-    state.editModalProject = null;
-  };
-
-  const loadProjects = async () => {
-    await notes.loadProjectsFromServer();
-  };
-
-  createEffect(async () => {
-    await loadProjects();
-  });
 
   return (
     <>
@@ -106,16 +91,6 @@ const Sidebar: Component = () => {
           />
         </Show>
       </div>
-      <Show when={state.editModalProject}>
-        <EditProjectModal
-          project={state.editModalProject!}
-          onClose={closeEditModal}
-          onSuccess={loadProjects}
-        />
-      </Show>
-      <Show when={state.isAddModalOpen}>
-        <AddProjectModal onClose={closeAddModal} onSuccess={loadProjects} />
-      </Show>
     </>
   );
 };
