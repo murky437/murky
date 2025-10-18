@@ -14,6 +14,10 @@ info() {
     echo -e "${MAGENTA}[$(date '+%Y-%m-%d %H:%M:%S')][local]${NC} $*"
 }
 
+err() {
+    echo "${MAGENTA}[$(date '+%Y-%m-%d %H:%M:%S')][server]${NC} ${RED}$*${NC}"
+}
+
 build() {
   env="$1"
 
