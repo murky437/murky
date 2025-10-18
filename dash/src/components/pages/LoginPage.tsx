@@ -1,5 +1,5 @@
 import { useNavigate } from '@solidjs/router';
-import { createEffect } from 'solid-js';
+import { createEffect, onMount } from 'solid-js';
 import { auth } from '../../auth/auth.ts';
 import styles from './LoginPage.module.css';
 import { GeneralErrors } from '../GeneralErrors.tsx';
@@ -17,6 +17,7 @@ function LoginPage() {
     fieldErrors: {} as Record<string, string[]>,
   });
   const navigate = useNavigate();
+  let usernameInputRef!: HTMLInputElement;
 
   createEffect(() => {
     if (auth.getAccessToken()) {
@@ -47,6 +48,10 @@ function LoginPage() {
     state.loading = false;
   };
 
+  onMount(() => {
+    usernameInputRef.focus();
+  });
+
   return (
     <div class={styles.wrapper}>
       <form onSubmit={handleSubmit}>
@@ -56,7 +61,7 @@ function LoginPage() {
           value={state.username}
           onChange={e => (state.username = e.target.value)}
           placeholder="Username"
-          autofocus={true}
+          ref={usernameInputRef}
         />
         <FieldError fieldErrors={state.fieldErrors.username} />
         <input
