@@ -1,4 +1,4 @@
-import { Sidebar } from '../../components/Sidebar.tsx';
+import { Sidebar } from '../../Sidebar.tsx';
 import type { RouteSectionProps } from '@solidjs/router';
 
 function NotesLayout(props: RouteSectionProps) {

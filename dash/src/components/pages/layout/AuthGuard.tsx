@@ -1,6 +1,6 @@
 import { type RouteSectionProps, useNavigate } from '@solidjs/router';
 import { createEffect } from 'solid-js';
-import { auth } from '../../auth/auth.ts';
+import { auth } from '../../../auth/auth.ts';
 
 function AuthGuard(props: RouteSectionProps) {
   const navigate = useNavigate();

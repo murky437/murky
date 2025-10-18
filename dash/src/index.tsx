@@ -2,18 +2,19 @@
 import { render } from 'solid-js/web';
 import './index.css';
 import { Route, Router } from '@solidjs/router';
-import { NotesBasePage } from './pages/NotesBasePage.tsx';
-import { IndexPage } from './pages/IndexPage.tsx';
-import { LoginPage } from './pages/LoginPage.tsx';
-import { AuthGuard } from './pages/layout/AuthGuard.tsx';
-import { OpenNotesPage } from './pages/OpenNotesPage.tsx';
-import { NotesLayout } from './pages/layout/NotesLayout.tsx';
+import { NotesBasePage } from './components/pages/NotesBasePage.tsx';
+import { IndexPage } from './components/pages/IndexPage.tsx';
+import { LoginPage } from './components/pages/LoginPage.tsx';
+import { AuthGuard } from './components/pages/layout/AuthGuard.tsx';
+import { OpenNotesPage } from './components/pages/OpenNotesPage.tsx';
+import { NotesLayout } from './components/pages/layout/NotesLayout.tsx';
+import {RootLayout} from "./components/pages/layout/RootLayout.tsx";
 
 const root = document.getElementById('root');
 
 render(
   () => (
-    <Router>
+    <Router root={RootLayout}>
       <Route path={'/login'} component={LoginPage} />
       <Route component={AuthGuard}>
         <Route path={'/'} component={IndexPage} />

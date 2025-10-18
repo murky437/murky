@@ -4,12 +4,12 @@ import { EditorState } from '@codemirror/state';
 import { vim } from '@replit/codemirror-vim';
 import { indentWithTab } from '@codemirror/commands';
 import { type Component, createEffect, onCleanup, onMount } from 'solid-js';
-import { getProjectNotes, updateProjectNotes } from '../api/project.tsx';
+import { getProjectNotes, updateProjectNotes } from '../../api/project.tsx';
 import { useParams } from '@solidjs/router';
 import { createMutable } from 'solid-js/store';
-import { debounce } from '../util/debounce.ts';
+import { debounce } from '../../util/debounce.ts';
 import { basicSetup } from 'codemirror';
-import { notes } from '../store/notes.ts';
+import { notes } from '../../store/notes.ts';
 
 const OpenNotesPage: Component = () => {
   const state = createMutable({

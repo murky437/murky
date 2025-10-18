@@ -1,5 +1,5 @@
 import { useNavigate } from '@solidjs/router';
-import { notes } from '../store/notes.ts';
+import { notes } from '../../store/notes.ts';
 import { createEffect } from 'solid-js';
 
 function NotesBasePage() {

@@ -1,11 +1,11 @@
 import { useNavigate } from '@solidjs/router';
 import { createEffect } from 'solid-js';
-import { auth } from '../auth/auth.ts';
+import { auth } from '../../auth/auth.ts';
 import styles from './LoginPage.module.css';
-import { GeneralErrors } from '../components/GeneralErrors.tsx';
-import { FieldError } from '../components/FieldError.tsx';
-import { createTokens } from '../api/auth.tsx';
-import { isGeneralError, isValidationError } from '../api/api.ts';
+import { GeneralErrors } from '../GeneralErrors.tsx';
+import { FieldError } from '../FieldError.tsx';
+import { createTokens } from '../../api/auth.tsx';
+import { isGeneralError, isValidationError } from '../../api/api.ts';
 import { createMutable } from 'solid-js/store';
 
 function LoginPage() {

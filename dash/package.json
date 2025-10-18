@@ -13,6 +13,7 @@
     "@codemirror/state": "^6.5.2",
     "@codemirror/view": "^6.38.6",
     "@replit/codemirror-vim": "^6.3.0",
+    "@solidjs/meta": "^0.29.4",
     "@solidjs/router": "^0.15.3",
     "codemirror": "^6.0.2",
     "solid-js": "^1.9.9"
