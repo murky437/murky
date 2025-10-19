@@ -1,13 +1,15 @@
 import { ContextMenu } from './ContextMenu.tsx';
 import { type Component, createEffect } from 'solid-js';
-import { auth } from '../../auth/auth.ts';
 import { createMutable } from 'solid-js/store';
-import { deleteRefreshToken } from '../../api/auth.tsx';
+import type { AuthApi } from '../../app/api/authApi.ts';
+import type { AuthState } from '../../app/auth/authState.ts';
 
 interface Props {
   x: number;
   y: number;
   onClose: () => void;
+  authApi: AuthApi;
+  authState: AuthState;
 }
 
 const SettingsContextMenu: Component<Props> = props => {
@@ -23,8 +25,8 @@ const SettingsContextMenu: Component<Props> = props => {
   });
 
   const handleLogout = async () => {
-    await deleteRefreshToken();
-    auth.setAccessToken(null);
+    await props.authApi.deleteRefreshToken();
+    props.authState.setAccessToken(null);
   };
 
   return (

@@ -1,10 +1,11 @@
 import { useNavigate } from '@solidjs/router';
+import type { Component } from 'solid-js';
 
-function IndexPage() {
+const IndexPage: Component = () => {
   const navigate = useNavigate();
   navigate('/notes', { replace: true });
 
-  return '';
-}
+  return 'Hello, world';
+};
 
 export { IndexPage };

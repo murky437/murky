@@ -4,15 +4,24 @@ import { EditorState } from '@codemirror/state';
 import { vim } from '@replit/codemirror-vim';
 import { indentWithTab } from '@codemirror/commands';
 import { type Component, createEffect, onCleanup, onMount } from 'solid-js';
-import { getProjectNotes, updateProjectNotes } from '../../api/project.tsx';
 import { useNavigate, useParams } from '@solidjs/router';
 import { createMutable } from 'solid-js/store';
 import { debounce } from '../../util/debounce.ts';
 import { basicSetup } from 'codemirror';
-import { notes } from '../../store/notes.ts';
-import { NotesLayout } from '../NotesLayout.tsx';
+import type { ProjectsApi } from '../../app/api/projectsApi.ts';
+import type { NotesState } from '../../app/notes/notesState.ts';
+import { NotesLayout } from '../elements/NotesLayout.tsx';
+import type { AuthApi } from '../../app/api/authApi.ts';
+import type { AuthState } from '../../app/auth/authState.ts';
 
-const OpenNotesPage: Component = () => {
+interface Props {
+  projectsApi: ProjectsApi;
+  notesState: NotesState;
+  authApi: AuthApi;
+  authState: AuthState;
+}
+
+const OpenNotesPage: Component<Props> = props => {
   const state = createMutable({
     fetchedNotes: null as string | null,
   });
@@ -22,7 +31,7 @@ const OpenNotesPage: Component = () => {
   const navigate = useNavigate();
 
   const updateNotes = debounce(async (slug: string, notes: string) => {
-    await updateProjectNotes(slug, { notes: notes });
+    await props.projectsApi.updateProjectNotes(slug, { notes: notes });
   }, 300);
 
   onMount(() => {
@@ -52,7 +61,8 @@ const OpenNotesPage: Component = () => {
   });
 
   createEffect(() => {
-    getProjectNotes(params.slug)
+    props.projectsApi
+      .getProjectNotes(params.slug)
       .then(notes => {
         state.fetchedNotes = notes;
         editorView?.dispatch({
@@ -71,7 +81,7 @@ const OpenNotesPage: Component = () => {
 
   createEffect(() => {
     if (params.slug) {
-      notes.setLastViewedProjectSlug(params.slug);
+      props.notesState.setLastViewedProjectSlug(params.slug);
     }
   });
 
@@ -82,7 +92,12 @@ const OpenNotesPage: Component = () => {
   });
 
   return (
-    <NotesLayout>
+    <NotesLayout
+      notesState={props.notesState}
+      authApi={props.authApi}
+      authState={props.authState}
+      projectsApi={props.projectsApi}
+    >
       <div class={styles.wrapper} ref={wrapperDiv}></div>
     </NotesLayout>
   );

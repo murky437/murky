@@ -1,14 +1,19 @@
 import { useNavigate } from '@solidjs/router';
-import { createEffect, onMount } from 'solid-js';
-import { auth } from '../../auth/auth.ts';
+import { type Component, createEffect, onMount } from 'solid-js';
 import styles from './LoginPage.module.css';
-import { GeneralErrors } from '../GeneralErrors.tsx';
-import { FieldError } from '../FieldError.tsx';
-import { createTokens } from '../../api/auth.tsx';
-import { isGeneralError, isValidationError } from '../../api/api.ts';
 import { createMutable } from 'solid-js/store';
+import { GeneralErrors } from '../elements/GeneralErrors.tsx';
+import { FieldError } from '../elements/FieldError.tsx';
+import { isGeneralError, isValidationError } from '../../app/api/api.ts';
+import type { AuthApi } from '../../app/api/authApi.ts';
+import type { AuthState } from '../../app/auth/authState.ts';
 
-function LoginPage() {
+interface Props {
+  authState: AuthState;
+  authApi: AuthApi;
+}
+
+const LoginPage: Component<Props> = props => {
   const state = createMutable({
     username: '',
     password: '',
@@ -19,12 +24,6 @@ function LoginPage() {
   const navigate = useNavigate();
   let usernameInputRef!: HTMLInputElement;
 
-  createEffect(() => {
-    if (auth.getAccessToken()) {
-      navigate('/', { replace: true });
-    }
-  });
-
   const handleSubmit = async (e: SubmitEvent) => {
     e.preventDefault();
     state.generalErrors = [];
@@ -32,8 +31,11 @@ function LoginPage() {
     state.loading = true;
 
     try {
-      const response = await createTokens({ username: state.username, password: state.password });
-      auth.setAccessToken(response.accessToken);
+      const response = await props.authApi.createTokens({
+        username: state.username,
+        password: state.password,
+      });
+      props.authState.setAccessToken(response.accessToken);
     } catch (err) {
       if (isValidationError(err)) {
         state.generalErrors = err.generalErrors || [];
@@ -50,6 +52,12 @@ function LoginPage() {
 
   onMount(() => {
     usernameInputRef.focus();
+  });
+
+  createEffect(() => {
+    if (props.authState.isAuthenticated()) {
+      navigate('/', { replace: true });
+    }
   });
 
   return (
@@ -77,6 +85,6 @@ function LoginPage() {
       </form>
     </div>
   );
-}
+};
 
 export { LoginPage };

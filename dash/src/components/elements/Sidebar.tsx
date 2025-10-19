@@ -1,18 +1,23 @@
 import { A } from '@solidjs/router';
 import styles from './Sidebar.module.css';
 import { createMutable } from 'solid-js/store';
-import type { Project } from '../types/project.ts';
 import { type Component, For, Show } from 'solid-js';
-import { SettingsContextMenu } from './contextmenu/SettingsContextMenu.tsx';
-import { ProjectContextMenu } from './contextmenu/ProjectContextMenu.tsx';
-import { SidebarContextMenu } from './contextmenu/SidebarContextMenu.tsx';
-import { notes } from '../store/notes.ts';
+import type { Project } from '../../app/types/project.ts';
+import type { NotesState } from '../../app/notes/notesState.ts';
+import { SettingsContextMenu } from '../contextmenu/SettingsContextMenu.tsx';
+import { ProjectContextMenu } from '../contextmenu/ProjectContextMenu.tsx';
+import { SidebarContextMenu } from '../contextmenu/SidebarContextMenu.tsx';
+import type { AuthApi } from '../../app/api/authApi.ts';
+import type { AuthState } from '../../app/auth/authState.ts';
 
 type ContextMenuState = 'Closed' | 'Sidebar' | 'Settings' | 'Project';
 
 interface Props {
   openAddModal: () => void;
   openEditModal: (project: Project | null) => void;
+  notesState: NotesState;
+  authApi: AuthApi;
+  authState: AuthState;
 }
 
 const Sidebar: Component<Props> = props => {
@@ -54,7 +59,7 @@ const Sidebar: Component<Props> = props => {
     <>
       <div class={styles.wrapper} onContextMenu={e => setContextMenu(e, 'Sidebar')}>
         <ul>
-          <For each={notes.getProjects()}>
+          <For each={props.notesState.getProjects()}>
             {project => (
               <li onContextMenu={e => setContextMenu(e, 'Project', project)}>
                 <A href={`/notes/${project.slug}`}>{project.title}</A>
@@ -72,6 +77,8 @@ const Sidebar: Component<Props> = props => {
             x={state.contextMenu.pos.x}
             y={state.contextMenu.pos.y}
             onClose={closeMenus}
+            authApi={props.authApi}
+            authState={props.authState}
           />
         </Show>
         <Show when={state.contextMenu.state === 'Project'}>

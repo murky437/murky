@@ -1,15 +1,23 @@
 import { createEffect, onMount, type ParentComponent, Show } from 'solid-js';
 import { createMutable } from 'solid-js/store';
-import type { Project } from '../types/project.ts';
 import { Sidebar } from './Sidebar.tsx';
-import { EditProjectModal } from './modal/EditProjectModal.tsx';
-import { AddProjectModal } from './modal/AddProjectModal.tsx';
-import { notes } from '../store/notes.ts';
 import styles from './NotesLayout.module.css';
+import type { Project } from '../../app/types/project.ts';
+import type { NotesState } from '../../app/notes/notesState.ts';
+import { EditProjectModal } from '../modal/EditProjectModal.tsx';
+import { AddProjectModal } from '../modal/AddProjectModal.tsx';
+import type { AuthState } from '../../app/auth/authState.ts';
+import type { AuthApi } from '../../app/api/authApi.ts';
+import type { ProjectsApi } from '../../app/api/projectsApi.ts';
+import { useNavigate } from '@solidjs/router';
 
 interface Props {
   addModalShouldOpen?: boolean;
   onAddModalOpen?: () => void;
+  notesState: NotesState;
+  authState: AuthState;
+  authApi: AuthApi;
+  projectsApi: ProjectsApi;
 }
 
 const NotesLayout: ParentComponent<Props> = props => {
@@ -17,6 +25,7 @@ const NotesLayout: ParentComponent<Props> = props => {
     editModalProject: null as Project | null,
     isAddModalOpen: false,
   });
+  const navigate = useNavigate();
 
   const openAddModal = () => {
     state.isAddModalOpen = true;
@@ -35,7 +44,12 @@ const NotesLayout: ParentComponent<Props> = props => {
   };
 
   const loadProjects = async () => {
-    await notes.loadProjectsFromServer();
+    await props.notesState.loadProjectsFromServer();
+  };
+
+  const onDeleteProject = async () => {
+    await loadProjects();
+    navigate(`/notes`, { replace: true });
   };
 
   onMount(async () => {
@@ -53,7 +67,13 @@ const NotesLayout: ParentComponent<Props> = props => {
   return (
     <>
       <div class={styles.wrapper}>
-        <Sidebar openAddModal={openAddModal} openEditModal={openEditModal} />
+        <Sidebar
+          authState={props.authState}
+          authApi={props.authApi}
+          notesState={props.notesState}
+          openAddModal={openAddModal}
+          openEditModal={openEditModal}
+        />
         {props.children}
       </div>
       <Show when={state.editModalProject}>
@@ -61,10 +81,16 @@ const NotesLayout: ParentComponent<Props> = props => {
           project={state.editModalProject!}
           onClose={closeEditModal}
           onSuccess={loadProjects}
+          onDelete={onDeleteProject}
+          projectsApi={props.projectsApi}
         />
       </Show>
       <Show when={state.isAddModalOpen}>
-        <AddProjectModal onClose={closeAddModal} onSuccess={loadProjects} />
+        <AddProjectModal
+          onClose={closeAddModal}
+          onSuccess={loadProjects}
+          projectsApi={props.projectsApi}
+        />
       </Show>
     </>
   );

@@ -1,15 +1,16 @@
 import { Modal } from './Modal.tsx';
-import { createProject } from '../../api/project.tsx';
 import styles from './Modal.module.css';
-import { isGeneralError, isValidationError } from '../../api/api.ts';
-import { GeneralErrors } from '../GeneralErrors.tsx';
-import { FieldError } from '../FieldError.tsx';
 import { type Component, onMount } from 'solid-js';
 import { createMutable } from 'solid-js/store';
+import { isGeneralError, isValidationError } from '../../app/api/api.ts';
+import type { ProjectsApi } from '../../app/api/projectsApi.ts';
+import { GeneralErrors } from '../elements/GeneralErrors.tsx';
+import { FieldError } from '../elements/FieldError.tsx';
 
 interface Props {
   onClose: () => void;
   onSuccess: () => void;
+  projectsApi: ProjectsApi;
 }
 
 const AddProjectModal: Component<Props> = props => {
@@ -29,7 +30,7 @@ const AddProjectModal: Component<Props> = props => {
     state.loading = true;
 
     try {
-      await createProject({ title: state.title, slug: state.slug });
+      await props.projectsApi.createProject({ title: state.title, slug: state.slug });
       props.onSuccess();
       props.onClose();
     } catch (err) {

@@ -1,7 +1,7 @@
-import type { RouteSectionProps } from '@solidjs/router';
 import { Link, Meta, MetaProvider, Title } from '@solidjs/meta';
+import { type RouteSectionProps } from '@solidjs/router';
 
-function RootLayout(props: RouteSectionProps) {
+function Root(props: RouteSectionProps) {
   return (
     <MetaProvider>
       <Meta charset={'UTF-8'} />
@@ -13,4 +13,4 @@ function RootLayout(props: RouteSectionProps) {
   );
 }
 
-export { RootLayout };
+export { Root };

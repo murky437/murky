@@ -1,37 +1,46 @@
 import { createMutable } from 'solid-js/store';
 import type { Project } from '../types/project.ts';
-import { getProjectList } from '../api/project.tsx';
+import type { ProjectsApi } from '../api/projectsApi.ts';
 
 const KEY_LAST_VIEWED_PROJECT_SLUG = 'lastViewedProjectSlug';
 
-interface NotesData {
+interface Data {
   projects: Project[];
   lastViewedProjectSlug: string | null;
 }
 
-const notesData = createMutable<NotesData>({
+const notesData = createMutable<Data>({
   projects: [],
   lastViewedProjectSlug: localStorage.getItem(KEY_LAST_VIEWED_PROJECT_SLUG),
 });
 
-const notes = {
-  getProjects: () => {
+class NotesState {
+  #projectsApi: ProjectsApi;
+
+  constructor(projectsApi: ProjectsApi) {
+    this.#projectsApi = projectsApi;
+  }
+
+  getProjects() {
     return notesData.projects;
-  },
-  loadProjectsFromServer: async () => {
+  }
+
+  async loadProjectsFromServer() {
     try {
       // TODO: maybe use tanstack query to automatically fetch data again after it becomes stale
       //  (useful when being away from pc or tab etc...)
-      notesData.projects = await getProjectList();
+      notesData.projects = await this.#projectsApi.getProjectList();
     } catch (e) {}
-  },
-  getLastViewedProjectSlug: () => {
+  }
+
+  getLastViewedProjectSlug() {
     return notesData.lastViewedProjectSlug;
-  },
-  setLastViewedProjectSlug: (lastViewedProjectSlug: string) => {
+  }
+
+  setLastViewedProjectSlug(lastViewedProjectSlug: string) {
     notesData.lastViewedProjectSlug = lastViewedProjectSlug;
     localStorage.setItem(KEY_LAST_VIEWED_PROJECT_SLUG, lastViewedProjectSlug);
-  },
-};
+  }
+}
 
-export { notes };
+export { NotesState };
