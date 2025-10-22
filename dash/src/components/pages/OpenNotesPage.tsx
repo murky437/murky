@@ -4,24 +4,16 @@ import { EditorState } from '@codemirror/state';
 import { vim } from '@replit/codemirror-vim';
 import { indentWithTab } from '@codemirror/commands';
 import { type Component, createEffect, onCleanup, onMount } from 'solid-js';
-import { useNavigate, useParams } from '@solidjs/router';
+import { type RouteSectionProps, useNavigate, useParams } from '@solidjs/router';
 import { createMutable } from 'solid-js/store';
 import { debounce } from '../../util/debounce.ts';
 import { basicSetup } from 'codemirror';
-import type { ProjectsApi } from '../../app/api/projectsApi.ts';
-import type { NotesState } from '../../app/notes/notesState.ts';
 import { NotesLayout } from '../elements/NotesLayout.tsx';
-import type { AuthApi } from '../../app/api/authApi.ts';
-import type { AuthState } from '../../app/auth/authState.ts';
+import { isGeneralError } from '../../app/api/api.ts';
+import { useApp } from '../../app/appContext.tsx';
 
-interface Props {
-  projectsApi: ProjectsApi;
-  notesState: NotesState;
-  authApi: AuthApi;
-  authState: AuthState;
-}
-
-const OpenNotesPage: Component<Props> = props => {
+const OpenNotesPage: Component<RouteSectionProps> = () => {
+  const app = useApp();
   const state = createMutable({
     fetchedNotes: null as string | null,
   });
@@ -31,7 +23,7 @@ const OpenNotesPage: Component<Props> = props => {
   const navigate = useNavigate();
 
   const updateNotes = debounce(async (slug: string, notes: string) => {
-    await props.projectsApi.updateProjectNotes(slug, { notes: notes });
+    await app.notes.updateNotes(slug, notes);
   }, 300);
 
   onMount(() => {
@@ -61,8 +53,8 @@ const OpenNotesPage: Component<Props> = props => {
   });
 
   createEffect(() => {
-    props.projectsApi
-      .getProjectNotes(params.slug)
+    app.notes
+      .getNotes(params.slug)
       .then(notes => {
         state.fetchedNotes = notes;
         editorView?.dispatch({
@@ -74,14 +66,16 @@ const OpenNotesPage: Component<Props> = props => {
         });
         editorView?.focus();
       })
-      .catch(() => {
-        navigate(`/notes`, { replace: true });
+      .catch(err => {
+        if (isGeneralError(err) && err.message !== 'Unauthorized') {
+          navigate(`/notes`, { replace: true });
+        }
       });
   });
 
   createEffect(() => {
     if (params.slug) {
-      props.notesState.setLastViewedProjectSlug(params.slug);
+      app.notes.setLastViewedProjectSlug(params.slug);
     }
   });
 
@@ -92,12 +86,7 @@ const OpenNotesPage: Component<Props> = props => {
   });
 
   return (
-    <NotesLayout
-      notesState={props.notesState}
-      authApi={props.authApi}
-      authState={props.authState}
-      projectsApi={props.projectsApi}
-    >
+    <NotesLayout>
       <div class={styles.wrapper} ref={wrapperDiv}></div>
     </NotesLayout>
   );

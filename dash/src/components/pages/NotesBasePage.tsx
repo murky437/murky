@@ -1,33 +1,24 @@
-import { useNavigate } from '@solidjs/router';
+import { type RouteSectionProps, useNavigate } from '@solidjs/router';
 import { type Component, createEffect } from 'solid-js';
 import styles from './NotesBasePage.module.css';
 import { createMutable } from 'solid-js/store';
-import type { NotesState } from '../../app/notes/notesState.ts';
 import { NotesLayout } from '../elements/NotesLayout.tsx';
-import type { AuthState } from '../../app/auth/authState.ts';
-import type { AuthApi } from '../../app/api/authApi.ts';
-import type { ProjectsApi } from '../../app/api/projectsApi.ts';
+import { useApp } from '../../app/appContext.tsx';
 
-interface Props {
-  notesState: NotesState;
-  authState: AuthState;
-  authApi: AuthApi;
-  projectsApi: ProjectsApi;
-}
-
-const NotesBasePage: Component<Props> = props => {
+const NotesBasePage: Component<RouteSectionProps> = () => {
+  const app = useApp();
   const state = createMutable({
     addModalShouldOpen: false,
   });
   const navigate = useNavigate();
 
   createEffect(() => {
-    const projects = props.notesState.getProjects();
+    const projects = app.notes.getProjects();
     if (projects.length === 0) {
       return;
     }
 
-    const lastViewedProjectSlug = props.notesState.getLastViewedProjectSlug();
+    const lastViewedProjectSlug = app.notes.getLastViewedProjectSlug();
     if (lastViewedProjectSlug) {
       const found = projects.find(p => p.slug === lastViewedProjectSlug);
 
@@ -49,14 +40,7 @@ const NotesBasePage: Component<Props> = props => {
   };
 
   return (
-    <NotesLayout
-      notesState={props.notesState}
-      authApi={props.authApi}
-      authState={props.authState}
-      projectsApi={props.projectsApi}
-      addModalShouldOpen={state.addModalShouldOpen}
-      onAddModalOpen={onAddModalOpen}
-    >
+    <NotesLayout addModalShouldOpen={state.addModalShouldOpen} onAddModalOpen={onAddModalOpen}>
       <div class={styles.wrapper}>
         <p>Right click the sidebar to add the first project.</p>
         <p>

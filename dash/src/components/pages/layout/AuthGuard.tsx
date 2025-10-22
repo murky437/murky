@@ -1,16 +1,13 @@
-import { useNavigate } from '@solidjs/router';
+import { type RouteSectionProps, useNavigate } from '@solidjs/router';
 import { createEffect, type ParentComponent } from 'solid-js';
-import type { AuthState } from '../../../app/auth/authState.ts';
+import { useApp } from '../../../app/appContext.tsx';
 
-interface Props {
-  authState: AuthState;
-}
-
-const AuthGuard: ParentComponent<Props> = props => {
+const AuthGuard: ParentComponent<RouteSectionProps> = props => {
+  const app = useApp();
   const navigate = useNavigate();
 
   createEffect(() => {
-    if (!props.authState.isAuthenticated()) {
+    if (!app.auth.isAuthenticated()) {
       navigate('/login', { replace: true });
     }
   });

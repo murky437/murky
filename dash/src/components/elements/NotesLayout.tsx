@@ -3,24 +3,18 @@ import { createMutable } from 'solid-js/store';
 import { Sidebar } from './Sidebar.tsx';
 import styles from './NotesLayout.module.css';
 import type { Project } from '../../app/types/project.ts';
-import type { NotesState } from '../../app/notes/notesState.ts';
 import { EditProjectModal } from '../modal/EditProjectModal.tsx';
 import { AddProjectModal } from '../modal/AddProjectModal.tsx';
-import type { AuthState } from '../../app/auth/authState.ts';
-import type { AuthApi } from '../../app/api/authApi.ts';
-import type { ProjectsApi } from '../../app/api/projectsApi.ts';
 import { useNavigate } from '@solidjs/router';
+import { useApp } from '../../app/appContext.tsx';
 
 interface Props {
   addModalShouldOpen?: boolean;
   onAddModalOpen?: () => void;
-  notesState: NotesState;
-  authState: AuthState;
-  authApi: AuthApi;
-  projectsApi: ProjectsApi;
 }
 
 const NotesLayout: ParentComponent<Props> = props => {
+  const app = useApp();
   const state = createMutable({
     editModalProject: null as Project | null,
     isAddModalOpen: false,
@@ -44,7 +38,7 @@ const NotesLayout: ParentComponent<Props> = props => {
   };
 
   const loadProjects = async () => {
-    await props.notesState.loadProjectsFromServer();
+    await app.notes.loadProjectsFromServer();
   };
 
   const onDeleteProject = async () => {
@@ -67,13 +61,7 @@ const NotesLayout: ParentComponent<Props> = props => {
   return (
     <>
       <div class={styles.wrapper}>
-        <Sidebar
-          authState={props.authState}
-          authApi={props.authApi}
-          notesState={props.notesState}
-          openAddModal={openAddModal}
-          openEditModal={openEditModal}
-        />
+        <Sidebar openAddModal={openAddModal} openEditModal={openEditModal} />
         {props.children}
       </div>
       <Show when={state.editModalProject}>
@@ -82,15 +70,10 @@ const NotesLayout: ParentComponent<Props> = props => {
           onClose={closeEditModal}
           onSuccess={loadProjects}
           onDelete={onDeleteProject}
-          projectsApi={props.projectsApi}
         />
       </Show>
       <Show when={state.isAddModalOpen}>
-        <AddProjectModal
-          onClose={closeAddModal}
-          onSuccess={loadProjects}
-          projectsApi={props.projectsApi}
-        />
+        <AddProjectModal onClose={closeAddModal} onSuccess={loadProjects} />
       </Show>
     </>
   );

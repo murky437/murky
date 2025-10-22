@@ -1,4 +1,4 @@
-import { type State, StateService } from './state/state.ts';
+import { StateService } from './state/state.ts';
 import { AuthService } from './auth/authService.ts';
 import { NotesService } from './notes/notesService.ts';
 import { AuthRepository } from './auth/authRepository.ts';
@@ -6,22 +6,32 @@ import { NotesRepository } from './notes/notesRepository.ts';
 import { Api } from './api/api.ts';
 import { AuthApi } from './api/authApi.ts';
 import { ProjectsApi } from './api/projectsApi.ts';
+import type { Container } from './container.ts';
 
-interface Container {
-  storage: Storage;
-  stateService: StateService;
-  state: State;
-  authRepository: AuthRepository;
-  notesRepository: NotesRepository;
-  api: Api;
-  authApi: AuthApi;
-  projectsApi: ProjectsApi;
-  authService: AuthService;
-  notesService: NotesService;
-}
+function newTestContainer(): Container {
+  const localStorageMock: Storage = {
+    store: {} as Record<string, string>,
+    getItem(key) {
+      return this.store[key] ?? null;
+    },
+    setItem(key, value) {
+      this.store[key] = value;
+    },
+    removeItem(key) {
+      delete this.store[key];
+    },
+    clear() {
+      this.store = {};
+    },
+    key(i) {
+      return Object.keys(this.store)[i] ?? null;
+    },
+    get length() {
+      return Object.keys(this.store).length;
+    },
+  };
 
-function newContainer(): Container {
-  const storage = localStorage;
+  const storage = localStorageMock;
 
   const stateService = new StateService(storage);
   const state = stateService.createState();
@@ -29,7 +39,7 @@ function newContainer(): Container {
   const authRepository = new AuthRepository(state, storage);
   const notesRepository = new NotesRepository(state, storage);
 
-  const api = new Api(import.meta.env.VITE_API_URL, authRepository);
+  const api = new Api('http://test.local', authRepository);
   const authApi = new AuthApi(api);
   const projectsApi = new ProjectsApi(api);
 
@@ -50,5 +60,4 @@ function newContainer(): Container {
   };
 }
 
-export { newContainer };
-export type { Container };
+export { newTestContainer };

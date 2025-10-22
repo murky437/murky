@@ -1,19 +1,14 @@
-import { useNavigate } from '@solidjs/router';
+import { type RouteSectionProps, useNavigate } from '@solidjs/router';
 import { type Component, createEffect, onMount } from 'solid-js';
 import styles from './LoginPage.module.css';
 import { createMutable } from 'solid-js/store';
 import { GeneralErrors } from '../elements/GeneralErrors.tsx';
 import { FieldError } from '../elements/FieldError.tsx';
 import { isGeneralError, isValidationError } from '../../app/api/api.ts';
-import type { AuthApi } from '../../app/api/authApi.ts';
-import type { AuthState } from '../../app/auth/authState.ts';
+import { useApp } from '../../app/appContext.tsx';
 
-interface Props {
-  authState: AuthState;
-  authApi: AuthApi;
-}
-
-const LoginPage: Component<Props> = props => {
+const LoginPage: Component<RouteSectionProps> = () => {
+  const app = useApp();
   const state = createMutable({
     username: '',
     password: '',
@@ -31,11 +26,7 @@ const LoginPage: Component<Props> = props => {
     state.loading = true;
 
     try {
-      const response = await props.authApi.createTokens({
-        username: state.username,
-        password: state.password,
-      });
-      props.authState.setAccessToken(response.accessToken);
+      await app.auth.login(state.username, state.password);
     } catch (err) {
       if (isValidationError(err)) {
         state.generalErrors = err.generalErrors || [];
@@ -55,7 +46,7 @@ const LoginPage: Component<Props> = props => {
   });
 
   createEffect(() => {
-    if (props.authState.isAuthenticated()) {
+    if (app.auth.isAuthenticated()) {
       navigate('/', { replace: true });
     }
   });

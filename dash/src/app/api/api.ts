@@ -1,14 +1,14 @@
 import { isObject } from '../../util/types.ts';
-import type { AuthState } from '../auth/authState.ts';
+import type { AuthRepository } from '../auth/authRepository.ts';
 
 class Api {
   readonly #baseUrl: string;
   #refreshPromise: Promise<boolean> | null = null;
-  #authState: AuthState;
+  #authService: AuthRepository;
 
-  constructor(baseUrl: string, authState: AuthState) {
+  constructor(baseUrl: string, authState: AuthRepository) {
     this.#baseUrl = baseUrl;
-    this.#authState = authState;
+    this.#authService = authState;
   }
 
   async #handleResponse<T>(res: Response): Promise<T> {
@@ -50,11 +50,11 @@ class Api {
 
           const data = (await res.json()) as { accessToken?: string };
           if (data.accessToken) {
-            this.#authState.setAccessToken(data.accessToken);
+            this.#authService.setAccessToken(data.accessToken);
             return true;
           }
         } catch {
-          this.#authState.setAccessToken(null);
+          this.#authService.setAccessToken(null);
           return false;
         } finally {
           this.#refreshPromise = null;
@@ -71,7 +71,7 @@ class Api {
       ...(options.headers as Record<string, string>),
     };
 
-    const token = this.#authState.getAccessToken();
+    const token = this.#authService.getAccessToken();
 
     if (requireAuth && !token) {
       throw { message: 'Unauthorized' } as GeneralError;

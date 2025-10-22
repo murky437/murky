@@ -3,17 +3,17 @@ import styles from './Modal.module.css';
 import { type Component, onMount } from 'solid-js';
 import { createMutable } from 'solid-js/store';
 import { isGeneralError, isValidationError } from '../../app/api/api.ts';
-import type { ProjectsApi } from '../../app/api/projectsApi.ts';
 import { GeneralErrors } from '../elements/GeneralErrors.tsx';
 import { FieldError } from '../elements/FieldError.tsx';
+import { useApp } from '../../app/appContext.tsx';
 
 interface Props {
   onClose: () => void;
   onSuccess: () => void;
-  projectsApi: ProjectsApi;
 }
 
 const AddProjectModal: Component<Props> = props => {
+  const app = useApp();
   const state = createMutable({
     title: '',
     slug: '',
@@ -30,7 +30,7 @@ const AddProjectModal: Component<Props> = props => {
     state.loading = true;
 
     try {
-      await props.projectsApi.createProject({ title: state.title, slug: state.slug });
+      await app.notes.createProject({ title: state.title, slug: state.slug });
       props.onSuccess();
       props.onClose();
     } catch (err) {

@@ -1,5 +1,14 @@
 import type { Api } from './api.ts';
 
+interface CreateTokensRequest {
+  username: string;
+  password: string;
+}
+
+interface CreateTokensResponse {
+  accessToken: string;
+}
+
 class AuthApi {
   readonly #api: Api;
 
@@ -29,15 +38,6 @@ class AuthApi {
       false
     );
   }
-}
-
-interface CreateTokensRequest {
-  username: string;
-  password: string;
-}
-
-interface CreateTokensResponse {
-  accessToken: string;
 }
 
 export { AuthApi };

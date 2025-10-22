@@ -1,16 +1,18 @@
 /* @refresh reload */
 import { render } from 'solid-js/web';
 import './index.css';
-import { App } from './app/App.tsx';
-import { Container, newContainer } from './app/container.ts';
+import { Main } from './app/Main.tsx';
+import { App } from './app/app.ts';
+import { newContainer } from './app/container.ts';
 
 declare global {
   interface Window {
-    app: Container;
+    app: App;
   }
 }
 
 const c = newContainer();
-window.app = c;
+const app = new App(c);
+window.app = app;
 
-render(() => <App container={c} />, document.getElementById('root')!);
+render(() => <Main app={app} />, document.getElementById('root')!);

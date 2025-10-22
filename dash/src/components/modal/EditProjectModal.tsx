@@ -5,19 +5,19 @@ import { type Component, onMount } from 'solid-js';
 import { createMutable } from 'solid-js/store';
 import { useNavigate } from '@solidjs/router';
 import { isGeneralError, isValidationError } from '../../app/api/api.ts';
-import type { ProjectsApi } from '../../app/api/projectsApi.ts';
 import { GeneralErrors } from '../elements/GeneralErrors.tsx';
 import { FieldError } from '../elements/FieldError.tsx';
+import { useApp } from '../../app/appContext.tsx';
 
 interface Props {
   project: Project;
   onClose: () => void;
   onSuccess: () => void;
   onDelete: () => void;
-  projectsApi: ProjectsApi;
 }
 
 const EditProjectModal: Component<Props> = props => {
+  const app = useApp();
   const state = createMutable({
     title: props.project.title,
     slug: props.project.slug,
@@ -35,7 +35,7 @@ const EditProjectModal: Component<Props> = props => {
     state.loading = true;
 
     try {
-      await props.projectsApi.updateProject(props.project.slug, {
+      await app.notes.updateProject(props.project.slug, {
         title: state.title,
         slug: state.slug,
       });
@@ -60,7 +60,7 @@ const EditProjectModal: Component<Props> = props => {
 
   const del = async () => {
     if (confirm(`Are you sure you want to delete ${props.project.title}?`)) {
-      await props.projectsApi.deleteProject(props.project.slug);
+      await app.notes.deleteProject(props.project.slug);
       props.onDelete();
       props.onClose();
     }
