@@ -32,7 +32,8 @@ test('Create first project through modal', async () => {
   fireEvent.keyDown(window, { key: 'Escape' });
   expect(screen.queryByTestId('add-project-form')).toBeNull();
 
-  // Esc key closes the modal
+  // Test form submissions
+
   fireEvent.click(screen.getByRole('button', { name: 'Add a new project' }));
   const form = screen.getByTestId('add-project-form');
   const formQueries = within(form);

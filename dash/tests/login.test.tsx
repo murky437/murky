@@ -4,7 +4,7 @@ import { App } from '../src/app/app.ts';
 import { fireEvent, render, screen, waitFor, within } from '@solidjs/testing-library';
 import { Main } from '../src/app/Main.tsx';
 
-test('Login form exists and user can log in', async () => {
+test('Logging in', async () => {
   const c = newTestContainer();
   const app = new App(c);
 
