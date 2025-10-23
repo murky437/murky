@@ -22,7 +22,9 @@ build() {
   env="$1"
 
   info "Creating new builds"
-  docker compose -f "../docker-compose.$env.yml" up --build
+  docker compose -f "../docker-compose.$env.yml" run --rm --build api
+  docker compose -f "../docker-compose.$env.yml" run --rm --build dash
+
 
   info "Removing old deployment directory"
   rm -rf "./$env"

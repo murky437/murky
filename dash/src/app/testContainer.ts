@@ -3,7 +3,6 @@ import { AuthService } from './auth/authService.ts';
 import { NotesService } from './notes/notesService.ts';
 import { AuthRepository } from './auth/authRepository.ts';
 import { NotesRepository } from './notes/notesRepository.ts';
-import { Api } from './api/api.ts';
 import { AuthApi } from './api/authApi.ts';
 import { ProjectsApi } from './api/projectsApi.ts';
 import type { Container } from './container.ts';
