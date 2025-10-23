@@ -12,31 +12,31 @@ interface State {
 }
 
 class StateService {
-  private storage: Storage;
+  #storage: Storage;
 
   constructor(storage: Storage) {
-    this.storage = storage;
+    this.#storage = storage;
   }
 
-  private getDefaultState(): State {
+  #getDefaultState(): State {
     return {
       auth: {
-        accessToken: this.storage.getItem('accessToken'),
+        accessToken: this.#storage.getItem('accessToken'),
       },
       notes: {
         projects: [],
-        lastViewedProjectSlug: this.storage.getItem('lastViewedProjectSlug'),
+        lastViewedProjectSlug: this.#storage.getItem('lastViewedProjectSlug'),
       },
     };
   }
 
   createState(): State {
-    return createMutable<State>(this.getDefaultState());
+    return createMutable<State>(this.#getDefaultState());
   }
 
   resetState(state: State) {
-    this.storage.clear();
-    modifyMutable(state, reconcile(this.getDefaultState()));
+    this.#storage.clear();
+    modifyMutable(state, reconcile(this.#getDefaultState()));
   }
 }
 

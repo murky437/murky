@@ -4,29 +4,29 @@ import type { Project } from '../types/project.ts';
 class NotesRepository {
   static readonly KEY_LAST_VIEWED_PROJECT_SLUG = 'lastViewedProjectSlug';
 
-  private state: State;
-  private storage: Storage;
+  #state: State;
+  #storage: Storage;
 
   constructor(state: State, storage: Storage) {
-    this.state = state;
-    this.storage = storage;
+    this.#state = state;
+    this.#storage = storage;
   }
 
   getProjects() {
-    return this.state.notes.projects;
+    return this.#state.notes.projects;
   }
 
   setProjects(projects: Project[]) {
-    return (this.state.notes.projects = projects);
+    return (this.#state.notes.projects = projects);
   }
 
   getLastViewedProjectSlug() {
-    return this.state.notes.lastViewedProjectSlug;
+    return this.#state.notes.lastViewedProjectSlug;
   }
 
   setLastViewedProjectSlug(lastViewedProjectSlug: string) {
-    this.state.notes.lastViewedProjectSlug = lastViewedProjectSlug;
-    this.storage.setItem(NotesRepository.KEY_LAST_VIEWED_PROJECT_SLUG, lastViewedProjectSlug);
+    this.#state.notes.lastViewedProjectSlug = lastViewedProjectSlug;
+    this.#storage.setItem(NotesRepository.KEY_LAST_VIEWED_PROJECT_SLUG, lastViewedProjectSlug);
   }
 }
 
