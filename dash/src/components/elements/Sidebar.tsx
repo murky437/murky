@@ -53,7 +53,11 @@ const Sidebar: Component<Props> = props => {
 
   return (
     <>
-      <div class={styles.wrapper} onContextMenu={e => setContextMenu(e, 'Sidebar')}>
+      <div
+        class={styles.wrapper}
+        onContextMenu={e => setContextMenu(e, 'Sidebar')}
+        data-testid="sidebar"
+      >
         <ul>
           <For each={app.notes.getProjects()}>
             {project => (

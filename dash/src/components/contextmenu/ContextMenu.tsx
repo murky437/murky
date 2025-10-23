@@ -28,6 +28,7 @@ const ContextMenu: ParentComponent<Props> = props => {
         ref={wrapperDiv}
         style={{ left: `${props.x}px`, top: `${props.y}px` }}
         class={styles.wrapper}
+        data-testid="context-menu"
       >
         {props.children}
       </div>

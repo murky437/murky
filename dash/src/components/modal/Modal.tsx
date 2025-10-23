@@ -31,7 +31,7 @@ const Modal: ParentComponent<Props> = props => {
   return (
     <Portal>
       <div class={styles.overlay}>
-        <div ref={modalDiv} class={styles.modal}>
+        <div ref={modalDiv} class={styles.modal} data-testid="modal">
           <h2 class={styles.title}>{props.title}</h2>
           {props.children}
         </div>

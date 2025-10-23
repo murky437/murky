@@ -7,6 +7,7 @@ import { Api } from './api/api.ts';
 import { AuthApi } from './api/authApi.ts';
 import { ProjectsApi } from './api/projectsApi.ts';
 import type { Container } from './container.ts';
+import { vi } from 'vitest';
 
 function newTestContainer(): Container {
   const localStorageMock: Storage = {
@@ -39,7 +40,9 @@ function newTestContainer(): Container {
   const authRepository = new AuthRepository(state, storage);
   const notesRepository = new NotesRepository(state, storage);
 
-  const api = new Api('http://test.local', authRepository);
+  const ApiMock = vi.fn().mockImplementation(() => ({ fetch: vi.fn() }));
+  const api = new ApiMock();
+
   const authApi = new AuthApi(api);
   const projectsApi = new ProjectsApi(api);
 

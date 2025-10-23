@@ -53,18 +53,20 @@ const AddProjectModal: Component<Props> = props => {
 
   return (
     <Modal title="Add project" onClose={props.onClose}>
-      <form class={styles.form} onSubmit={handleSubmit}>
+      <form class={styles.form} onSubmit={handleSubmit} data-testid="add-project-form">
         <GeneralErrors errors={state.generalErrors} />
         <input
           ref={titleInputRef}
           class={styles.input}
           value={state.title}
+          placeholder="Title"
           onChange={e => (state.title = e.target.value)}
         />
         <FieldError fieldErrors={state.fieldErrors.title} />
         <input
           class={styles.input}
           value={state.slug}
+          placeholder="slug"
           onChange={e => (state.slug = e.target.value)}
         />
         <FieldError fieldErrors={state.fieldErrors.slug} />

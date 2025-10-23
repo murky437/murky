@@ -29,7 +29,7 @@ const SettingsContextMenu: Component<Props> = props => {
 
   return (
     <ContextMenu x={state.x} y={state.y} onClose={props.onClose}>
-      <button onClick={handleLogout}>Logout</button>
+      <button onClick={handleLogout}>Log out</button>
     </ContextMenu>
   );
 };

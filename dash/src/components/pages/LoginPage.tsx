@@ -53,7 +53,7 @@ const LoginPage: Component<RouteSectionProps> = () => {
 
   return (
     <div class={styles.wrapper}>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} data-testid="login-form">
         <GeneralErrors errors={state.generalErrors} />
         <input
           type="text"
@@ -71,7 +71,7 @@ const LoginPage: Component<RouteSectionProps> = () => {
         />
         <FieldError fieldErrors={state.fieldErrors.password} />
         <button type="submit" disabled={state.loading}>
-          Login
+          Log in
         </button>
       </form>
     </div>
