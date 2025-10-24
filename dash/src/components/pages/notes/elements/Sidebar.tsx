@@ -2,11 +2,11 @@ import { A } from '@solidjs/router';
 import styles from './Sidebar.module.css';
 import { createMutable } from 'solid-js/store';
 import { type Component, For, Show } from 'solid-js';
-import type { Project } from '../../app/types/project.ts';
-import { SettingsContextMenu } from '../contextmenu/SettingsContextMenu.tsx';
-import { ProjectContextMenu } from '../contextmenu/ProjectContextMenu.tsx';
-import { SidebarContextMenu } from '../contextmenu/SidebarContextMenu.tsx';
-import { useApp } from '../../app/appContext.tsx';
+import type { Project } from '../../../../app/types/project.ts';
+import { SettingsContextMenu } from './contextmenu/SettingsContextMenu.tsx';
+import { ProjectContextMenu } from './contextmenu/ProjectContextMenu.tsx';
+import { SidebarContextMenu } from './contextmenu/SidebarContextMenu.tsx';
+import { useApp } from '../../../../app/appContext.tsx';
 
 type ContextMenuState = 'Closed' | 'Sidebar' | 'Settings' | 'Project';
 

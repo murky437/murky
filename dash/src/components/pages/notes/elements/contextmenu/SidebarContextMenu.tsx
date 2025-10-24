@@ -1,4 +1,4 @@
-import { ContextMenu } from './ContextMenu.tsx';
+import { ContextMenu } from '../../../../shared/contextmenu/ContextMenu.tsx';
 import type { Component } from 'solid-js';
 
 interface Props {

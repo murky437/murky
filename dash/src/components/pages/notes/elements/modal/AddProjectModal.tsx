@@ -1,31 +1,26 @@
-import { Modal } from './Modal.tsx';
-import type { Project } from '../../app/types/project.ts';
-import styles from './Modal.module.css';
+import { Modal } from '../../../../shared/modal/Modal.tsx';
+import styles from '../../../../shared/modal/Modal.module.css';
 import { type Component, onMount } from 'solid-js';
 import { createMutable } from 'solid-js/store';
-import { useNavigate } from '@solidjs/router';
-import { isGeneralError, isValidationError } from '../../app/api/api.ts';
-import { GeneralErrors } from '../elements/GeneralErrors.tsx';
-import { FieldError } from '../elements/FieldError.tsx';
-import { useApp } from '../../app/appContext.tsx';
+import { isGeneralError, isValidationError } from '../../../../../app/api/api.ts';
+import { GeneralErrors } from '../../../../shared/GeneralErrors.tsx';
+import { FieldError } from '../../../../shared/FieldError.tsx';
+import { useApp } from '../../../../../app/appContext.tsx';
 
 interface Props {
-  project: Project;
   onClose: () => void;
   onSuccess: () => void;
-  onDelete: () => void;
 }
 
-const EditProjectModal: Component<Props> = props => {
+const AddProjectModal: Component<Props> = props => {
   const app = useApp();
   const state = createMutable({
-    title: props.project.title,
-    slug: props.project.slug,
+    title: '',
+    slug: '',
     generalErrors: [] as string[],
     fieldErrors: {} as Record<string, string[]>,
     loading: false,
   });
-  const navigate = useNavigate();
   let titleInputRef!: HTMLInputElement;
 
   const handleSubmit = async (e: SubmitEvent) => {
@@ -35,13 +30,7 @@ const EditProjectModal: Component<Props> = props => {
     state.loading = true;
 
     try {
-      await app.notes.updateProject(props.project.slug, {
-        title: state.title,
-        slug: state.slug,
-      });
-      if (state.slug !== props.project.slug) {
-        navigate(`/notes/${state.slug}`, { replace: true });
-      }
+      await app.notes.createProject({ title: state.title, slug: state.slug });
       props.onSuccess();
       props.onClose();
     } catch (err) {
@@ -58,21 +47,13 @@ const EditProjectModal: Component<Props> = props => {
     state.loading = false;
   };
 
-  const del = async () => {
-    if (confirm(`Are you sure you want to delete ${props.project.title}?`)) {
-      await app.notes.deleteProject(props.project.slug);
-      props.onDelete();
-      props.onClose();
-    }
-  };
-
   onMount(() => {
     titleInputRef.focus();
   });
 
   return (
-    <Modal title="Edit project" onClose={props.onClose}>
-      <form class={styles.form} onSubmit={handleSubmit} data-testid="edit-project-form">
+    <Modal title="Add project" onClose={props.onClose}>
+      <form class={styles.form} onSubmit={handleSubmit} data-testid="add-project-form">
         <GeneralErrors errors={state.generalErrors} />
         <input
           ref={titleInputRef}
@@ -90,9 +71,6 @@ const EditProjectModal: Component<Props> = props => {
         />
         <FieldError fieldErrors={state.fieldErrors.slug} />
         <div class={styles.buttonWrapper}>
-          <button class={`${styles.button} ${styles.delete}`} type="button" onClick={del}>
-            Delete
-          </button>
           <div class={styles.right}>
             <button
               class={`${styles.button} ${styles.secondary}`}
@@ -115,4 +93,4 @@ const EditProjectModal: Component<Props> = props => {
   );
 };
 
-export { EditProjectModal };
+export { AddProjectModal };

@@ -1,10 +1,10 @@
 import { onMount, type ParentComponent, Show } from 'solid-js';
-import { Sidebar } from '../../elements/Sidebar.tsx';
 import styles from './NotesLayout.module.css';
-import { EditProjectModal } from '../../modal/EditProjectModal.tsx';
-import { AddProjectModal } from '../../modal/AddProjectModal.tsx';
+import { EditProjectModal } from '../elements/modal/EditProjectModal.tsx';
+import { AddProjectModal } from '../elements/modal/AddProjectModal.tsx';
 import { useNavigate } from '@solidjs/router';
-import { useApp } from '../../../app/appContext.tsx';
+import { useApp } from '../../../../app/appContext.tsx';
+import { Sidebar } from '../elements/Sidebar.tsx';
 
 const NotesLayout: ParentComponent = props => {
   const app = useApp();

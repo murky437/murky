@@ -1,7 +1,7 @@
-import { ContextMenu } from './ContextMenu.tsx';
+import { ContextMenu } from '../../../../shared/contextmenu/ContextMenu.tsx';
 import { type Component, createEffect } from 'solid-js';
 import { createMutable } from 'solid-js/store';
-import { useApp } from '../../app/appContext.tsx';
+import { useApp } from '../../../../../app/appContext.tsx';
 
 interface Props {
   x: number;

@@ -8,7 +8,7 @@ import { IndexPage } from './pages/IndexPage.tsx';
 import { NotesBasePage } from './pages/notes/NotesBasePage.tsx';
 import { OpenNotesPage } from './pages/notes/OpenNotesPage.tsx';
 import { AppContext } from '../app/appContext.tsx';
-import { NotesLayout } from './pages/notes/NotesLayout.tsx';
+import { NotesLayout } from './pages/notes/layout/NotesLayout.tsx';
 
 interface Props {
   app: App;
