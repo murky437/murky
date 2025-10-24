@@ -17,7 +17,7 @@ class NotesRepository {
   }
 
   setProjects(projects: Project[]) {
-    return (this.#state.notes.projects = projects);
+    this.#state.notes.projects = projects;
   }
 
   getLastViewedProjectSlug() {
@@ -27,6 +27,22 @@ class NotesRepository {
   setLastViewedProjectSlug(lastViewedProjectSlug: string) {
     this.#state.notes.lastViewedProjectSlug = lastViewedProjectSlug;
     this.#storage.setItem(NotesRepository.KEY_LAST_VIEWED_PROJECT_SLUG, lastViewedProjectSlug);
+  }
+
+  isAddModalOpen(): boolean {
+    return this.#state.notes.modals.isAddModalOpen;
+  }
+
+  setIsAddModalOpen(isAddModalOpen: boolean) {
+    this.#state.notes.modals.isAddModalOpen = isAddModalOpen;
+  }
+
+  getEditModalProject(): Project | null {
+    return this.#state.notes.modals.editModalProject;
+  }
+
+  setEditModalProject(project: Project | null) {
+    this.#state.notes.modals.editModalProject = project;
   }
 }
 

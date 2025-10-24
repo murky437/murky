@@ -2,10 +2,10 @@ import { type RouteSectionProps, useNavigate } from '@solidjs/router';
 import { type Component, createEffect, onMount } from 'solid-js';
 import styles from './LoginPage.module.css';
 import { createMutable } from 'solid-js/store';
-import { GeneralErrors } from '../elements/GeneralErrors.tsx';
-import { FieldError } from '../elements/FieldError.tsx';
-import { isGeneralError, isValidationError } from '../../app/api/api.ts';
-import { useApp } from '../../app/appContext.tsx';
+import { GeneralErrors } from '../../elements/GeneralErrors.tsx';
+import { FieldError } from '../../elements/FieldError.tsx';
+import { isGeneralError, isValidationError } from '../../../app/api/api.ts';
+import { useApp } from '../../../app/appContext.tsx';
 
 const LoginPage: Component<RouteSectionProps> = () => {
   const app = useApp();

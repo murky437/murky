@@ -6,11 +6,11 @@ import { indentWithTab } from '@codemirror/commands';
 import { type Component, createEffect, onCleanup, onMount } from 'solid-js';
 import { type RouteSectionProps, useNavigate, useParams } from '@solidjs/router';
 import { createMutable } from 'solid-js/store';
-import { debounce } from '../../util/debounce.ts';
+import { debounce } from '../../../util/debounce.ts';
 import { basicSetup } from 'codemirror';
-import { NotesLayout } from '../elements/NotesLayout.tsx';
-import { isGeneralError } from '../../app/api/api.ts';
-import { useApp } from '../../app/appContext.tsx';
+import { NotesLayout } from './NotesLayout.tsx';
+import { isGeneralError } from '../../../app/api/api.ts';
+import { useApp } from '../../../app/appContext.tsx';
 
 const OpenNotesPage: Component<RouteSectionProps> = () => {
   const app = useApp();

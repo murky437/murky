@@ -10,12 +10,7 @@ import { useApp } from '../../app/appContext.tsx';
 
 type ContextMenuState = 'Closed' | 'Sidebar' | 'Settings' | 'Project';
 
-interface Props {
-  openAddModal: () => void;
-  openEditModal: (project: Project | null) => void;
-}
-
-const Sidebar: Component<Props> = props => {
+const Sidebar: Component = () => {
   const app = useApp();
   const state = createMutable({
     contextMenu: {
@@ -42,12 +37,12 @@ const Sidebar: Component<Props> = props => {
   };
 
   const openAddModal = () => {
-    props.openAddModal();
+    app.notes.setIsAddModalOpen(true);
     closeMenus();
   };
 
   const openEditModal = () => {
-    props.openEditModal(state.contextMenu.project);
+    app.notes.setEditModalProject(state.contextMenu.project);
     closeMenus();
   };
 

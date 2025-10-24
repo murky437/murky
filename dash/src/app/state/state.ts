@@ -8,6 +8,10 @@ interface State {
   notes: {
     projects: Project[];
     lastViewedProjectSlug: string | null;
+    modals: {
+      isAddModalOpen: boolean;
+      editModalProject: Project | null;
+    };
   };
 }
 
@@ -26,6 +30,10 @@ class StateService {
       notes: {
         projects: [],
         lastViewedProjectSlug: this.#storage.getItem('lastViewedProjectSlug'),
+        modals: {
+          isAddModalOpen: false,
+          editModalProject: null,
+        },
       },
     };
   }

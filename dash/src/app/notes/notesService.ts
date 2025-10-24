@@ -50,6 +50,22 @@ class NotesService {
   async getNotes(slug: string): Promise<string> {
     return await this.#projectsApi.getNotes(slug);
   }
+
+  isAddModalOpen(): boolean {
+    return this.#notesRepository.isAddModalOpen();
+  }
+
+  setIsAddModalOpen(isAddModalOpen: boolean) {
+    this.#notesRepository.setIsAddModalOpen(isAddModalOpen);
+  }
+
+  getEditModalProject(): Project | null {
+    return this.#notesRepository.getEditModalProject();
+  }
+
+  setEditModalProject(project: Project | null) {
+    this.#notesRepository.setEditModalProject(project);
+  }
 }
 
 export { NotesService };

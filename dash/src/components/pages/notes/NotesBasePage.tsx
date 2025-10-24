@@ -1,15 +1,11 @@
 import { type RouteSectionProps, useNavigate } from '@solidjs/router';
 import { type Component, createEffect } from 'solid-js';
 import styles from './NotesBasePage.module.css';
-import { createMutable } from 'solid-js/store';
-import { NotesLayout } from '../elements/NotesLayout.tsx';
-import { useApp } from '../../app/appContext.tsx';
+import { NotesLayout } from './NotesLayout.tsx';
+import { useApp } from '../../../app/appContext.tsx';
 
 const NotesBasePage: Component<RouteSectionProps> = () => {
   const app = useApp();
-  const state = createMutable({
-    addModalShouldOpen: false,
-  });
   const navigate = useNavigate();
 
   createEffect(() => {
@@ -32,15 +28,11 @@ const NotesBasePage: Component<RouteSectionProps> = () => {
   });
 
   const openAddProjectModal = () => {
-    state.addModalShouldOpen = true;
-  };
-
-  const onAddModalOpen = () => {
-    state.addModalShouldOpen = false;
+    app.notes.setIsAddModalOpen(true);
   };
 
   return (
-    <NotesLayout addModalShouldOpen={state.addModalShouldOpen} onAddModalOpen={onAddModalOpen}>
+    <NotesLayout>
       <div class={styles.wrapper}>
         <p>Right click the sidebar to add the first project.</p>
         <p>

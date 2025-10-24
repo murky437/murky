@@ -1,12 +1,12 @@
 import { Route, Router } from '@solidjs/router';
 import { Root } from '../components/pages/layout/Root.tsx';
-import { LoginPage } from '../components/pages/LoginPage.tsx';
+import { LoginPage } from '../components/pages/login/LoginPage.tsx';
 import type { Component } from 'solid-js';
 import type { App } from './app.ts';
 import { AuthGuard } from '../components/pages/layout/AuthGuard.tsx';
 import { IndexPage } from '../components/pages/IndexPage.tsx';
-import { NotesBasePage } from '../components/pages/NotesBasePage.tsx';
-import { OpenNotesPage } from '../components/pages/OpenNotesPage.tsx';
+import { NotesBasePage } from '../components/pages/notes/NotesBasePage.tsx';
+import { OpenNotesPage } from '../components/pages/notes/OpenNotesPage.tsx';
 import { AppContext } from './appContext.tsx';
 
 interface Props {
