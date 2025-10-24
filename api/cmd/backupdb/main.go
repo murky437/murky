@@ -41,4 +41,8 @@ func main() {
 	}
 
 	fmt.Println("Backup created at:", backupPath)
+
+	// TODO: upload backup to s3
+	// TODO: prune old backups (keep min 7 latest, delete others that are older than week)
+	// TODO: also prune on s3
 }
