@@ -1,14 +1,17 @@
 import { isObject } from '../../util/types.ts';
 import type { AuthRepository } from '../auth/authRepository.ts';
+import type { StatusRepository } from '../status/statusRepository.ts';
 
 class Api {
   readonly #baseUrl: string;
   #refreshPromise: Promise<boolean> | null = null;
   #authService: AuthRepository;
+  #statusRepository: StatusRepository;
 
-  constructor(baseUrl: string, authState: AuthRepository) {
+  constructor(baseUrl: string, authRepository: AuthRepository, statusRepository: StatusRepository) {
     this.#baseUrl = baseUrl;
-    this.#authService = authState;
+    this.#authService = authRepository;
+    this.#statusRepository = statusRepository;
   }
 
   async #handleResponse<T>(res: Response): Promise<T> {
@@ -39,7 +42,7 @@ class Api {
     if (!this.#refreshPromise) {
       this.#refreshPromise = (async () => {
         try {
-          const res = await fetch(`${this.#baseUrl}/auth/refresh-access-token`, {
+          const res = await this.#fetch(`${this.#baseUrl}/auth/refresh-access-token`, {
             method: 'POST',
             credentials: 'include', // send HttpOnly cookie
           });
@@ -66,6 +69,20 @@ class Api {
     return this.#refreshPromise;
   }
 
+  async #fetch(input: RequestInfo, init?: RequestInit) {
+    try {
+      this.#statusRepository.setIsRequestLoading(true);
+      const res = await fetch(input, init);
+      this.#statusRepository.setLastRequestStatusCode(res.status);
+      this.#statusRepository.setIsRequestLoading(false);
+      return res;
+    } catch (e) {
+      this.#statusRepository.setLastRequestStatusCode(500);
+      this.#statusRepository.setIsRequestLoading(false);
+      throw e;
+    }
+  }
+
   async fetch<T>(path: string, options: RequestInit = {}, requireAuth = true): Promise<T> {
     const headers: Record<string, string> = {
       ...(options.headers as Record<string, string>),
@@ -81,7 +98,7 @@ class Api {
       headers['Authorization'] = `Bearer ${token}`;
     }
 
-    let res = await fetch(`${this.#baseUrl}${path}`, {
+    let res = await this.#fetch(`${this.#baseUrl}${path}`, {
       ...options,
       headers,
       credentials: 'include',
@@ -92,7 +109,7 @@ class Api {
       const refreshed = await this.#refreshAccessToken();
       if (refreshed && token) {
         headers['Authorization'] = `Bearer ${token}`;
-        res = await fetch(`${this.#baseUrl}${path}`, {
+        res = await this.#fetch(`${this.#baseUrl}${path}`, {
           ...options,
           headers,
           credentials: 'include',

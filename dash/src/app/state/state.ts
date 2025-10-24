@@ -13,6 +13,20 @@ interface State {
       editModalProject: Project | null;
     };
   };
+  status: {
+    isRequestLoading: boolean;
+    lastRequestStatusCode: number | null;
+    deploy: {
+      frontend: {
+        commit: string | null;
+        timestamp: string | null;
+      };
+      backend: {
+        commit: string | null;
+        timestamp: string | null;
+      };
+    };
+  };
 }
 
 class StateService {
@@ -33,6 +47,20 @@ class StateService {
         modals: {
           isAddModalOpen: false,
           editModalProject: null,
+        },
+      },
+      status: {
+        isRequestLoading: false,
+        lastRequestStatusCode: null,
+        deploy: {
+          frontend: {
+            commit: null,
+            timestamp: null,
+          },
+          backend: {
+            commit: null,
+            timestamp: null,
+          },
         },
       },
     };

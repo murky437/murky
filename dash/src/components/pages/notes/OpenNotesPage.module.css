@@ -5,6 +5,10 @@
     height: 100%;
   }
 
+  :global(.cm-scroller) {
+    font-family: var(--font-mono);
+  }
+
   :global(.cm-activeLine) {
     background-color: #ffffff11;
   }

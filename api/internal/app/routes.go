@@ -4,6 +4,7 @@ import (
 	"murky_api/internal/auth"
 	"murky_api/internal/project"
 	"murky_api/internal/routing"
+	"murky_api/internal/status"
 	"net/http"
 )
 
@@ -18,6 +19,10 @@ func NewMux(c *Container) *http.ServeMux {
 		routing.CorsMiddleware(c.Config)))
 	mux.HandleFunc("POST /auth/delete-refresh-token", routing.Chain(
 		auth.DeleteRefreshToken(c.Db),
+		routing.CorsMiddleware(c.Config)))
+
+	mux.HandleFunc("GET /status", routing.Chain(
+		status.Get(c.Config),
 		routing.CorsMiddleware(c.Config)))
 
 	protectedMux := http.NewServeMux()

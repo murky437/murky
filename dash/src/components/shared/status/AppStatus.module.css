@@ -1,0 +1,21 @@
+.wrapper {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-family: var(--font-mono), monospace;
+  font-size: 12px;
+  line-height: 14px;
+
+  .gray {
+    color: var(--color-brown);
+  }
+  .green {
+    color: var(--color-meta-green);
+  }
+  .yellow {
+    color: var(--color-yellow);
+  }
+  .red {
+    color: var(--color-red);
+  }
+}

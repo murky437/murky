@@ -6,6 +6,9 @@ import { NotesRepository } from './notes/notesRepository.ts';
 import { Api } from './api/api.ts';
 import { AuthApi } from './api/authApi.ts';
 import { ProjectsApi } from './api/projectsApi.ts';
+import { StatusRepository } from './status/statusRepository.ts';
+import { StatusService } from './status/statusService.ts';
+import { StatusApi } from './api/statusApi.ts';
 
 interface Container {
   storage: Storage;
@@ -13,11 +16,14 @@ interface Container {
   state: State;
   authRepository: AuthRepository;
   notesRepository: NotesRepository;
+  statusRepository: StatusRepository;
   api: Api;
   authApi: AuthApi;
   projectsApi: ProjectsApi;
+  statusApi: StatusApi;
   authService: AuthService;
   notesService: NotesService;
+  statusService: StatusService;
 }
 
 function newContainer(): Container {
@@ -28,13 +34,16 @@ function newContainer(): Container {
 
   const authRepository = new AuthRepository(state, storage);
   const notesRepository = new NotesRepository(state, storage);
+  const statusRepository = new StatusRepository(state);
 
-  const api = new Api(import.meta.env.VITE_API_URL, authRepository);
+  const api = new Api(import.meta.env.VITE_API_URL, authRepository, statusRepository);
   const authApi = new AuthApi(api);
   const projectsApi = new ProjectsApi(api);
+  const statusApi = new StatusApi(api);
 
   const authService = new AuthService(authRepository, authApi);
   const notesService = new NotesService(notesRepository, projectsApi);
+  const statusService = new StatusService(statusRepository, statusApi);
 
   return {
     state,
@@ -47,6 +56,9 @@ function newContainer(): Container {
     notesRepository,
     notesService,
     storage,
+    statusRepository,
+    statusService,
+    statusApi,
   };
 }
 

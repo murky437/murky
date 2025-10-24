@@ -1,5 +1,6 @@
 import { Link, Meta, MetaProvider, Title } from '@solidjs/meta';
 import { type RouteSectionProps } from '@solidjs/router';
+import { AppStatus } from '../../shared/status/AppStatus.tsx';
 
 function Root(props: RouteSectionProps) {
   return (
@@ -9,6 +10,7 @@ function Root(props: RouteSectionProps) {
       <Meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <Title>murky.dev</Title>
       {props.children}
+      <AppStatus />
     </MetaProvider>
   );
 }
