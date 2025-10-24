@@ -4,7 +4,7 @@ import { fireEvent, render, screen, waitFor, within } from '@solidjs/testing-lib
 import { newTestContainer } from '../../src/app/testContainer.ts';
 import { App } from '../../src/app/app.ts';
 
-test('Edit projects', async () => {
+test('Delete project', async () => {
   const c = newTestContainer();
   const app = new App(c);
   app.auth.setAccessToken('test-token');
