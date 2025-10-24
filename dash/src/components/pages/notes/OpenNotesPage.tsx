@@ -8,7 +8,6 @@ import { type RouteSectionProps, useNavigate, useParams } from '@solidjs/router'
 import { createMutable } from 'solid-js/store';
 import { debounce } from '../../../util/debounce.ts';
 import { basicSetup } from 'codemirror';
-import { NotesLayout } from './NotesLayout.tsx';
 import { isGeneralError } from '../../../app/api/api.ts';
 import { useApp } from '../../../app/appContext.tsx';
 
@@ -85,11 +84,7 @@ const OpenNotesPage: Component<RouteSectionProps> = () => {
     }
   });
 
-  return (
-    <NotesLayout>
-      <div class={styles.wrapper} ref={wrapperDiv}></div>
-    </NotesLayout>
-  );
+  return <div class={styles.wrapper} ref={wrapperDiv}></div>;
 };
 
 export { OpenNotesPage };

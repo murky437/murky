@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { Main } from '../../src/app/Main.tsx';
+import { Main } from '../../src/components/Main.tsx';
 import { fireEvent, render, screen, waitFor, within } from '@solidjs/testing-library';
 import { newTestContainer } from '../../src/app/testContainer.ts';
 import { App } from '../../src/app/app.ts';

@@ -1,7 +1,6 @@
 import { type RouteSectionProps, useNavigate } from '@solidjs/router';
 import { type Component, createEffect } from 'solid-js';
 import styles from './NotesBasePage.module.css';
-import { NotesLayout } from './NotesLayout.tsx';
 import { useApp } from '../../../app/appContext.tsx';
 
 const NotesBasePage: Component<RouteSectionProps> = () => {
@@ -32,14 +31,12 @@ const NotesBasePage: Component<RouteSectionProps> = () => {
   };
 
   return (
-    <NotesLayout>
-      <div class={styles.wrapper}>
-        <p>Right click the sidebar to add the first project.</p>
-        <p>
-          Or click this button: <button onClick={openAddProjectModal}>Add a new project</button>
-        </p>
-      </div>
-    </NotesLayout>
+    <div class={styles.wrapper}>
+      <p>Right click the sidebar to add the first project.</p>
+      <p>
+        Or click this button: <button onClick={openAddProjectModal}>Add a new project</button>
+      </p>
+    </div>
   );
 };
 

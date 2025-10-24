@@ -2,7 +2,7 @@ import { expect, test, vi } from 'vitest';
 import { newTestContainer } from '../src/app/testContainer.ts';
 import { App } from '../src/app/app.ts';
 import { fireEvent, render, screen, waitFor, within } from '@solidjs/testing-library';
-import { Main } from '../src/app/Main.tsx';
+import { Main } from '../src/components/Main.tsx';
 
 test('Logging in', async () => {
   const c = newTestContainer();

@@ -1,7 +1,7 @@
 /* @refresh reload */
 import { render } from 'solid-js/web';
 import './index.css';
-import { Main } from './app/Main.tsx';
+import { Main } from './components/Main.tsx';
 import { App } from './app/app.ts';
 import { newContainer } from './app/container.ts';
 
