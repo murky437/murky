@@ -44,7 +44,9 @@ class NotesService {
   }
 
   async updateNotes(slug: string, notes: string): Promise<void> {
-    await this.#projectsApi.updateNotes(slug, { notes: notes });
+    try {
+      await this.#projectsApi.updateNotes(slug, { notes: notes });
+    } catch (e) {}
   }
 
   async getNotes(slug: string): Promise<string> {

@@ -5,7 +5,6 @@ import { vim } from '@replit/codemirror-vim';
 import { indentWithTab } from '@codemirror/commands';
 import { type Component, createEffect, onCleanup, onMount } from 'solid-js';
 import { type RouteSectionProps, useNavigate, useParams } from '@solidjs/router';
-import { createMutable } from 'solid-js/store';
 import { debounce } from '../../../util/debounce.ts';
 import { basicSetup } from 'codemirror';
 import { isGeneralError } from '../../../app/api/api.ts';
@@ -13,11 +12,9 @@ import { useApp } from '../../../app/appContext.tsx';
 
 const OpenNotesPage: Component<RouteSectionProps> = () => {
   const app = useApp();
-  const state = createMutable({
-    fetchedNotes: null as string | null,
-  });
   let wrapperDiv!: HTMLDivElement;
   let editorView: EditorView | null = null;
+  let fetchedNotes: string | null = null;
   const params = useParams();
   const navigate = useNavigate();
 
@@ -37,10 +34,11 @@ const OpenNotesPage: Component<RouteSectionProps> = () => {
               let doc = e.state.doc.toString();
 
               // ignore update event triggered by initial fetch from api
-              if (state.fetchedNotes !== null && doc === state.fetchedNotes) {
-                state.fetchedNotes = null;
+              if (fetchedNotes !== null && doc === fetchedNotes) {
+                fetchedNotes = null;
                 return;
               }
+              fetchedNotes = null;
 
               updateNotes(params.slug, doc);
             }
@@ -51,25 +49,23 @@ const OpenNotesPage: Component<RouteSectionProps> = () => {
     });
   });
 
-  createEffect(() => {
-    app.notes
-      .getNotes(params.slug)
-      .then(notes => {
-        state.fetchedNotes = notes;
-        editorView?.dispatch({
-          changes: {
-            from: 0,
-            to: editorView.state.doc.length,
-            insert: notes,
-          },
-        });
-        editorView?.focus();
-      })
-      .catch(err => {
-        if (isGeneralError(err) && err.message !== 'Unauthorized') {
-          navigate(`/notes`, { replace: true });
-        }
+  createEffect(async () => {
+    try {
+      const notes = await app.notes.getNotes(params.slug);
+      fetchedNotes = notes;
+      editorView?.dispatch({
+        changes: {
+          from: 0,
+          to: editorView.state.doc.length,
+          insert: notes,
+        },
       });
+      editorView?.focus();
+    } catch (err) {
+      if (isGeneralError(err) && err.message !== 'Unauthorized') {
+        navigate(`/notes`, { replace: true });
+      }
+    }
   });
 
   createEffect(() => {

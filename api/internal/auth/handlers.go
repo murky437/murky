@@ -70,7 +70,7 @@ func CreateTokens(db *sql.DB, jwtService jwt.Service) http.HandlerFunc {
 		http.SetCookie(w, &http.Cookie{
 			Name:     "refresh_token",
 			Value:    refreshTokenString,
-			Path:     "/",
+			Path:     "/", // TODO: set a different path, so that its not sent for every request?
 			HttpOnly: true,
 			Secure:   false, // TODO: set to secure based on env (dev = false, prod = true)
 			SameSite: http.SameSiteLaxMode,

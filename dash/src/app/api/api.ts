@@ -4,13 +4,15 @@ import type { StatusRepository } from '../status/statusRepository.ts';
 
 class Api {
   readonly #baseUrl: string;
+  #accessToken: string | null;
   #refreshPromise: Promise<boolean> | null = null;
-  #authService: AuthRepository;
+  #authRepository: AuthRepository;
   #statusRepository: StatusRepository;
 
   constructor(baseUrl: string, authRepository: AuthRepository, statusRepository: StatusRepository) {
     this.#baseUrl = baseUrl;
-    this.#authService = authRepository;
+    this.#accessToken = authRepository.getAccessToken();
+    this.#authRepository = authRepository;
     this.#statusRepository = statusRepository;
   }
 
@@ -53,11 +55,13 @@ class Api {
 
           const data = (await res.json()) as { accessToken?: string };
           if (data.accessToken) {
-            this.#authService.setAccessToken(data.accessToken);
+            this.#accessToken = data.accessToken;
+            this.#authRepository.setAccessToken(data.accessToken);
             return true;
           }
         } catch {
-          this.#authService.setAccessToken(null);
+          this.#accessToken = null;
+          this.#authRepository.setAccessToken(null);
           return false;
         } finally {
           this.#refreshPromise = null;
@@ -88,14 +92,11 @@ class Api {
       ...(options.headers as Record<string, string>),
     };
 
-    const token = this.#authService.getAccessToken();
-
-    if (requireAuth && !token) {
-      throw { message: 'Unauthorized' } as GeneralError;
-    }
-
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
+    if (requireAuth) {
+      if (!this.#accessToken) {
+        throw { message: 'Unauthorized' } as GeneralError;
+      }
+      headers['Authorization'] = `Bearer ${this.#accessToken}`;
     }
 
     let res = await this.#fetch(`${this.#baseUrl}${path}`, {
@@ -105,10 +106,10 @@ class Api {
     });
 
     // Handle expired access token
-    if (res.status === 401) {
+    if (requireAuth && res.status === 401) {
       const refreshed = await this.#refreshAccessToken();
-      if (refreshed && token) {
-        headers['Authorization'] = `Bearer ${token}`;
+      if (refreshed && this.#accessToken) {
+        headers['Authorization'] = `Bearer ${this.#accessToken}`;
         res = await this.#fetch(`${this.#baseUrl}${path}`, {
           ...options,
           headers,
