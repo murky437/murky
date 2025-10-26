@@ -1,28 +1,22 @@
-import { type State, StateService } from './state/state.ts';
-import { AuthService } from './auth/authService.ts';
-import { NotesService } from './notes/notesService.ts';
 import type { Container } from './container.ts';
-import type { StatusService } from './status/statusService.ts';
+import type { ClientState } from './state/clientState.ts';
+import type { ServerState } from './state/serverState.ts';
 
 class App {
-  readonly #state: State;
-  readonly #stateService: StateService;
-  readonly auth: AuthService;
-  readonly notes: NotesService;
-  readonly status: StatusService;
+  readonly #storage: Storage;
+  readonly client: ClientState;
+  readonly server: ServerState;
 
   constructor(c: Container) {
-    this.#state = c.state;
-    this.#stateService = c.stateService;
-    this.auth = c.authService;
-    this.notes = c.notesService;
-    this.status = c.statusService;
-    this.status.loadDeployStatus().then();
+    this.#storage = c.storage;
+    this.client = c.clientState;
+    this.server = c.serverState;
   }
 
-  resetState() {
-    this.#stateService.resetState(this.#state);
-    this.status.loadDeployStatus().then();
+  async reset() {
+    this.#storage.clear();
+    this.client.reset();
+    await this.server.reset();
   }
 }
 

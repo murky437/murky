@@ -26,7 +26,11 @@ const LoginPage: Component<RouteSectionProps> = () => {
     state.loading = true;
 
     try {
-      await app.auth.login(state.username, state.password);
+      const response = await app.server.auth.createTokens({
+        username: state.username,
+        password: state.password,
+      });
+      app.client.auth.setAccessToken(response.accessToken);
     } catch (err) {
       if (isValidationError(err)) {
         state.generalErrors = err.generalErrors || [];
@@ -46,7 +50,7 @@ const LoginPage: Component<RouteSectionProps> = () => {
   });
 
   createEffect(() => {
-    if (app.auth.isAuthenticated()) {
+    if (app.client.auth.isAuthenticated()) {
       navigate('/', { replace: true });
     }
   });

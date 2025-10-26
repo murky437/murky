@@ -11,15 +11,15 @@ const NotesLayout: ParentComponent = props => {
   const navigate = useNavigate();
 
   const closeAddModal = () => {
-    app.notes.setIsAddModalOpen(false);
+    app.client.notes.setIsAddModalOpen(false);
   };
 
   const closeEditModal = () => {
-    app.notes.setEditModalProject(null);
+    app.client.notes.setEditModalProject(null);
   };
 
   const loadProjects = async () => {
-    await app.notes.loadProjectsFromServer();
+    await app.server.notes.invalidateProjectListQuery();
   };
 
   const onDeleteProject = async () => {
@@ -37,15 +37,15 @@ const NotesLayout: ParentComponent = props => {
         <Sidebar />
         {props.children}
       </div>
-      <Show when={app.notes.getEditModalProject()}>
+      <Show when={app.client.notes.getEditModalProject()}>
         <EditProjectModal
-          project={app.notes.getEditModalProject()!}
+          project={app.client.notes.getEditModalProject()!}
           onClose={closeEditModal}
           onSuccess={loadProjects}
           onDelete={onDeleteProject}
         />
       </Show>
-      <Show when={app.notes.isAddModalOpen()}>
+      <Show when={app.client.notes.isAddModalOpen()}>
         <AddProjectModal onClose={closeAddModal} onSuccess={loadProjects} />
       </Show>
     </>

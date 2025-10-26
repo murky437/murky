@@ -8,7 +8,7 @@ test('Logging in', async () => {
   const c = newTestContainer();
   const app = new App(c);
 
-  const spy = vi.spyOn(c.authApi, 'createTokens');
+  const spy = vi.spyOn(c.serverState.auth, 'createTokens');
 
   render(() => <Main app={app} />);
 
@@ -70,7 +70,7 @@ test('Logging in', async () => {
   fireEvent.change(password, { target: { value: 'correct' } });
   fireEvent.click(button);
   await waitFor(() => {
-    expect(app.auth.isAuthenticated()).toBe(true);
+    expect(app.client.auth.isAuthenticated()).toBe(true);
     expect(window.location.pathname).toBe('/notes');
   });
 

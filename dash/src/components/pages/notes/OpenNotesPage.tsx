@@ -19,7 +19,7 @@ const OpenNotesPage: Component<RouteSectionProps> = () => {
   const navigate = useNavigate();
 
   const updateNotes = debounce(async (slug: string, notes: string) => {
-    await app.notes.updateNotes(slug, notes);
+    await app.server.notes.updateProjectNotes(slug, notes);
   }, 300);
 
   onMount(() => {
@@ -49,28 +49,30 @@ const OpenNotesPage: Component<RouteSectionProps> = () => {
     });
   });
 
-  createEffect(async () => {
-    try {
-      const notes = await app.notes.getNotes(params.slug);
-      fetchedNotes = notes;
-      editorView?.dispatch({
-        changes: {
-          from: 0,
-          to: editorView.state.doc.length,
-          insert: notes,
-        },
-      });
-      editorView?.focus();
-    } catch (err) {
-      if (isGeneralError(err) && err.message !== 'Unauthorized') {
-        navigate(`/notes`, { replace: true });
+  createEffect(() => {
+    const notes = app.server.notes.getProjectNotes(params.slug);
+    createEffect(() => {
+      if (notes.isSuccess) {
+        fetchedNotes = notes.data;
+        editorView?.dispatch({
+          changes: {
+            from: 0,
+            to: editorView.state.doc.length,
+            insert: notes.data,
+          },
+        });
+        editorView?.focus();
+      } else if (notes.isError) {
+        if (isGeneralError(notes.error) && notes.error.message !== 'Unauthorized') {
+          navigate(`/notes`, { replace: true });
+        }
       }
-    }
+    });
   });
 
   createEffect(() => {
     if (params.slug) {
-      app.notes.setLastViewedProjectSlug(params.slug);
+      app.client.notes.setLastViewedProjectSlug(params.slug);
     }
   });
 

@@ -30,7 +30,7 @@ const AddProjectModal: Component<Props> = props => {
     state.loading = true;
 
     try {
-      await app.notes.createProject({ title: state.title, slug: state.slug });
+      await app.server.notes.createProject({ title: state.title, slug: state.slug });
       props.onSuccess();
       props.onClose();
     } catch (err) {

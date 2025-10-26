@@ -1,19 +1,17 @@
 import { isObject } from '../../util/types.ts';
-import type { AuthRepository } from '../auth/authRepository.ts';
-import type { StatusRepository } from '../status/statusRepository.ts';
+import type { StatusState } from '../domain/status/state.ts';
+import type { AuthState } from '../domain/auth/state.ts';
 
 class Api {
   readonly #baseUrl: string;
-  #accessToken: string | null;
   #refreshPromise: Promise<boolean> | null = null;
-  #authRepository: AuthRepository;
-  #statusRepository: StatusRepository;
+  #authState: AuthState;
+  #statusState: StatusState;
 
-  constructor(baseUrl: string, authRepository: AuthRepository, statusRepository: StatusRepository) {
+  constructor(baseUrl: string, authState: AuthState, statusState: StatusState) {
     this.#baseUrl = baseUrl;
-    this.#accessToken = authRepository.getAccessToken();
-    this.#authRepository = authRepository;
-    this.#statusRepository = statusRepository;
+    this.#authState = authState;
+    this.#statusState = statusState;
   }
 
   async #handleResponse<T>(res: Response): Promise<T> {
@@ -55,13 +53,11 @@ class Api {
 
           const data = (await res.json()) as { accessToken?: string };
           if (data.accessToken) {
-            this.#accessToken = data.accessToken;
-            this.#authRepository.setAccessToken(data.accessToken);
+            this.#authState.setAccessToken(data.accessToken);
             return true;
           }
         } catch {
-          this.#accessToken = null;
-          this.#authRepository.setAccessToken(null);
+          this.#authState.setAccessToken(null);
           return false;
         } finally {
           this.#refreshPromise = null;
@@ -75,14 +71,14 @@ class Api {
 
   async #fetch(input: RequestInfo, init?: RequestInit) {
     try {
-      this.#statusRepository.setIsRequestLoading(true);
+      this.#statusState.setIsRequestLoading(true);
       const res = await fetch(input, init);
-      this.#statusRepository.setLastRequestStatusCode(res.status);
-      this.#statusRepository.setIsRequestLoading(false);
+      this.#statusState.setLastRequestStatusCode(res.status);
+      this.#statusState.setIsRequestLoading(false);
       return res;
     } catch (e) {
-      this.#statusRepository.setLastRequestStatusCode(500);
-      this.#statusRepository.setIsRequestLoading(false);
+      this.#statusState.setLastRequestStatusCode(500);
+      this.#statusState.setIsRequestLoading(false);
       throw e;
     }
   }
@@ -93,10 +89,11 @@ class Api {
     };
 
     if (requireAuth) {
-      if (!this.#accessToken) {
+      const token = this.#authState.getAccessToken();
+      if (!token) {
         throw { message: 'Unauthorized' } as GeneralError;
       }
-      headers['Authorization'] = `Bearer ${this.#accessToken}`;
+      headers['Authorization'] = `Bearer ${token}`;
     }
 
     let res = await this.#fetch(`${this.#baseUrl}${path}`, {
@@ -108,8 +105,8 @@ class Api {
     // Handle expired access token
     if (requireAuth && res.status === 401) {
       const refreshed = await this.#refreshAccessToken();
-      if (refreshed && this.#accessToken) {
-        headers['Authorization'] = `Bearer ${this.#accessToken}`;
+      if (refreshed) {
+        headers['Authorization'] = `Bearer ${this.#authState.getAccessToken()}`;
         res = await this.#fetch(`${this.#baseUrl}${path}`, {
           ...options,
           headers,

@@ -7,7 +7,7 @@ const AuthGuard: ParentComponent<RouteSectionProps> = props => {
   const navigate = useNavigate();
 
   createEffect(() => {
-    if (!app.auth.isAuthenticated()) {
+    if (!app.client.auth.isAuthenticated()) {
       navigate('/login', { replace: true });
     }
   });

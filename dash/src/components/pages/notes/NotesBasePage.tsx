@@ -6,16 +6,16 @@ import { useApp } from '../../../app/appContext.tsx';
 const NotesBasePage: Component<RouteSectionProps> = () => {
   const app = useApp();
   const navigate = useNavigate();
+  const projectListQuery = app.server.notes.getProjectListQuery();
 
   createEffect(() => {
-    const projects = app.notes.getProjects();
-    if (projects.length === 0) {
+    if (!projectListQuery.data || projectListQuery.data.length === 0) {
       return;
     }
 
-    const lastViewedProjectSlug = app.notes.getLastViewedProjectSlug();
+    const lastViewedProjectSlug = app.client.notes.getLastViewedProjectSlug();
     if (lastViewedProjectSlug) {
-      const found = projects.find(p => p.slug === lastViewedProjectSlug);
+      const found = projectListQuery.data.find(p => p.slug === lastViewedProjectSlug);
 
       if (found) {
         navigate(`/notes/${lastViewedProjectSlug}`, { replace: true });
@@ -23,11 +23,11 @@ const NotesBasePage: Component<RouteSectionProps> = () => {
       }
     }
 
-    navigate(`/notes/${[projects[0].slug]}`, { replace: true });
+    navigate(`/notes/${[projectListQuery.data[0].slug]}`, { replace: true });
   });
 
   const openAddProjectModal = () => {
-    app.notes.setIsAddModalOpen(true);
+    app.client.notes.setIsAddModalOpen(true);
   };
 
   return (

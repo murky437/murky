@@ -6,8 +6,8 @@ import { App } from '../../src/app/app.ts';
 
 test('Create first project through modal', async () => {
   const c = newTestContainer();
+  c.clientState.auth.setAccessToken('test-token');
   const app = new App(c);
-  app.auth.setAccessToken('test-token');
 
   const spy = vi.spyOn(c.projectsApi, 'create');
 

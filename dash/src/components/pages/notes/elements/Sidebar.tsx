@@ -2,7 +2,7 @@ import { A } from '@solidjs/router';
 import styles from './Sidebar.module.css';
 import { createMutable } from 'solid-js/store';
 import { type Component, For, Show } from 'solid-js';
-import type { Project } from '../../../../app/types/project.ts';
+import type { Project } from '../../../../app/domain/notes/types.ts';
 import { SettingsContextMenu } from './contextmenu/SettingsContextMenu.tsx';
 import { ProjectContextMenu } from './contextmenu/ProjectContextMenu.tsx';
 import { SidebarContextMenu } from './contextmenu/SidebarContextMenu.tsx';
@@ -37,14 +37,16 @@ const Sidebar: Component = () => {
   };
 
   const openAddModal = () => {
-    app.notes.setIsAddModalOpen(true);
+    app.client.notes.setIsAddModalOpen(true);
     closeMenus();
   };
 
   const openEditModal = () => {
-    app.notes.setEditModalProject(state.contextMenu.project);
+    app.client.notes.setEditModalProject(state.contextMenu.project);
     closeMenus();
   };
+
+  const projectListQuery = app.server.notes.getProjectListQuery();
 
   return (
     <>
@@ -54,7 +56,7 @@ const Sidebar: Component = () => {
         data-testid="sidebar"
       >
         <ul>
-          <For each={app.notes.getProjects()}>
+          <For each={projectListQuery.data}>
             {project => (
               <li onContextMenu={e => setContextMenu(e, 'Project', project)}>
                 <A href={`/notes/${project.slug}`}>{project.title}</A>

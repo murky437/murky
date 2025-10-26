@@ -1,53 +1,58 @@
-import { type Component, createEffect, Show } from 'solid-js';
+import { type Component, createMemo, Show } from 'solid-js';
 import { Portal } from 'solid-js/web';
 import styles from './AppStatus.module.css';
 import { useApp } from '../../../app/appContext.tsx';
-import { createMutable } from 'solid-js/store';
 import { Spinner } from '../Spinner.tsx';
 
 const AppStatus: Component = () => {
   const app = useApp();
-  const state = createMutable({
-    statusIcon: '?',
-    colorClass: styles.gray,
-  });
 
-  createEffect(() => {
-    const statusCode = app.status.getLastRequestStatusCode();
+  const styleData = createMemo(() => {
+    const styleData = {
+      statusIcon: '?',
+      colorClass: styles.gray,
+    };
+    const statusCode = app.client.status.getLastRequestStatusCode();
     if (statusCode) {
       if (statusCode >= 200 && statusCode < 300) {
-        state.statusIcon = '✓';
-        state.colorClass = styles.green;
+        styleData.statusIcon = '✓';
+        styleData.colorClass = styles.green;
       } else if (statusCode >= 400 && statusCode < 500) {
-        state.statusIcon = '×';
-        state.colorClass = styles.yellow;
+        styleData.statusIcon = '×';
+        styleData.colorClass = styles.yellow;
       } else if (statusCode >= 500 && statusCode < 600) {
-        state.statusIcon = '×';
-        state.colorClass = styles.red;
+        styleData.statusIcon = '×';
+        styleData.colorClass = styles.red;
       }
-    } else {
-      state.statusIcon = '?';
-      state.colorClass = styles.gray;
     }
+    return styleData;
   });
+
+  const frontendDeployStatusQuery = app.server.status.getFrontendDeployStatusQuery();
+  const backendDeployStatusQuery = app.server.status.getBackendDeployStatusQuery();
 
   return (
     <Portal>
       <div class={styles.wrapper}>
         <div>
-          <Show when={!app.status.isRequestLoading()} fallback={<Spinner class={styles.gray} />}>
-            <span class={state.colorClass}>{state.statusIcon}</span>{' '}
-            <span class={state.colorClass}>{app.status.getLastRequestStatusCode()}</span>
+          <Show
+            when={!app.client.status.isRequestLoading()}
+            fallback={<Spinner class={styles.gray} />}
+          >
+            <span class={styleData().colorClass}>{styleData().statusIcon}</span>{' '}
+            <span class={styleData().colorClass}>
+              {app.client.status.getLastRequestStatusCode()}
+            </span>
           </Show>
         </div>
         <div>
           <div>Deploy data</div>
           <div>frontend</div>
-          <div>commit: {app.status.getFrontendDeployCommitHash() ?? 'N/A'}</div>
-          <div>timestamp: {app.status.getFrontendDeployTimestamp() ?? 'N/A'}</div>
+          <div>commit: {frontendDeployStatusQuery.data?.commit ?? 'N/A'}</div>
+          <div>timestamp: {frontendDeployStatusQuery.data?.timestamp ?? 'N/A'}</div>
           <div>backend</div>
-          <div>commit: {app.status.getBackendDeployCommitHash() ?? 'N/A'}</div>
-          <div>timestamp: {app.status.getBackendDeployTimestamp() ?? 'N/A'}</div>
+          <div>commit: {backendDeployStatusQuery.data?.commit ?? 'N/A'}</div>
+          <div>timestamp: {backendDeployStatusQuery.data?.timestamp ?? 'N/A'}</div>
         </div>
       </div>
     </Portal>

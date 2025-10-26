@@ -1,5 +1,5 @@
 import type { Api } from './api.ts';
-import type { Project } from '../types/project.ts';
+import type { Project } from '../domain/notes/types.ts';
 
 interface GetProjectListResponse {
   data: Project[];

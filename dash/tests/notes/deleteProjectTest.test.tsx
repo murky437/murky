@@ -6,8 +6,8 @@ import { App } from '../../src/app/app.ts';
 
 test('Delete project', async () => {
   const c = newTestContainer();
+  c.clientState.auth.setAccessToken('test-token');
   const app = new App(c);
-  app.auth.setAccessToken('test-token');
 
   const spy = vi.spyOn(c.projectsApi, 'delete');
   vi.spyOn(c.projectsApi, 'getList').mockResolvedValue([

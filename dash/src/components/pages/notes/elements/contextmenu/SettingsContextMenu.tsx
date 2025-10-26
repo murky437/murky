@@ -23,8 +23,8 @@ const SettingsContextMenu: Component<Props> = props => {
   });
 
   const handleLogout = async () => {
-    await app.auth.logout();
-    app.resetState();
+    await app.server.auth.deleteRefreshToken();
+    await app.reset();
   };
 
   return (

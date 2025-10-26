@@ -1,5 +1,5 @@
 import { Modal } from '../../../../shared/modal/Modal.tsx';
-import type { Project } from '../../../../../app/types/project.ts';
+import type { Project } from '../../../../../app/domain/notes/types.ts';
 import styles from '../../../../shared/modal/Modal.module.css';
 import { type Component, onMount } from 'solid-js';
 import { createMutable } from 'solid-js/store';
@@ -35,7 +35,7 @@ const EditProjectModal: Component<Props> = props => {
     state.loading = true;
 
     try {
-      await app.notes.updateProject(props.project.slug, {
+      await app.server.notes.updateProject(props.project.slug, {
         title: state.title,
         slug: state.slug,
       });
@@ -60,7 +60,7 @@ const EditProjectModal: Component<Props> = props => {
 
   const del = async () => {
     if (confirm(`Are you sure you want to delete ${props.project.title}?`)) {
-      await app.notes.deleteProject(props.project.slug);
+      await app.server.notes.deleteProject(props.project.slug);
       props.onDelete();
       props.onClose();
     }
