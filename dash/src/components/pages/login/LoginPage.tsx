@@ -62,7 +62,7 @@ const LoginPage: Component<RouteSectionProps> = () => {
         <input
           type="text"
           value={state.username}
-          onChange={e => (state.username = e.target.value)}
+          onInput={e => (state.username = e.target.value)}
           placeholder="Username"
           ref={usernameInputRef}
         />
@@ -70,7 +70,7 @@ const LoginPage: Component<RouteSectionProps> = () => {
         <input
           type="password"
           value={state.password}
-          onChange={e => (state.password = e.target.value)}
+          onInput={e => (state.password = e.target.value)}
           placeholder="Password"
         />
         <FieldError fieldErrors={state.fieldErrors.password} />
