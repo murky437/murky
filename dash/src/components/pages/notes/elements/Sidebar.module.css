@@ -1,48 +1,168 @@
-.wrapper {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-width: 200px;
-  background-color: var(--color-black-18);
-  padding: 20px;
+.sidebar {
+  user-select: none;
 
-  ul {
-    flex: 1;
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  .revealButton {
+    position: fixed;
+    left: 0;
+    bottom: 40px;
+    height: 80px;
+    width: 30px;
+    line-height: 80px;
+    text-align: center;
+    display: block;
+    z-index: 11;
+    cursor: pointer;
+    background-color: #ffffff99;
 
-    li {
-      a {
-        text-decoration: none;
-        font-size: 14px;
-        color: var(--color-white-a8);
-        user-select: none;
-        cursor: pointer;
+    .revealIcon {
+      height: 80px;
+      width: 30px;
+      position: fixed;
+      left: 0;
+      bottom: 40px;
+      background-color: var(--color-black-18);
+    }
+  }
 
-        &:hover,
-        &[class='active'] {
-          text-decoration: underline;
-          color: var(--color-white-e8);
+  &.visible .revealButton {
+    left: 90%;
+    height: 100%;
+    width: 10%;
+    top: 0;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    overscroll-behavior: contain;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    .revealIcon {
+      position: fixed;
+      bottom: 40px;
+      left: 90%;
+    }
+  }
+
+  #revealCheckbox:checked ~ .sidebar {
+    display: block;
+  }
+
+  &.visible .content {
+    display: block;
+  }
+
+  .content {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 90%;
+    background-color: var(--color-black-18);
+    z-index: 10;
+    overflow-y: scroll;
+    height: 100vh;
+    overscroll-behavior: contain;
+
+    .inside {
+      margin-top: 40vh;
+      height: 100vh;
+      display: flex;
+      justify-content: space-between;
+      flex-direction: column;
+      padding: 50px;
+
+      .projects {
+
+        ul {
+          list-style: none;
+          margin: 0;
+          padding: 0;
+
+          li {
+            a {
+              text-decoration: none;
+              font-size: 27px;
+              color: var(--color-white-a8);
+              user-select: none;
+              cursor: pointer;
+
+              &:hover,
+              &[class='active'] {
+                text-decoration: underline;
+                color: var(--color-white-e8);
+              }
+            }
+          }
+        }
+      }
+
+      .bottomLinks {
+        margin-top: 100px;
+
+        button {
+          border: none;
+          cursor: pointer;
+          font-size: 20px;
+          line-height: 30px;
+          text-align: center;
+          color: var(--color-white-a8);
+          display: block;
+
+          &:hover {
+            color: var(--color-white-e8);
+          }
         }
       }
     }
   }
+}
 
-  .settings {
-    cursor: pointer;
-    font-size: 20px;
-    line-height: 30px;
-    font-weight: bold;
-    user-select: none;
-    display: inline-block;
-    width: 30px;
-    height: 30px;
-    text-align: center;
-    color: var(--color-white-a8);
+@media (min-width: 768px) {
+  .sidebar {
+    flex-basis: 20%;
 
-    &:hover {
-      color: var(--color-white-e8);
+    .revealButton {
+      display: none;
+    }
+
+    .content {
+      display: flex;
+      position: fixed;
+      width: 20%;
+      height: 100vh;
+      overflow-y: scroll;
+      scrollbar-width: none;
+      overscroll-behavior: contain;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+
+      .inside {
+        margin-top: 0;
+        height: 100vh;
+        display: flex;
+        justify-content: space-between;
+        flex-direction: column;
+        padding: 20px;
+
+        .projects {
+          ul {
+            li {
+              a {
+                font-size: 14px;
+              }
+            }
+          }
+        }
+
+        .bottomLinks {
+          button {
+            font-size: 14px;
+          }
+        }
+      }
     }
   }
 }

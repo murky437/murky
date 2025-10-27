@@ -1,24 +1,26 @@
-import { A } from '@solidjs/router';
+import { A, useLocation } from '@solidjs/router';
 import styles from './Sidebar.module.css';
 import { createMutable } from 'solid-js/store';
-import { type Component, For, Show } from 'solid-js';
+import { type Component, createEffect, For, on, onMount, Show } from 'solid-js';
 import type { Project } from '../../../../app/domain/notes/types.ts';
-import { SettingsContextMenu } from './contextmenu/SettingsContextMenu.tsx';
 import { ProjectContextMenu } from './contextmenu/ProjectContextMenu.tsx';
 import { SidebarContextMenu } from './contextmenu/SidebarContextMenu.tsx';
 import { useApp } from '../../../../app/appContext.tsx';
 
-type ContextMenuState = 'Closed' | 'Sidebar' | 'Settings' | 'Project';
+type ContextMenuState = 'Closed' | 'Sidebar' | 'Project';
 
 const Sidebar: Component = () => {
   const app = useApp();
   const state = createMutable({
+    isSidebarVisible: false,
     contextMenu: {
       state: 'Closed' as ContextMenuState,
       pos: { x: 0, y: 0 },
       project: null as Project | null,
     },
   });
+  const location = useLocation();
+  let sidebarContentRef!: HTMLDivElement;
 
   const setContextMenu = (
     e: MouseEvent,
@@ -48,50 +50,81 @@ const Sidebar: Component = () => {
 
   const projectListQuery = app.server.notes.getProjectListQuery();
 
+  const toggleSidebarVisibility = () => {
+    state.isSidebarVisible = !state.isSidebarVisible;
+  };
+
+  const handleLogout = async () => {
+    await app.server.auth.deleteRefreshToken();
+    await app.reset();
+  };
+
+  onMount(() => {
+    state.isSidebarVisible = false;
+  });
+
+  createEffect(
+    on(
+      () => [location.pathname],
+      () => {
+        state.isSidebarVisible = false;
+      }
+    )
+  );
+
+  createEffect(() => {
+    if (state.isSidebarVisible) {
+      sidebarContentRef.scrollTop = window.innerHeight * 0.4;
+    }
+  });
+
   return (
     <>
-      <div
-        class={styles.wrapper}
-        onContextMenu={e => setContextMenu(e, 'Sidebar')}
-        data-testid="sidebar"
-      >
-        <ul>
-          <For each={projectListQuery.data}>
-            {project => (
-              <li onContextMenu={e => setContextMenu(e, 'Project', project)}>
-                <A href={`/notes/${project.slug}`}>{project.title}</A>
-              </li>
-            )}
-          </For>
-        </ul>
-        <div>
-          <div class={styles.settings} onClick={e => setContextMenu(e, 'Settings')}>
-            ☰
+      <div classList={{ [styles.sidebar]: true, [styles.visible]: state.isSidebarVisible }}>
+        <div class={styles.revealButton} onClick={toggleSidebarVisibility}>
+          <div class={styles.revealIcon}>☰</div>
+        </div>
+        <div
+          class={styles.content}
+          onContextMenu={e => setContextMenu(e, 'Sidebar')}
+          data-testid="sidebar"
+          ref={sidebarContentRef}
+        >
+          <div class={styles.inside}>
+            <div class={styles.projects}>
+              <ul>
+                <For each={projectListQuery.data}>
+                  {project => (
+                    <li onContextMenu={e => setContextMenu(e, 'Project', project)}>
+                      <label for={styles.revealCheckbox}>
+                        <A href={`/notes/${project.slug}`}>{project.title}</A>
+                      </label>
+                    </li>
+                  )}
+                </For>
+              </ul>
+            </div>
+            <div class={styles.bottomLinks}>
+              <button onClick={handleLogout}>Log out</button>
+            </div>
+            <Show when={state.contextMenu.state === 'Project'}>
+              <ProjectContextMenu
+                x={state.contextMenu.pos.x}
+                y={state.contextMenu.pos.y}
+                onEdit={openEditModal}
+                onClose={closeMenus}
+              />
+            </Show>
+            <Show when={state.contextMenu.state === 'Sidebar'}>
+              <SidebarContextMenu
+                x={state.contextMenu.pos.x}
+                y={state.contextMenu.pos.y}
+                onAdd={openAddModal}
+                onClose={closeMenus}
+              />
+            </Show>
           </div>
         </div>
-        <Show when={state.contextMenu.state === 'Settings'}>
-          <SettingsContextMenu
-            x={state.contextMenu.pos.x}
-            y={state.contextMenu.pos.y}
-            onClose={closeMenus}
-          />
-        </Show>
-        <Show when={state.contextMenu.state === 'Project'}>
-          <ProjectContextMenu
-            x={state.contextMenu.pos.x}
-            y={state.contextMenu.pos.y}
-            onEdit={openEditModal}
-            onClose={closeMenus}
-          />
-        </Show>
-        <Show when={state.contextMenu.state === 'Sidebar'}>
-          <SidebarContextMenu
-            x={state.contextMenu.pos.x}
-            y={state.contextMenu.pos.y}
-            onAdd={openAddModal}
-            onClose={closeMenus}
-          />
-        </Show>
       </div>
     </>
   );

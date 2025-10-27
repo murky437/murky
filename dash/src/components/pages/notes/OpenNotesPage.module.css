@@ -2,7 +2,7 @@
   flex: 1;
 
   :global(.cm-editor) {
-    height: 100%;
+    width: 100%;
   }
 
   :global(.cm-scroller) {
@@ -18,7 +18,7 @@
   }
 
   :global(.cm-gutters) {
-    background-color: unset;
+    background-color: var(--color-black-20);
     border: none;
   }
 
@@ -35,6 +35,6 @@
   }
 
   :global(.cm-selectionBackground) {
-    background: #ffffff55 !important;
+    background: #ffffff44 !important;
   }
 }

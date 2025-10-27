@@ -1,5 +1,6 @@
 .wrapper {
   position: absolute;
+  z-index: 100;
   background-color: var(--color-black-28);
 
   button {
