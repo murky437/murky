@@ -9,7 +9,7 @@ class StatusApi {
   }
 
   async get(): Promise<DeployStatus> {
-    return await this.#api.fetch<DeployStatus>(`/status`);
+    return await this.#api.fetch<DeployStatus>(`/status`, {}, false);
   }
 }
 
