@@ -7,7 +7,10 @@ function Root(props: RouteSectionProps) {
     <MetaProvider>
       <Meta charset={'UTF-8'} />
       <Link rel="icon" type="image/svg+xml" href="/vite.svg" />
-      <Meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <Meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, interactive-widget=resizes-content"
+      />
       <Title>murky.dev</Title>
       {props.children}
       <AppStatus />

@@ -12,7 +12,6 @@
   background-color: var(--color-black-28);
   color: var(--color-white-e8);
   border-radius: 7px;
-  min-width: 500px;
   max-width: 90%;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   position: relative;
@@ -47,9 +46,14 @@
   justify-content: space-between;
   margin-top: 40px;
 
-  .right {
+  .left, .right {
     display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
     gap: 15px;
+  }
+
+  .right {
     margin-left: auto;
   }
 }

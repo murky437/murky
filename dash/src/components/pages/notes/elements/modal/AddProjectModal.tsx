@@ -71,7 +71,7 @@ const AddProjectModal: Component<Props> = props => {
         />
         <FieldError fieldErrors={state.fieldErrors.slug} />
         <div class={styles.buttonWrapper}>
-          <div class={styles.right}>
+          <div class={styles.left}>
             <button
               class={`${styles.button} ${styles.secondary}`}
               type="button"
@@ -79,6 +79,8 @@ const AddProjectModal: Component<Props> = props => {
             >
               Cancel
             </button>
+          </div>
+          <div class={styles.right}>
             <button
               class={`${styles.button} ${styles.primary}`}
               type="submit"

@@ -72,17 +72,11 @@ const Sidebar: Component = () => {
     )
   );
 
-  createEffect(() => {
-    if (state.isSidebarVisible) {
-      sidebarContentRef.scrollTop = window.innerHeight * 0.4;
-    }
-  });
-
   return (
     <>
       <div classList={{ [styles.sidebar]: true, [styles.visible]: state.isSidebarVisible }}>
-        <div class={styles.revealButton} onClick={toggleSidebarVisibility}>
-          <div class={styles.revealIcon}>☰</div>
+        <div class={styles.revealButtonArea} onClick={toggleSidebarVisibility}>
+          <div class={styles.revealButton}>☰</div>
         </div>
         <div
           class={styles.content}
@@ -97,7 +91,9 @@ const Sidebar: Component = () => {
                   {project => (
                     <li onContextMenu={e => setContextMenu(e, 'Project', project)}>
                       <label for={styles.revealCheckbox}>
-                        <A href={`/notes/${project.slug}`}>{project.title}</A>
+                        <A href={`/notes/${project.slug}`} onClick={toggleSidebarVisibility}>
+                          {project.title}
+                        </A>
                       </label>
                     </li>
                   )}

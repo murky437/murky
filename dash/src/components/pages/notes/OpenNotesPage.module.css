@@ -1,5 +1,7 @@
 .wrapper {
   flex: 1;
+  max-width: 100%;
+  margin-top: 40vh;
 
   :global(.cm-editor) {
     width: 100%;
@@ -36,5 +38,12 @@
 
   :global(.cm-selectionBackground) {
     background: #ffffff44 !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .wrapper {
+    margin-top: 0;
+    width: 80%;
   }
 }

@@ -24,12 +24,15 @@ const OpenNotesPage: Component<RouteSectionProps> = () => {
   }, 300);
 
   const focusEditor = () => {
-    editorView?.focus();
+    if (!editorView?.hasFocus) {
+      editorView?.focus();
+    }
   };
 
   onMount(() => {
     const extensions = [
       basicSetup,
+      EditorView.lineWrapping,
       keymap.of([indentWithTab]),
       EditorView.updateListener.of(e => {
         if (e.docChanged) {

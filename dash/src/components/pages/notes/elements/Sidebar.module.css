@@ -1,7 +1,7 @@
 .sidebar {
   user-select: none;
 
-  .revealButton {
+  .revealButtonArea {
     position: fixed;
     left: 0;
     bottom: 40px;
@@ -12,9 +12,10 @@
     display: block;
     z-index: 11;
     cursor: pointer;
-    background-color: #ffffff99;
+    background-color: #ffffff22;
+    -webkit-tap-highlight-color: transparent;
 
-    .revealIcon {
+    .revealButton {
       height: 80px;
       width: 30px;
       position: fixed;
@@ -24,28 +25,19 @@
     }
   }
 
-  &.visible .revealButton {
-    left: 90%;
-    height: 100%;
-    width: 10%;
-    top: 0;
-    overflow-y: scroll;
-    scrollbar-width: none;
-    overscroll-behavior: contain;
+  &.visible .revealButtonArea {
+    left: 80%;
+    height: 100vh;
+    width: 20%;
+    bottom: 0;
 
     &::-webkit-scrollbar {
       display: none;
     }
 
-    .revealIcon {
-      position: fixed;
-      bottom: 40px;
-      left: 90%;
+    .revealButton {
+      left: 80%;
     }
-  }
-
-  #revealCheckbox:checked ~ .sidebar {
-    display: block;
   }
 
   &.visible .content {
@@ -55,18 +47,19 @@
   .content {
     display: none;
     position: fixed;
-    top: 0;
+    bottom: 0;
     left: 0;
-    width: 90%;
+    width: 80%;
     background-color: var(--color-black-18);
     z-index: 10;
     overflow-y: scroll;
     height: 100vh;
     overscroll-behavior: contain;
+    transition: width 0.3s ease-in-out;
 
     .inside {
       margin-top: 40vh;
-      height: 100vh;
+      min-height: 100vh;
       display: flex;
       justify-content: space-between;
       flex-direction: column;
@@ -120,9 +113,9 @@
 
 @media (min-width: 768px) {
   .sidebar {
-    flex-basis: 20%;
+    width: 20%;
 
-    .revealButton {
+    .revealButtonArea {
       display: none;
     }
 

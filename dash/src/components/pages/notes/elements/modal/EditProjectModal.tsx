@@ -90,10 +90,10 @@ const EditProjectModal: Component<Props> = props => {
         />
         <FieldError fieldErrors={state.fieldErrors.slug} />
         <div class={styles.buttonWrapper}>
-          <button class={`${styles.button} ${styles.delete}`} type="button" onClick={del}>
-            Delete
-          </button>
-          <div class={styles.right}>
+          <div class={styles.left}>
+            <button class={`${styles.button} ${styles.delete}`} type="button" onClick={del}>
+              Delete
+            </button>
             <button
               class={`${styles.button} ${styles.secondary}`}
               type="button"
@@ -101,6 +101,8 @@ const EditProjectModal: Component<Props> = props => {
             >
               Cancel
             </button>
+          </div>
+          <div class={styles.right}>
             <button
               class={`${styles.button} ${styles.primary}`}
               type="submit"
