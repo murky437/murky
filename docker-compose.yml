@@ -10,6 +10,7 @@ services:
       - ./api:/app
     env_file:
       - ./api/.env
+      - ./api/.env.local
   dash:
     image: node:24
     container_name: murky_dash
@@ -21,3 +22,4 @@ services:
     command: npm run dev -- --host 0.0.0.0 --port 5137
     env_file:
       - ./dash/.env
+      - ./dash/.env.local
