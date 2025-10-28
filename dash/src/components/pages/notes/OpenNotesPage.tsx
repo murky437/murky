@@ -9,6 +9,7 @@ import { debounce } from '../../../util/debounce.ts';
 import { basicSetup } from 'codemirror';
 import { isGeneralError } from '../../../app/api/api.ts';
 import { useApp } from '../../../app/appContext.tsx';
+import { isTouchDevice } from '../../../util/isTouchDevice.ts';
 
 const OpenNotesPage: Component<RouteSectionProps> = () => {
   const app = useApp();
@@ -22,31 +23,46 @@ const OpenNotesPage: Component<RouteSectionProps> = () => {
     await app.server.notes.updateProjectNotes(slug, notes);
   }, 300);
 
+  const focusEditor = () => {
+    editorView?.focus();
+  };
+
   onMount(() => {
+    const extensions = [
+      basicSetup,
+      keymap.of([indentWithTab]),
+      EditorView.updateListener.of(e => {
+        if (e.docChanged) {
+          let doc = e.state.doc.toString();
+
+          // ignore update event triggered by initial fetch from api
+          if (fetchedNotes !== null && doc === fetchedNotes) {
+            fetchedNotes = null;
+            return;
+          }
+          fetchedNotes = null;
+
+          updateNotes(params.slug, doc);
+        }
+      }),
+    ];
+
+    if (!isTouchDevice()) {
+      extensions.push(vim());
+    }
+
     editorView = new EditorView({
       state: EditorState.create({
-        extensions: [
-          basicSetup,
-          keymap.of([indentWithTab]),
-          vim(),
-          EditorView.updateListener.of(e => {
-            if (e.docChanged) {
-              let doc = e.state.doc.toString();
-
-              // ignore update event triggered by initial fetch from api
-              if (fetchedNotes !== null && doc === fetchedNotes) {
-                fetchedNotes = null;
-                return;
-              }
-              fetchedNotes = null;
-
-              updateNotes(params.slug, doc);
-            }
-          }),
-        ],
+        extensions: extensions,
       }),
       parent: wrapperDiv,
     });
+  });
+
+  onCleanup(() => {
+    if (editorView) {
+      editorView.destroy();
+    }
   });
 
   createEffect(() => {
@@ -61,7 +77,6 @@ const OpenNotesPage: Component<RouteSectionProps> = () => {
             insert: notes.data,
           },
         });
-        editorView?.focus();
       } else if (notes.isError) {
         if (isGeneralError(notes.error) && notes.error.message !== 'Unauthorized') {
           navigate(`/notes`, { replace: true });
@@ -76,13 +91,7 @@ const OpenNotesPage: Component<RouteSectionProps> = () => {
     }
   });
 
-  onCleanup(() => {
-    if (editorView) {
-      editorView.destroy();
-    }
-  });
-
-  return <div class={styles.wrapper} ref={wrapperDiv}></div>;
+  return <div class={styles.wrapper} ref={wrapperDiv} onClick={focusEditor}></div>;
 };
 
 export { OpenNotesPage };
