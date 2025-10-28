@@ -6,7 +6,7 @@
   }
 
   :global(.cm-scroller) {
-    font-family: var(--font-mono);
+    font-family: var(--font-mono), monospace;
   }
 
   :global(.cm-activeLine) {
