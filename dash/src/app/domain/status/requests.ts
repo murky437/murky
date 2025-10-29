@@ -18,6 +18,7 @@ class StatusRequests {
         queryFn: async () => {
           return await this.#statusApi.get();
         },
+        staleTime: 1000 * 60 * 60,
       }),
       () => this.#queryClient
     );
@@ -40,6 +41,7 @@ class StatusRequests {
 
           return data;
         },
+        staleTime: 1000 * 60 * 60,
       }),
       () => this.#queryClient
     );

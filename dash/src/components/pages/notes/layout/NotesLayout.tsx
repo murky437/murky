@@ -23,7 +23,7 @@ const NotesLayout: ParentComponent = props => {
   };
 
   const onDeleteProject = async () => {
-    await loadProjects();
+    // Redirect to base page to check if current project was deleted, and then it will redirect to an existing one
     navigate(`/notes`, { replace: true });
   };
 
