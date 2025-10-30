@@ -7,6 +7,10 @@
     width: 100%;
   }
 
+  :global(.cm-editor.cm-focused) {
+    outline: none;
+  }
+
   :global(.cm-scroller) {
     font-family: var(--font-mono), monospace;
     font-size: 14px;
