@@ -9,6 +9,9 @@
 
   :global(.cm-scroller) {
     font-family: var(--font-mono), monospace;
+    font-size: 14px;
+    line-height: 18px;
+    color: var(--color-editor-fg);
   }
 
   :global(.cm-activeLine) {
@@ -20,8 +23,11 @@
   }
 
   :global(.cm-gutters) {
-    background-color: var(--color-black-20);
+    background-color: var(--color-black-21);
     border: none;
+    font-size: 12px;
+    line-height: 18px;
+    color: var(--color-line-numbers);
   }
 
   :global(.cm-cursor) {

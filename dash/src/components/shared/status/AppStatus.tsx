@@ -34,7 +34,7 @@ const AppStatus: Component = () => {
   return (
     <Portal>
       <div class={styles.wrapper}>
-        <div>
+        <div class={styles.requestStatus}>
           <Show
             when={!app.client.status.isRequestLoading()}
             fallback={<Spinner class={styles.gray} />}
@@ -45,8 +45,8 @@ const AppStatus: Component = () => {
             </span>
           </Show>
         </div>
-        <div>
-          <div>Deploy data</div>
+        <div class={styles.deployInfo}>
+          <div>Deploy info</div>
           <div>frontend</div>
           <div>commit: {frontendDeployStatusQuery.data?.commit ?? 'N/A'}</div>
           <div>timestamp: {frontendDeployStatusQuery.data?.timestamp ?? 'N/A'}</div>

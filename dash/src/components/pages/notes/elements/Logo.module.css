@@ -1,0 +1,17 @@
+.logo {
+  width: calc(60px + calc(18px / tan(60deg) / 2));
+  padding-right: calc(18px / tan(60deg) / 2);
+  height: 18px;
+  background-color: var(--color-black-1d);
+  clip-path: polygon(0 0, 100% 0, calc(100% - calc(18px / tan(60deg))) 100%, 0 100%);
+  color: #fff;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 50;
+  font-size: 12px;
+  line-height: 18px;
+  font-weight: bold;
+  font-style: italic;
+  text-align: center;
+}

@@ -54,10 +54,11 @@ const Sidebar: Component = () => {
     state.isSidebarVisible = !state.isSidebarVisible;
   };
 
-  const handleLogout = async () => {
-    await app.server.auth.deleteRefreshToken();
-    await app.reset();
-  };
+  // TODO: move this to settings page
+  // const handleLogout = async () => {
+  //   await app.server.auth.deleteRefreshToken();
+  //   await app.reset();
+  // };
 
   onMount(() => {
     state.isSidebarVisible = false;
@@ -76,7 +77,11 @@ const Sidebar: Component = () => {
     <>
       <div classList={{ [styles.sidebar]: true, [styles.visible]: state.isSidebarVisible }}>
         <div class={styles.revealButtonArea} onClick={toggleSidebarVisibility}>
-          <div class={styles.revealButton}>☰</div>
+          <div class={styles.revealButton}>
+            <div class={styles.circle}></div>
+            <div class={styles.circle}></div>
+            <div class={styles.circle}></div>
+          </div>
         </div>
         <div
           class={styles.content}
@@ -101,7 +106,13 @@ const Sidebar: Component = () => {
               </ul>
             </div>
             <div class={styles.bottomLinks}>
-              <button onClick={handleLogout}>Log out</button>
+              <A href={'/apps'} onClick={toggleSidebarVisibility}>
+                Other apps
+              </A>
+              <div class={styles.separator}></div>
+              <A href={'/settings'} onClick={toggleSidebarVisibility}>
+                Settings
+              </A>
             </div>
             <Show when={state.contextMenu.state === 'Project'}>
               <ProjectContextMenu

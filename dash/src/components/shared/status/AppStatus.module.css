@@ -1,10 +1,13 @@
 .wrapper {
-  position: absolute;
+  position: fixed;
   top: 0;
   right: 0;
   font-family: var(--font-mono), monospace;
-  font-size: 12px;
+  font-size: 10px;
   line-height: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: end;
 
   .gray {
     color: var(--color-brown);
@@ -17,5 +20,24 @@
   }
   .red {
     color: var(--color-red);
+  }
+
+  .requestStatus {
+    text-align: center;
+    background-color: var(--color-black-1d);
+    width: calc(56px + calc(14px / tan(60deg) / 2));
+    clip-path: polygon(0 0, 100% 0, 100% 100%, calc(calc(18px / tan(60deg))) 100%);
+    padding-left: calc(18px / tan(60deg) / 2);
+    height: 14px;
+  }
+
+  &:hover .deployInfo {
+    display: block;
+  }
+
+  .deployInfo {
+    display: none;
+    background-color: var(--color-black-1d);
+    padding: 10px;
   }
 }

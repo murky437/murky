@@ -2,22 +2,31 @@
 
 :root {
   --color-black-18: #181818;
-  --color-black-20: #1d1d1d;
+  --color-black-1d: #1d1d1d;
+  --color-black-1f: #1f1f1f;
   --color-black-21: #212121;
   --color-black-28: #282828;
   --color-black-40: #404040;
   --color-white-e8: #e8e8e8;
   --color-white-a8: #a8a8a8;
-  --color-form-error: var(--color-red);
+
   --color-form-input-bg: #282828;
   --color-form-input-fg: #e8e8e8;
   --color-form-input-placeholder: #666666;
+
   --color-meta-green: #80a37c;
   --color-red: #fb4934;
   --color-yellow: #fabd2f;
   --color-lightyellow: #edc990;
   --color-brown: #665c54;
   --color-purple: #c8899a;
+
+  --color-line-numbers: #5C5A56;
+  --color-editor-fg: #E8DBB7;
+  --color-menu-icon: #72716E;
+  --color-sidebar-list-inactive: #72716E;
+  --color-sidebar-list-active: #ffffff;
+
   --font-mono: 'Consolas';
   --font-sans: 'Open Sans';
 }
@@ -37,7 +46,7 @@ body {
 }
 
 body {
-  background-color: var(--color-black-21);
+  background-color: var(--color-black-28);
   color: var(--color-white-e8);
   font-family: var(--font-sans), sans-serif;
   font-size: 16px;
