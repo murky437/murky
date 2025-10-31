@@ -10,6 +10,8 @@ import { basicSetup } from 'codemirror';
 import { isGeneralError } from '../../../app/api/api.ts';
 import { useApp } from '../../../app/appContext.tsx';
 import { isTouchDevice } from '../../../util/isTouchDevice.ts';
+import { Breadcrumbs } from './elements/Breadcrumbs.tsx';
+import { createMutable } from 'solid-js/store';
 
 const OpenNotesPage: Component<RouteSectionProps> = () => {
   const app = useApp();
@@ -18,6 +20,12 @@ const OpenNotesPage: Component<RouteSectionProps> = () => {
   let fetchedNotes: string | null = null;
   const params = useParams();
   const navigate = useNavigate();
+  const state = createMutable({
+    project: {
+      title: '',
+      slug: params.slug,
+    },
+  });
 
   const updateNotes = debounce(async (slug: string, notes: string) => {
     await app.server.notes.updateProjectNotes(slug, notes);
@@ -69,21 +77,17 @@ const OpenNotesPage: Component<RouteSectionProps> = () => {
   });
 
   createEffect(() => {
-    const notes = app.server.notes.getProjectNotes(params.slug);
+    const notesQuery = app.server.notes.getProjectNotesQuery(params.slug);
     createEffect(() => {
-      if (notes.isSuccess) {
-        fetchedNotes = notes.data;
+      if (notesQuery.isSuccess) {
+        fetchedNotes = notesQuery.data;
         editorView?.dispatch({
           changes: {
             from: 0,
             to: editorView.state.doc.length,
-            insert: notes.data,
+            insert: fetchedNotes,
           },
         });
-      } else if (notes.isError) {
-        if (isGeneralError(notes.error) && notes.error.message !== 'Unauthorized') {
-          navigate(`/notes`, { replace: true });
-        }
       }
     });
   });
@@ -94,7 +98,28 @@ const OpenNotesPage: Component<RouteSectionProps> = () => {
     }
   });
 
-  return <div class={styles.wrapper} ref={wrapperDiv} onClick={focusEditor}></div>;
+  createEffect(() => {
+    state.project.slug = params.slug;
+    if (params.slug) {
+      const projectQuery = app.server.notes.getProjectQuery(params.slug);
+      createEffect(() => {
+        if (projectQuery.isSuccess) {
+          state.project.title = projectQuery.data.title;
+        } else if (projectQuery.isError) {
+          if (isGeneralError(projectQuery.error) && projectQuery.error.message !== 'Unauthorized') {
+            navigate(`/notes`, { replace: true });
+          }
+        }
+      });
+    }
+  });
+
+  return (
+    <>
+      <Breadcrumbs projectName={state.project.title} />
+      <div class={styles.wrapper} ref={wrapperDiv} onClick={focusEditor}></div>
+    </>
+  );
 };
 
 export { OpenNotesPage };

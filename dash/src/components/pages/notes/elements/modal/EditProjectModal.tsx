@@ -3,7 +3,6 @@ import type { Project } from '../../../../../app/domain/notes/types.ts';
 import styles from '../../../../shared/modal/Modal.module.css';
 import { type Component, onMount } from 'solid-js';
 import { createMutable } from 'solid-js/store';
-import { useNavigate } from '@solidjs/router';
 import { isGeneralError, isValidationError } from '../../../../../app/api/api.ts';
 import { GeneralErrors } from '../../../../shared/GeneralErrors.tsx';
 import { FieldError } from '../../../../shared/FieldError.tsx';
@@ -12,7 +11,7 @@ import { useApp } from '../../../../../app/appContext.tsx';
 interface Props {
   project: Project;
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (oldSlug: string, newSlug: string) => void;
   onDelete: () => void;
 }
 
@@ -25,7 +24,6 @@ const EditProjectModal: Component<Props> = props => {
     fieldErrors: {} as Record<string, string[]>,
     loading: false,
   });
-  const navigate = useNavigate();
   let titleInputRef!: HTMLInputElement;
 
   const handleSubmit = async (e: SubmitEvent) => {
@@ -39,10 +37,7 @@ const EditProjectModal: Component<Props> = props => {
         title: state.title,
         slug: state.slug,
       });
-      if (state.slug !== props.project.slug) {
-        navigate(`/notes/${state.slug}`, { replace: true });
-      }
-      props.onSuccess();
+      props.onSuccess(props.project.slug, state.slug);
       props.onClose();
     } catch (err) {
       if (isValidationError(err)) {

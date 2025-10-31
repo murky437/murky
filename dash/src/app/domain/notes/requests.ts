@@ -29,7 +29,25 @@ class NotesRequests {
     });
   }
 
-  getProjectNotes(slug: string) {
+  getProjectQuery(slug: string) {
+    return useQuery(
+      () => ({
+        queryKey: ['notes.getProject', slug],
+        queryFn: async () => {
+          return await this.#projectsApi.get(slug);
+        },
+      }),
+      () => this.#queryClient
+    );
+  }
+
+  invalidateProjectQuery(slug: string) {
+    return this.#queryClient.invalidateQueries({
+      queryKey: ['notes.getProject', slug],
+    });
+  }
+
+  getProjectNotesQuery(slug: string) {
     return useQuery(
       () => ({
         queryKey: ['notes.getProjectNotes', slug],

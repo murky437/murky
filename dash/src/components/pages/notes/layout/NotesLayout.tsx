@@ -2,7 +2,7 @@ import { onMount, type ParentComponent, Show } from 'solid-js';
 import styles from './NotesLayout.module.css';
 import { EditProjectModal } from '../elements/modal/EditProjectModal.tsx';
 import { AddProjectModal } from '../elements/modal/AddProjectModal.tsx';
-import { useNavigate } from '@solidjs/router';
+import { useNavigate, useParams } from '@solidjs/router';
 import { useApp } from '../../../../app/appContext.tsx';
 import { Sidebar } from '../elements/Sidebar.tsx';
 import { Logo } from '../elements/Logo.tsx';
@@ -10,6 +10,7 @@ import { Logo } from '../elements/Logo.tsx';
 const NotesLayout: ParentComponent = props => {
   const app = useApp();
   const navigate = useNavigate();
+  const params = useParams();
 
   const closeAddModal = () => {
     app.client.notes.setIsAddModalOpen(false);
@@ -19,12 +20,18 @@ const NotesLayout: ParentComponent = props => {
     app.client.notes.setEditModalProject(null);
   };
 
-  const loadProjects = async () => {
+  const loadProjects = async (oldSlug?: string, newSlug?: string) => {
     await app.server.notes.invalidateProjectListQuery();
+    if (oldSlug && newSlug) {
+      if (oldSlug === params.slug && oldSlug !== newSlug) {
+        navigate(`/notes/${newSlug}`);
+      } else {
+        await app.server.notes.invalidateProjectQuery(newSlug);
+      }
+    }
   };
 
   const onDeleteProject = async () => {
-    // Redirect to base page to check if current project was deleted, and then it will redirect to an existing one
     navigate(`/notes`, { replace: true });
   };
 

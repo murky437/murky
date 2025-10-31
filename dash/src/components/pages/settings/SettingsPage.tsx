@@ -1,7 +1,8 @@
 import { useApp } from '../../../app/appContext.tsx';
 import styles from './SettingsPage.module.css';
+import type { Component } from 'solid-js';
 
-const SettingsPage = () => {
+const SettingsPage: Component = () => {
   const app = useApp();
 
   const handleLogout = async () => {

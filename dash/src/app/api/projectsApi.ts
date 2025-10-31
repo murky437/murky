@@ -5,6 +5,11 @@ interface GetProjectListResponse {
   data: Project[];
 }
 
+interface GetProjectResponse {
+  title: string;
+  slug: string;
+}
+
 interface GetProjectNotesResponse {
   notes: string;
 }
@@ -35,8 +40,12 @@ class ProjectsApi {
     return data.data;
   }
 
+  async get(slug: string): Promise<Project> {
+    return await this.#api.fetch<GetProjectResponse>(`/projects/${slug}`);
+  }
+
   async getNotes(slug: string): Promise<string> {
-    const data = await this.#api.fetch<GetProjectNotesResponse>(`/projects/${slug}`);
+    const data = await this.#api.fetch<GetProjectNotesResponse>(`/projects/${slug}/notes`);
     return data.notes;
   }
 
