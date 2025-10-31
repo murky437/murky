@@ -1,5 +1,6 @@
 :8081 {
     reverse_proxy localhost:8080
+    encode gzip zstd
 
     log {
         output file ./server/api/logs/access.log {
@@ -14,6 +15,7 @@
     root * ./server/dash/deployments/current
     try_files {path} /index.html
     file_server
+    encode gzip zstd
 
     log {
         output file ./server/dash/logs/access.log {
