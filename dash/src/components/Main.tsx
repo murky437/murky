@@ -12,6 +12,7 @@ import { NotesLayout } from './pages/notes/layout/NotesLayout.tsx';
 import { QueryClientProvider } from '@tanstack/solid-query';
 import { SettingsPage } from './pages/settings/SettingsPage.tsx';
 import { AppsPage } from './pages/apps/AppsPage.tsx';
+import { NotFoundPage } from './pages/404/NotFoundPage.tsx';
 
 interface Props {
   app: App;
@@ -32,6 +33,7 @@ const Main: Component<Props> = props => {
               <Route path={'/notes/:slug'} component={OpenNotesPage} />
             </Route>
           </Route>
+          <Route path="*" component={NotFoundPage} />
         </Router>
       </QueryClientProvider>
     </AppContext.Provider>
