@@ -58,12 +58,6 @@ const Sidebar: Component = () => {
     state.isSidebarVisible = false;
   };
 
-  // TODO: move this to settings page
-  // const handleLogout = async () => {
-  //   await app.server.auth.deleteRefreshToken();
-  //   await app.reset();
-  // };
-
   onMount(() => {
     hideSidebar();
   });

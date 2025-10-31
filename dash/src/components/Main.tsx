@@ -10,6 +10,7 @@ import { OpenNotesPage } from './pages/notes/OpenNotesPage.tsx';
 import { AppContext } from '../app/appContext.tsx';
 import { NotesLayout } from './pages/notes/layout/NotesLayout.tsx';
 import { QueryClientProvider } from '@tanstack/solid-query';
+import { SettingsPage } from './pages/settings/SettingsPage.tsx';
 
 interface Props {
   app: App;
@@ -23,6 +24,7 @@ const Main: Component<Props> = props => {
           <Route path={'/login'} component={LoginPage} />
           <Route component={AuthGuard}>
             <Route path={'/'} component={IndexPage} />
+            <Route path={'/settings'} component={SettingsPage} />
             <Route component={NotesLayout}>
               <Route path={'/notes'} component={NotesBasePage} />
               <Route path={'/notes/:slug'} component={OpenNotesPage} />
