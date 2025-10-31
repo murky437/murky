@@ -33,6 +33,7 @@ func NewMux(c *Container) *http.ServeMux {
 	protectedMux.HandleFunc("GET /projects", project.GetList(c.Db))
 	protectedMux.HandleFunc("GET /projects/{slug}", project.Get(c.Db))
 	protectedMux.HandleFunc("PUT /projects/{slug}", routing.Chain(project.Update(c.Db), routing.RequireJSON))
+	protectedMux.HandleFunc("GET /projects/{slug}/notes", project.GetNotes(c.Db))
 	protectedMux.HandleFunc("PUT /projects/{slug}/notes", routing.Chain(project.UpdateNotes(c.Db), routing.RequireJSON))
 	protectedMux.HandleFunc("DELETE /projects/{slug}", project.Delete(c.Db))
 

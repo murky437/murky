@@ -13,8 +13,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestGetUnauthorized(t *testing.T) {
-	req := httptest.NewRequest(http.MethodGet, "/projects/1", nil)
+func TestGetNotesUnauthorized(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "/projects/1/notes", nil)
 	rr := httptest.NewRecorder()
 
 	c := app.NewTestContainer(t)
@@ -24,14 +24,14 @@ func TestGetUnauthorized(t *testing.T) {
 	require.Equal(t, http.StatusUnauthorized, rr.Code)
 }
 
-func TestGetOtherUserNotFound(t *testing.T) {
+func TestGetOtherUserNotesNotFound(t *testing.T) {
 	c := app.NewTestContainer(t)
 	defer c.Close()
 
 	token, err := c.JwtService.CreateAccessToken(model.User{Id: 1, Username: "user"}, time.Now().Add(time.Hour))
 	require.NoError(t, err)
 
-	req := httptest.NewRequest(http.MethodGet, "/projects/project-4", nil)
+	req := httptest.NewRequest(http.MethodGet, "/projects/project-4/notes", nil)
 	req.Header.Add("Authorization", "Bearer "+token)
 	rr := httptest.NewRecorder()
 
@@ -40,14 +40,14 @@ func TestGetOtherUserNotFound(t *testing.T) {
 	require.Equal(t, http.StatusNotFound, rr.Code)
 }
 
-func TestGetSuccess(t *testing.T) {
+func TestGetNotesSuccess(t *testing.T) {
 	c := app.NewTestContainer(t)
 	defer c.Close()
 
 	token, err := c.JwtService.CreateAccessToken(model.User{Id: 1, Username: "user"}, time.Now().Add(time.Hour))
 	require.NoError(t, err)
 
-	req := httptest.NewRequest(http.MethodGet, "/projects/project-1", nil)
+	req := httptest.NewRequest(http.MethodGet, "/projects/project-1/notes", nil)
 	req.Header.Add("Authorization", "Bearer "+token)
 	rr := httptest.NewRecorder()
 
@@ -55,12 +55,11 @@ func TestGetSuccess(t *testing.T) {
 
 	require.Equal(t, http.StatusOK, rr.Code)
 
-	var resp project.GetResponse
+	var resp project.GetNotesResponse
 	err = json.Unmarshal(rr.Body.Bytes(), &resp)
 	require.NoError(t, err)
 
-	require.Equal(t, project.GetResponse{
-		Title: "Project 1",
-		Slug:  "project-1",
+	require.Equal(t, project.GetNotesResponse{
+		Notes: "",
 	}, resp)
 }

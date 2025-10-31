@@ -55,6 +55,11 @@ type ListItem struct {
 }
 
 type GetResponse struct {
+	Title string `json:"title"`
+	Slug  string `json:"slug"`
+}
+
+type GetNotesResponse struct {
 	Notes string `json:"notes"`
 }
 

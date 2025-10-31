@@ -77,13 +77,32 @@ func Get(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		user := context.GetCurrentUser(r)
 
-		project, err := model.GetProjectNotesByUserIdAndSlug(db, user.Id, r.PathValue("slug"))
+		project, err := model.GetProjectByUserIdAndSlug(db, user.Id, r.PathValue("slug"))
 		if err != nil {
 			routing.WriteNotFoundResponse(w)
 			return
 		}
 
 		resp := GetResponse{
+			Title: project.Title,
+			Slug:  project.Slug,
+		}
+
+		routing.WriteJsonResponse(w, http.StatusOK, resp)
+	}
+}
+
+func GetNotes(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		user := context.GetCurrentUser(r)
+
+		project, err := model.GetProjectNotesByUserIdAndSlug(db, user.Id, r.PathValue("slug"))
+		if err != nil {
+			routing.WriteNotFoundResponse(w)
+			return
+		}
+
+		resp := GetNotesResponse{
 			Notes: project.Notes,
 		}
 
