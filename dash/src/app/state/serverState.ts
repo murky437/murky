@@ -13,7 +13,13 @@ class ServerState {
   readonly status: StatusRequests;
 
   constructor(authApi: AuthApi, projectsApi: ProjectsApi, statusApi: StatusApi) {
-    this.queryClient = new QueryClient();
+    this.queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    });
 
     // Make QueryClient refetchOnWindowFocus also listen to 'focus' event in addition to the default 'visibilitychange' event
     focusManager.setEventListener(onFocus => {
