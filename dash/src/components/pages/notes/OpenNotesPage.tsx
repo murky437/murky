@@ -3,7 +3,7 @@ import { EditorView, keymap } from '@codemirror/view';
 import { EditorState } from '@codemirror/state';
 import { vim } from '@replit/codemirror-vim';
 import { indentWithTab } from '@codemirror/commands';
-import { type Component, createEffect, onCleanup, onMount } from 'solid-js';
+import { type Component, createEffect, onCleanup } from 'solid-js';
 import { type RouteSectionProps, useNavigate, useParams } from '@solidjs/router';
 import { debounce } from '../../../util/debounce.ts';
 import { basicSetup } from 'codemirror';
@@ -17,7 +17,6 @@ const OpenNotesPage: Component<RouteSectionProps> = () => {
   const app = useApp();
   let wrapperDiv!: HTMLDivElement;
   let editorView: EditorView | null = null;
-  let fetchedNotes: string | null = null;
   const params = useParams();
   const navigate = useNavigate();
   const state = createMutable({
@@ -31,13 +30,7 @@ const OpenNotesPage: Component<RouteSectionProps> = () => {
     await app.server.notes.updateProjectNotes(slug, notes);
   }, 300);
 
-  const focusEditor = () => {
-    if (!editorView?.hasFocus) {
-      editorView?.focus();
-    }
-  };
-
-  onMount(() => {
+  const createEditor = (initialNotes: string) => {
     const extensions = [
       basicSetup,
       EditorView.lineWrapping,
@@ -45,14 +38,6 @@ const OpenNotesPage: Component<RouteSectionProps> = () => {
       EditorView.updateListener.of(e => {
         if (e.docChanged) {
           let doc = e.state.doc.toString();
-
-          // ignore update event triggered by initial fetch from api
-          if (fetchedNotes !== null && doc === fetchedNotes) {
-            fetchedNotes = null;
-            return;
-          }
-          fetchedNotes = null;
-
           updateNotes(params.slug, doc);
         }
       }),
@@ -62,13 +47,24 @@ const OpenNotesPage: Component<RouteSectionProps> = () => {
       extensions.push(vim());
     }
 
+    if (editorView) {
+      editorView.destroy();
+    }
+
     editorView = new EditorView({
       state: EditorState.create({
+        doc: initialNotes,
         extensions: extensions,
       }),
       parent: wrapperDiv,
     });
-  });
+  };
+
+  const focusEditor = () => {
+    if (editorView && !editorView.hasFocus) {
+      editorView.focus();
+    }
+  };
 
   onCleanup(() => {
     if (editorView) {
@@ -80,14 +76,7 @@ const OpenNotesPage: Component<RouteSectionProps> = () => {
     const notesQuery = app.server.notes.getProjectNotesQuery(params.slug);
     createEffect(() => {
       if (notesQuery.isSuccess) {
-        fetchedNotes = notesQuery.data;
-        editorView?.dispatch({
-          changes: {
-            from: 0,
-            to: editorView.state.doc.length,
-            insert: fetchedNotes,
-          },
-        });
+        createEditor(notesQuery.data);
       }
     });
   });
