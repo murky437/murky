@@ -25,7 +25,7 @@
   .requestStatus {
     text-align: center;
     background-color: var(--color-black-1d);
-    width: calc(56px + calc(14px / tan(60deg) / 2));
+    width: calc(52px + calc(14px / tan(60deg) / 2));
     clip-path: polygon(0 0, 100% 0, 100% 100%, calc(calc(18px / tan(60deg))) 100%);
     padding-left: calc(18px / tan(60deg) / 2);
     height: 14px;

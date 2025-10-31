@@ -54,6 +54,10 @@ const Sidebar: Component = () => {
     state.isSidebarVisible = !state.isSidebarVisible;
   };
 
+  const hideSidebar = () => {
+    state.isSidebarVisible = false;
+  };
+
   // TODO: move this to settings page
   // const handleLogout = async () => {
   //   await app.server.auth.deleteRefreshToken();
@@ -61,14 +65,14 @@ const Sidebar: Component = () => {
   // };
 
   onMount(() => {
-    state.isSidebarVisible = false;
+    hideSidebar();
   });
 
   createEffect(
     on(
       () => [location.pathname],
       () => {
-        state.isSidebarVisible = false;
+        hideSidebar();
       }
     )
   );
@@ -96,7 +100,7 @@ const Sidebar: Component = () => {
                   {project => (
                     <li onContextMenu={e => setContextMenu(e, 'Project', project)}>
                       <label for={styles.revealCheckbox}>
-                        <A href={`/notes/${project.slug}`} onClick={toggleSidebarVisibility}>
+                        <A href={`/notes/${project.slug}`} onClick={hideSidebar}>
                           {project.title}
                         </A>
                       </label>
@@ -106,11 +110,11 @@ const Sidebar: Component = () => {
               </ul>
             </div>
             <div class={styles.bottomLinks}>
-              <A href={'/apps'} onClick={toggleSidebarVisibility}>
+              <A href={'/apps'} onClick={hideSidebar}>
                 Other apps
               </A>
               <div class={styles.separator}></div>
-              <A href={'/settings'} onClick={toggleSidebarVisibility}>
+              <A href={'/settings'} onClick={hideSidebar}>
                 Settings
               </A>
             </div>
