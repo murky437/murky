@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"murky_api/internal/model"
 	"murky_api/internal/validation"
+	"regexp"
 	"strings"
 )
 
@@ -24,6 +25,28 @@ func (request *CreateRequest) Validate(db *sql.DB) *validation.Result {
 
 	if strings.TrimSpace(request.Slug) == "" {
 		result.FieldErrors["slug"] = append(result.FieldErrors["slug"], validation.NotBlankMessage)
+	}
+
+	if len(request.Title) < 2 {
+		result.FieldErrors["title"] = append(result.FieldErrors["title"], "Has to be at least 2 characters long.")
+	}
+
+	if len(request.Slug) < 2 {
+		result.FieldErrors["slug"] = append(result.FieldErrors["slug"], "Has to be at least 2 characters long.")
+	}
+
+	matchedTitle := regexp.MustCompile(`^[a-zA-Z0-9\- ]+$`).MatchString(request.Title)
+	if !matchedTitle {
+		result.FieldErrors["title"] = append(result.FieldErrors["title"], "Must only contain letters, numbers, dashes and spaces.")
+	}
+
+	matchedSlug := regexp.MustCompile(`^[a-zA-Z0-9\-]+$`).MatchString(request.Slug)
+	if !matchedSlug {
+		result.FieldErrors["slug"] = append(result.FieldErrors["slug"], "Must only contain letters, numbers and dashes.")
+	}
+
+	if len(result.GeneralErrors) > 0 || len(result.FieldErrors) > 0 {
+		return result
 	}
 
 	if isUnique, _ := model.IsProjectSlugUnique(db, request.Slug, model.SlugCheckOptions{}); !isUnique {
@@ -80,6 +103,28 @@ func (request *UpdateRequest) Validate(db *sql.DB, currentSlug string) *validati
 
 	if strings.TrimSpace(request.Slug) == "" {
 		result.FieldErrors["slug"] = append(result.FieldErrors["slug"], validation.NotBlankMessage)
+	}
+
+	if len(request.Title) < 2 {
+		result.FieldErrors["title"] = append(result.FieldErrors["title"], "Has to be at least 2 characters long.")
+	}
+
+	if len(request.Slug) < 2 {
+		result.FieldErrors["slug"] = append(result.FieldErrors["slug"], "Has to be at least 2 characters long.")
+	}
+
+	matchedTitle := regexp.MustCompile(`^[a-zA-Z0-9\- ]+$`).MatchString(request.Title)
+	if !matchedTitle {
+		result.FieldErrors["title"] = append(result.FieldErrors["title"], "Must only contain letters, numbers, dashes and spaces.")
+	}
+
+	matchedSlug := regexp.MustCompile(`^[a-zA-Z0-9\-]+$`).MatchString(request.Slug)
+	if !matchedSlug {
+		result.FieldErrors["slug"] = append(result.FieldErrors["slug"], "Must only contain letters, numbers and dashes.")
+	}
+
+	if len(result.GeneralErrors) > 0 || len(result.FieldErrors) > 0 {
+		return result
 	}
 
 	if isUnique, _ := model.IsProjectSlugUnique(db, request.Slug, model.SlugCheckOptions{CurrentSlug: currentSlug}); !isUnique {

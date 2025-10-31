@@ -81,8 +81,16 @@ func TestUpdateValidationError(t *testing.T) {
 	err = json.Unmarshal(rr.Body.Bytes(), &resp)
 	require.NoError(t, err)
 
-	require.Equal(t, []string{"Must not be blank."}, resp.FieldErrors["title"])
-	require.Equal(t, []string{"Must not be blank."}, resp.FieldErrors["slug"])
+	require.Equal(t, []string{
+		"Must not be blank.",
+		"Has to be at least 2 characters long.",
+		"Must only contain letters, numbers, dashes and spaces.",
+	}, resp.FieldErrors["title"])
+	require.Equal(t, []string{
+		"Must not be blank.",
+		"Has to be at least 2 characters long.",
+		"Must only contain letters, numbers and dashes.",
+	}, resp.FieldErrors["slug"])
 }
 
 func TestUpdateNotUniqueSlugError(t *testing.T) {
