@@ -9,14 +9,17 @@ const NotesBasePage: Component<RouteSectionProps> = () => {
   const projectListQuery = app.server.notes.getProjectListQuery();
 
   createEffect(() => {
-    if (!projectListQuery.data || projectListQuery.data.length === 0) {
+    if (
+      projectListQuery.isFetching ||
+      !projectListQuery.data ||
+      projectListQuery.data.length === 0
+    ) {
       return;
     }
 
     const lastViewedProjectSlug = app.client.notes.getLastViewedProjectSlug();
     if (lastViewedProjectSlug) {
       const found = projectListQuery.data.find(p => p.slug === lastViewedProjectSlug);
-
       if (found) {
         navigate(`/notes/${lastViewedProjectSlug}`, { replace: true });
         return;

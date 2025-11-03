@@ -1,4 +1,4 @@
-import { onMount, type ParentComponent, Show } from 'solid-js';
+import { type ParentComponent, Show } from 'solid-js';
 import styles from './NotesLayout.module.css';
 import { EditProjectModal } from '../elements/modal/EditProjectModal.tsx';
 import { AddProjectModal } from '../elements/modal/AddProjectModal.tsx';
@@ -20,24 +20,26 @@ const NotesLayout: ParentComponent = props => {
     app.client.notes.setEditModalProject(null);
   };
 
-  const loadProjects = async (oldSlug?: string, newSlug?: string) => {
+  const onAddProject = async () => {
     await app.server.notes.invalidateProjectListQuery();
-    if (oldSlug && newSlug) {
-      if (oldSlug === params.slug && oldSlug !== newSlug) {
-        navigate(`/notes/${newSlug}`);
-      } else {
-        await app.server.notes.invalidateProjectQuery(newSlug);
-      }
+  };
+
+  const onEditProject = async (oldSlug: string, newSlug: string) => {
+    await app.server.notes.invalidateProjectListQuery();
+    if (oldSlug === params.slug && oldSlug !== newSlug) {
+      navigate(`/notes/${newSlug}`, { replace: true });
+    } else {
+      await app.server.notes.invalidateProjectQuery(newSlug);
     }
   };
 
-  const onDeleteProject = async () => {
-    navigate(`/notes`, { replace: true });
+  const onDeleteProject = async (deletedSlug: string) => {
+    if (deletedSlug === params.slug) {
+      navigate(`/notes`, { replace: true });
+    } else {
+      await app.server.notes.invalidateProjectListQuery();
+    }
   };
-
-  onMount(async () => {
-    await loadProjects();
-  });
 
   return (
     <>
@@ -50,12 +52,12 @@ const NotesLayout: ParentComponent = props => {
         <EditProjectModal
           project={app.client.notes.getEditModalProject()!}
           onClose={closeEditModal}
-          onSuccess={loadProjects}
+          onSuccess={onEditProject}
           onDelete={onDeleteProject}
         />
       </Show>
       <Show when={app.client.notes.isAddModalOpen()}>
-        <AddProjectModal onClose={closeAddModal} onSuccess={loadProjects} />
+        <AddProjectModal onClose={closeAddModal} onSuccess={onAddProject} />
       </Show>
     </>
   );

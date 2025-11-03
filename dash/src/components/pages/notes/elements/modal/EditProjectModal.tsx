@@ -12,7 +12,7 @@ interface Props {
   project: Project;
   onClose: () => void;
   onSuccess: (oldSlug: string, newSlug: string) => void;
-  onDelete: () => void;
+  onDelete: (deletedSlug: string) => void;
 }
 
 const EditProjectModal: Component<Props> = props => {
@@ -56,7 +56,7 @@ const EditProjectModal: Component<Props> = props => {
   const del = async () => {
     if (confirm(`Are you sure you want to delete ${props.project.title}?`)) {
       await app.server.notes.deleteProject(props.project.slug);
-      props.onDelete();
+      props.onDelete(props.project.slug);
       props.onClose();
     }
   };
