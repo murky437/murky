@@ -17,13 +17,16 @@ test('Log out from notes page', async () => {
 
   const sidebar = screen.getByTestId('sidebar');
 
-  const menuDiv = within(sidebar).getByText('☰');
+  const menuDiv = within(sidebar).getByText('Settings');
   expect(menuDiv).toBeInTheDocument();
 
   fireEvent.click(menuDiv);
 
-  const contextMenu = screen.getByTestId('context-menu');
-  const logoutButton = within(contextMenu).getByRole('button', { name: 'Log out' });
+  await waitFor(() => {
+    expect(window.location.pathname).toBe('/settings');
+  });
+
+  const logoutButton = screen.getByRole('button', { name: 'Log out' });
   expect(logoutButton).toBeInTheDocument();
 
   fireEvent.click(logoutButton);
