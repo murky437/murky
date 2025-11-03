@@ -48,7 +48,7 @@ test('Logging in', async () => {
     fieldErrors: { password: ['Must not be blank.'] },
     generalErrors: [],
   });
-  fireEvent.change(username, { target: { value: 'user' } });
+  fireEvent.input(username, { target: { value: 'user' } });
   fireEvent.click(button);
   await waitFor(() => {
     expect(password.nextElementSibling?.textContent).toMatch('Must not be blank.');
@@ -59,7 +59,7 @@ test('Logging in', async () => {
     fieldErrors: {},
     generalErrors: ['Invalid credentials'],
   });
-  fireEvent.change(password, { target: { value: 'wrong' } });
+  fireEvent.input(password, { target: { value: 'wrong' } });
   fireEvent.click(button);
   await waitFor(() => {
     expect(formQueries.getByText('Invalid credentials')).toBeInTheDocument();
@@ -67,7 +67,7 @@ test('Logging in', async () => {
 
   // correct credentials
   spy.mockResolvedValue({ accessToken: 'ok' });
-  fireEvent.change(password, { target: { value: 'correct' } });
+  fireEvent.input(password, { target: { value: 'correct' } });
   fireEvent.click(button);
   await waitFor(() => {
     expect(app.client.auth.isAuthenticated()).toBe(true);
