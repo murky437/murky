@@ -33,7 +33,6 @@ func setupDatabase(conf *config.Config) *sql.DB {
 	}
 
 	setDatabasePragmas(db)
-	logDatabasePragmas(db)
 
 	return db
 }
@@ -58,38 +57,6 @@ func setDatabasePragmas(db *sql.DB) {
 	if _, err := db.Exec("PRAGMA synchronous=NORMAL;"); err != nil {
 		log.Fatal(err)
 	}
-}
-
-func logDatabasePragmas(db *sql.DB) {
-	var journalMode string
-	if err := db.QueryRow("PRAGMA journal_mode;").Scan(&journalMode); err != nil {
-		log.Fatal(err)
-	}
-	log.Println("SQLite journal_mode:", journalMode)
-
-	var fk int
-	if err := db.QueryRow("PRAGMA foreign_keys;").Scan(&fk); err != nil {
-		log.Fatal(err)
-	}
-	log.Println("SQLite foreign_keys:", fk)
-
-	var busy int
-	if err := db.QueryRow("PRAGMA busy_timeout;").Scan(&busy); err != nil {
-		log.Fatal(err)
-	}
-	log.Println("SQLite busy_timeout (ms):", busy)
-
-	var tempStore int
-	if err := db.QueryRow("PRAGMA temp_store;").Scan(&tempStore); err != nil {
-		log.Fatal(err)
-	}
-	log.Println("SQLite temp_store:", tempStore)
-
-	var sync int
-	if err := db.QueryRow("PRAGMA synchronous;").Scan(&sync); err != nil {
-		log.Fatal(err)
-	}
-	log.Println("SQLite synchronous:", sync)
 }
 
 func (c *Container) Close() error {

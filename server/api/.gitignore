@@ -1,4 +1,4 @@
 deployments
 database_backups
 logs
-.env
+.env.local

@@ -12,6 +12,9 @@ type Config struct {
 	AccessTokenSecret  string
 	RefreshTokenSecret string
 	DeployFilePath     string
+	DbBackupDir        string
+	RedisAddress       string
+	Timezone           string
 }
 
 func NewConfig() *Config {
@@ -24,5 +27,8 @@ func NewConfig() *Config {
 		AccessTokenSecret:  os.Getenv("ACCESS_TOKEN_SECRET"),
 		RefreshTokenSecret: os.Getenv("REFRESH_TOKEN_SECRET"),
 		DeployFilePath:     deployFilePath,
+		DbBackupDir:        os.Getenv("DB_BACKUP_DIR"),
+		RedisAddress:       os.Getenv("REDIS_ADDRESS"),
+		Timezone:           os.Getenv("TIMEZONE"),
 	}
 }

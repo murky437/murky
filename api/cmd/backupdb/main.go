@@ -22,7 +22,7 @@ func main() {
 
 	err := os.MkdirAll(backupDir, 0755)
 	if err != nil {
-		log.Fatal("Error creating backup directory:", err)
+		log.Println("Error creating backup directory:", err)
 		return
 	}
 
@@ -31,16 +31,18 @@ func main() {
 
 	db, err := sql.Open("sqlite", dbPath)
 	if err != nil {
-		log.Fatal("Failed to open source DB:", err)
+		log.Println("Failed to open source DB:", err)
+		return
 	}
 	defer db.Close()
 
 	_, err = db.Exec("VACUUM INTO ?", backupPath)
 	if err != nil {
-		log.Fatal("Failed to create backup:", err)
+		log.Println("Failed to create backup:", err)
+		return
 	}
 
-	fmt.Println("Backup created at:", backupPath)
+	log.Println("Backup created at:", backupPath)
 
 	// TODO: upload backup to s3
 	// TODO: prune old backups (keep min 7 latest, delete others that are older than week)

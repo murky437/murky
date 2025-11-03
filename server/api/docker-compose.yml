@@ -5,7 +5,15 @@ services:
     restart: unless-stopped
     volumes:
       - ./deployments/current:/app
+      - ./database_backups:/db_backups
     ports:
       - "8080:8080"
     env_file:
       - .env
+      - .env.local
+    depends_on:
+      - redis
+  redis:
+    image: redis:latest
+    container_name: murky_redis_prod
+    restart: unless-stopped
