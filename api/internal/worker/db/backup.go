@@ -1,0 +1,147 @@
+package db
+
+import (
+	"context"
+	"database/sql"
+	"log"
+	"murky_api/internal/config"
+	"murky_api/internal/s3"
+	"os"
+	"path/filepath"
+	"sort"
+	"strings"
+	"time"
+
+	"github.com/hibiken/asynq"
+)
+
+const (
+	NumOfDbBackupsToKeep = 7
+)
+
+func HandleDbBackup(conf config.Config, s3Client s3.Client) asynq.HandlerFunc {
+	return func(ctx context.Context, t *asynq.Task) error {
+		backupFilePath, err := createDbBackup(conf)
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+
+		err = uploadBackupToS3(s3Client, backupFilePath, conf.S3DbBackupPath)
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+
+		err = deleteOldBackupsFromLocal(conf.DbBackupDir, NumOfDbBackupsToKeep)
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+
+		err = deleteOldBackupsFromS3(s3Client, conf.S3DbBackupPath, NumOfDbBackupsToKeep)
+		if err != nil {
+			log.Println(err)
+			return err
+		}
+
+		return nil
+	}
+}
+
+func createDbBackup(conf config.Config) (backupFilePath string, err error) {
+	timestamp := time.Now().Format("20060102T150405")
+	backupFilePath = filepath.Join(conf.DbBackupDir, timestamp+".sqlite3")
+
+	db, err := sql.Open("sqlite", conf.DbFilePath)
+	if err != nil {
+		return backupFilePath, err
+	}
+	defer db.Close()
+
+	_, err = db.Exec("VACUUM INTO ?", backupFilePath)
+	if err != nil {
+		return backupFilePath, err
+	}
+
+	log.Println("Backup created at:", backupFilePath)
+
+	return backupFilePath, nil
+}
+
+func uploadBackupToS3(s3Client s3.Client, backupFilePath string, s3DbBackupPath string) error {
+	f, err := os.Open(backupFilePath)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	key := strings.TrimSuffix(s3DbBackupPath, "/") + "/" + filepath.Base(backupFilePath)
+
+	err = s3Client.Upload(key, f)
+	if err != nil {
+		return err
+	}
+
+	log.Println("Backup uploaded to s3")
+
+	return nil
+}
+
+func deleteOldBackupsFromLocal(dbBackupDir string, keep int) error {
+	entries, err := os.ReadDir(dbBackupDir)
+	if err != nil {
+		return err
+	}
+
+	var backups []string
+	for _, e := range entries {
+		if !e.IsDir() && strings.HasSuffix(e.Name(), ".sqlite3") {
+			backups = append(backups, e.Name())
+		}
+	}
+
+	if len(backups) <= keep {
+		return nil
+	}
+
+	sort.Strings(backups)
+
+	toDelete := backups[:len(backups)-keep]
+
+	for _, f := range toDelete {
+		_ = os.Remove(filepath.Join(dbBackupDir, f))
+	}
+
+	log.Println("Deleted old backups from local")
+
+	return nil
+}
+
+func deleteOldBackupsFromS3(client s3.Client, s3DbBackupPath string, keep int) error {
+	listOutput, err := client.ListObjects(s3DbBackupPath)
+	if err != nil {
+		return err
+	}
+
+	var keys []string
+	for _, obj := range listOutput.Contents {
+		if strings.HasSuffix(*obj.Key, ".sqlite3") {
+			keys = append(keys, *obj.Key)
+		}
+	}
+
+	if len(keys) <= keep {
+		return nil
+	}
+
+	sort.Strings(keys)
+
+	for _, k := range keys[:len(keys)-keep] {
+		_, _ = client.DeleteObject(k)
+	}
+
+	log.Println("Deleted old backups from s3")
+
+	return nil
+}

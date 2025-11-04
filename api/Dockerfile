@@ -12,6 +12,7 @@ FROM base AS dev
 RUN apt-get update && apt-get install sqlite3
 
 RUN go install github.com/air-verse/air@latest
+RUN go install github.com/hibiken/asynq/tools/asynq@latest
 
 CMD ["air"]
 

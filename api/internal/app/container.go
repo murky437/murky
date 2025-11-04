@@ -5,6 +5,7 @@ import (
 	"log"
 	"murky_api/internal/config"
 	"murky_api/internal/jwt"
+	"murky_api/internal/s3"
 
 	_ "modernc.org/sqlite"
 )
@@ -13,16 +14,22 @@ type Container struct {
 	Config     *config.Config
 	Db         *sql.DB
 	JwtService jwt.Service
+	S3Client   *s3.Client
 }
 
 func NewContainer() *Container {
 	conf := config.NewConfig()
 	db := setupDatabase(conf)
 	jwtService := jwt.NewService(conf)
+	s3Client, err := s3.NewClient(conf)
+	if err != nil {
+		log.Fatal(err)
+	}
 	return &Container{
 		Config:     conf,
 		Db:         db,
 		JwtService: jwtService,
+		S3Client:   s3Client,
 	}
 }
 

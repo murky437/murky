@@ -3,11 +3,13 @@ package worker
 import (
 	"log"
 	"murky_api/internal/config"
+	"murky_api/internal/s3"
+	"murky_api/internal/worker/db"
 
 	"github.com/hibiken/asynq"
 )
 
-func StartServer(conf config.Config) {
+func StartServer(conf config.Config, s3Client s3.Client) {
 	log.Println("Starting worker server...")
 
 	server := asynq.NewServer(
@@ -18,7 +20,7 @@ func StartServer(conf config.Config) {
 	)
 
 	mux := asynq.NewServeMux()
-	mux.HandleFunc(TypeDbBackup, HandleDbBackup(&conf))
+	mux.HandleFunc(TypeDbBackup, db.HandleDbBackup(conf, s3Client))
 
 	err := server.Run(mux)
 	if err != nil {

@@ -15,7 +15,7 @@ func main() {
 		}
 	}(c)
 
-	go worker.StartServer(*c.Config)
+	go worker.StartServer(*c.Config, *c.S3Client)
 	go worker.StartScheduler(*c.Config)
 
 	app.StartApiServer(c)

@@ -15,6 +15,10 @@ type Config struct {
 	DbBackupDir        string
 	RedisAddress       string
 	Timezone           string
+	AwsRegion          string
+	AwsEndpointUrl     string
+	S3Bucket           string
+	S3DbBackupPath     string
 }
 
 func NewConfig() *Config {
@@ -30,5 +34,8 @@ func NewConfig() *Config {
 		DbBackupDir:        os.Getenv("DB_BACKUP_DIR"),
 		RedisAddress:       os.Getenv("REDIS_ADDRESS"),
 		Timezone:           os.Getenv("TIMEZONE"),
+		AwsRegion:          os.Getenv("AWS_REGION"),
+		AwsEndpointUrl:     os.Getenv("AWS_ENDPOINT_URL"),
+		S3Bucket:           os.Getenv("S3_BUCKET"),
 	}
 }
