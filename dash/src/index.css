@@ -7,28 +7,32 @@
   --color-black-21: #212121;
   --color-black-28: #282828;
   --color-black-40: #404040;
-  --color-white-e8: #e8e8e8;
   --color-white-a8: #a8a8a8;
+  --color-white-e8: #e8e8e8;
 
-  --color-form-input-bg: #282828;
-  --color-form-input-fg: #e8e8e8;
-  --color-form-input-placeholder: #666666;
-
-  --color-meta-green: #80a37c;
-  --color-red: #fb4934;
+  --color-red: #e45746;
   --color-yellow: #fabd2f;
   --color-lightyellow: #edc990;
-  --color-brown: #665c54;
+  --color-off-white: #e8dbb7;
+  --color-meta-green: #80a37c;
   --color-purple: #c8899a;
+  --color-brown: #665c54;
 
+  /* TODO: move specific named colors to specific files */
   --color-line-numbers: #5C5A56;
-  --color-editor-fg: #E8DBB7;
+  --color-editor-fg: var(--color-off-white);
   --color-menu-icon: #72716E;
   --color-sidebar-list-inactive: #72716E;
   --color-sidebar-list-active: #ffffff;
+}
 
-  --font-mono: 'Consolas';
+:root {
   --font-sans: 'Open Sans';
+  --font-mono: 'Consolas';
+}
+
+:root {
+  --font-size-small: 0.875rem;
 }
 
 :root {
@@ -49,10 +53,10 @@ body {
   background-color: var(--color-black-28);
   color: var(--color-white-e8);
   font-family: var(--font-sans), sans-serif;
-  font-size: 16px;
 }
 
 input,
 button {
   font-family: var(--font-sans), sans-serif;
+  font-size: inherit;
 }

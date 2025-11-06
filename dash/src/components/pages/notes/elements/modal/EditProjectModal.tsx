@@ -1,11 +1,9 @@
 import { Modal } from '../../../../shared/modal/Modal.tsx';
 import type { Project } from '../../../../../app/domain/notes/types.ts';
 import styles from '../../../../shared/modal/Modal.module.css';
-import { type Component, onMount } from 'solid-js';
+import { type Component, For, onMount } from 'solid-js';
 import { createMutable } from 'solid-js/store';
 import { isGeneralError, isValidationError } from '../../../../../app/api/api.ts';
-import { GeneralErrors } from '../../../../shared/GeneralErrors.tsx';
-import { FieldError } from '../../../../shared/FieldError.tsx';
 import { useApp } from '../../../../../app/appContext.tsx';
 
 interface Props {
@@ -68,7 +66,9 @@ const EditProjectModal: Component<Props> = props => {
   return (
     <Modal title="Edit project" onClose={props.onClose}>
       <form class={styles.form} onSubmit={handleSubmit} data-testid="edit-project-form">
-        <GeneralErrors errors={state.generalErrors} />
+        <For each={state.generalErrors}>
+          {item => <div class={styles.generalError}>{item}</div>}
+        </For>
         <input
           ref={titleInputRef}
           class={styles.input}
@@ -76,14 +76,18 @@ const EditProjectModal: Component<Props> = props => {
           placeholder="Title"
           onChange={e => (state.title = e.target.value)}
         />
-        <FieldError fieldErrors={state.fieldErrors.title} />
+        <For each={state.fieldErrors.title}>
+          {item => <div class={styles.fieldError}>{item}</div>}
+        </For>
         <input
           class={styles.input}
           value={state.slug}
           placeholder="slug"
           onChange={e => (state.slug = e.target.value)}
         />
-        <FieldError fieldErrors={state.fieldErrors.slug} />
+        <For each={state.fieldErrors.slug}>
+          {item => <div class={styles.fieldError}>{item}</div>}
+        </For>
         <div class={styles.buttonWrapper}>
           <div class={styles.left}>
             <button class={`${styles.button} ${styles.delete}`} type="button" onClick={del}>

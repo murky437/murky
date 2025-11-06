@@ -1,9 +1,7 @@
 import { type RouteSectionProps, useNavigate } from '@solidjs/router';
-import { type Component, createEffect, onMount } from 'solid-js';
+import { type Component, createEffect, For, onMount } from 'solid-js';
 import styles from './LoginPage.module.css';
 import { createMutable } from 'solid-js/store';
-import { GeneralErrors } from '../../shared/GeneralErrors.tsx';
-import { FieldError } from '../../shared/FieldError.tsx';
 import { isGeneralError, isValidationError } from '../../../app/api/api.ts';
 import { useApp } from '../../../app/appContext.tsx';
 
@@ -21,8 +19,6 @@ const LoginPage: Component<RouteSectionProps> = () => {
 
   const handleSubmit = async (e: SubmitEvent) => {
     e.preventDefault();
-    state.generalErrors = [];
-    state.fieldErrors = {};
     state.loading = true;
 
     try {
@@ -31,6 +27,8 @@ const LoginPage: Component<RouteSectionProps> = () => {
         password: state.password,
       });
       app.client.auth.setAccessToken(response.accessToken);
+      state.generalErrors = [];
+      state.fieldErrors = {};
     } catch (err) {
       if (isValidationError(err)) {
         state.generalErrors = err.generalErrors || [];
@@ -56,28 +54,42 @@ const LoginPage: Component<RouteSectionProps> = () => {
   });
 
   return (
-    <div class={styles.wrapper}>
-      <form onSubmit={handleSubmit} data-testid="login-form">
-        <GeneralErrors errors={state.generalErrors} />
-        <input
-          type="text"
-          value={state.username}
-          onInput={e => (state.username = e.target.value)}
-          placeholder="Username"
-          ref={usernameInputRef}
-        />
-        <FieldError fieldErrors={state.fieldErrors.username} />
-        <input
-          type="password"
-          value={state.password}
-          onInput={e => (state.password = e.target.value)}
-          placeholder="Password"
-        />
-        <FieldError fieldErrors={state.fieldErrors.password} />
-        <button type="submit" disabled={state.loading}>
-          Log in
-        </button>
-      </form>
+    <div class={styles.loginPage}>
+      <div class={styles.formContainer}>
+        <form onSubmit={handleSubmit} data-testid="login-form">
+          <For each={state.generalErrors}>
+            {item => <div class={styles.generalError}>{item}</div>}
+          </For>
+          <label for="username">Username</label>
+          <input
+            id="username"
+            type="text"
+            value={state.username}
+            onInput={e => (state.username = e.target.value)}
+            ref={usernameInputRef}
+          />
+          <For each={state.fieldErrors.username}>
+            {item => <div class={styles.fieldError}>{item}</div>}
+          </For>
+          <label for="password">Password</label>
+          <input
+            id="password"
+            type="password"
+            value={state.password}
+            onInput={e => (state.password = e.target.value)}
+          />
+          <For each={state.fieldErrors.password}>
+            {item => <div class={styles.fieldError}>{item}</div>}
+          </For>
+          <button type="submit">Log in</button>
+        </form>
+      </div>
+      <div class={styles.bottom}>
+        <em>
+          <strong>Coming soon:</strong>
+        </em>{' '}
+        Try out the app as a guest.
+      </div>
     </div>
   );
 };

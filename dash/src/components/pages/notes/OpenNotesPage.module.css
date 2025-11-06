@@ -51,7 +51,7 @@
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48rem) {
   .wrapper {
     margin-top: 0;
 

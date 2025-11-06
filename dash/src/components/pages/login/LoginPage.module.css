@@ -1,50 +1,80 @@
-.wrapper {
+.loginPage {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
   height: 100vh;
 
-  form {
-    padding: 2rem;
+  .formContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
     width: 100%;
-    max-width: 240px;
-    box-sizing: border-box;
+    max-width: 12.5rem;
 
-    input {
+    form {
       width: 100%;
-      background-color: var(--color-form-input-bg);
-      color: var(--color-form-input-fg);
-      border: none;
-      margin-top: 15px;
-      font-family: inherit;
-      padding: 10px;
-      font-size: inherit;
-      outline: none;
+      box-sizing: border-box;
 
-      &:focus {
-        outline: 1px dashed var(--color-brown);
+      label {
+        color: var(--color-brown);
+        font-size: 0.875rem;
+        display: block;
+        padding: 0.313rem;
+        line-height: 0.983rem;
+        margin-top: 0.625rem;
       }
 
-      &::placeholder {
-        color: var(--color-form-input-placeholder);
-        font-size: inherit;
+      input {
+        display: block;
+        width: 100%;
+        background-color: var(--color-black-21);
+        color: var(--color-white-e8);
+        padding: 0 0.313rem;
+        border: none;
+        outline: none;
+        line-height: 2.5rem;
+        margin-bottom: 0.313rem;
+
+        &:focus {
+          outline: 1px dashed var(--color-brown);
+        }
+
+        &::placeholder {
+          color: var(--color-form-input-placeholder);
+        }
+      }
+
+      button {
+        padding: 0.625rem;
+        margin-top: 2.188rem;
+        width: 100%;
+        border: none;
+        cursor: pointer;
+        background-color: var(--color-brown);
+        color: var(--color-black-21);
+        font-weight: bold;
+        line-height: 2.5rem;
+
+        &:focus {
+          outline: 1px dashed var(--color-brown);
+        }
+      }
+
+      .fieldError, .generalError {
+        color: var(--color-red);
+        font-size: 0.875rem;
+        margin: 0 0 0.313rem 0.313rem;
       }
     }
+  }
 
-    button {
-      padding: 10px;
-      margin-top: 15px;
-      width: 50%;
-      border: none;
-      cursor: pointer;
-      background-color: var(--color-yellow);
-      color: var(--color-black-21);
-      font-size: 14px;
-      font-weight: bold;
-
-      &:focus {
-        outline: 1px dashed var(--color-yellow);
-      }
-    }
+  .bottom {
+    flex-basis: 6rem;
+    text-align: center;
+    color: var(--color-brown);
+    font-size: 0.875rem;
+    text-decoration: underline;
   }
 }

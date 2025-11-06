@@ -16,7 +16,7 @@
   text-align: center;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48rem) {
   .logo {
     width: calc(76px + calc(24px / tan(60deg) / 2));
     padding-right: calc(24px / tan(60deg) / 2);

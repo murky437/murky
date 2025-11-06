@@ -18,8 +18,8 @@ test('Logging in', async () => {
 
   const form = screen.getByTestId('login-form');
   const formQueries = within(form);
-  const username = formQueries.getByPlaceholderText('Username');
-  const password = formQueries.getByPlaceholderText('Password');
+  const username = formQueries.getByLabelText('Username');
+  const password = formQueries.getByLabelText('Password');
   const button = formQueries.getByRole('button', { name: /log in/i });
 
   // empty submit
