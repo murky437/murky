@@ -1,4 +1,4 @@
-package db
+package dbbackup
 
 import (
 	"context"
@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/hibiken/asynq"
@@ -19,9 +20,9 @@ const (
 	NumOfDbBackupsToKeep = 7
 )
 
-func HandleDbBackup(conf config.Config, s3Client s3.Client) asynq.HandlerFunc {
+func Handle(db *sql.DB, conf config.Config, s3Client s3.Client) asynq.HandlerFunc {
 	return func(ctx context.Context, t *asynq.Task) error {
-		backupFilePath, err := createDbBackup(conf)
+		backupFilePath, err := createDbBackup(db, conf)
 		if err != nil {
 			log.Println(err)
 			return err
@@ -49,18 +50,21 @@ func HandleDbBackup(conf config.Config, s3Client s3.Client) asynq.HandlerFunc {
 	}
 }
 
-func createDbBackup(conf config.Config) (backupFilePath string, err error) {
+var backupMu sync.Mutex
+
+func createDbBackup(db *sql.DB, conf config.Config) (backupFilePath string, err error) {
+	backupMu.Lock()
+	defer backupMu.Unlock()
+
 	timestamp := time.Now().Format("20060102T150405")
 	backupFilePath = filepath.Join(conf.DbBackupDir, timestamp+".sqlite3")
 
-	db, err := sql.Open("sqlite", conf.DbFilePath)
-	if err != nil {
-		return backupFilePath, err
-	}
-	defer db.Close()
-
 	_, err = db.Exec("VACUUM INTO ?", backupFilePath)
 	if err != nil {
+		if strings.Contains(err.Error(), "output file already exists") {
+			log.Println("Backup already exists, skipping:", backupFilePath)
+			return backupFilePath, nil
+		}
 		return backupFilePath, err
 	}
 
