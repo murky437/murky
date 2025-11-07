@@ -4,8 +4,9 @@ import type { Component } from 'solid-js';
 
 const AppsPage: Component = () => {
   return (
-    <div class={styles.wrapper}>
+    <div class={styles.appsPage}>
       <A href={'/notes'}>Notes</A>
+      <A href={'/calendar'}>Calendar</A>
     </div>
   );
 };

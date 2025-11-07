@@ -13,6 +13,7 @@ import { QueryClientProvider } from '@tanstack/solid-query';
 import { SettingsPage } from './pages/settings/SettingsPage.tsx';
 import { AppsPage } from './pages/apps/AppsPage.tsx';
 import { NotFoundPage } from './pages/404/NotFoundPage.tsx';
+import { CalendarPage } from './pages/calendar/CalendarPage.tsx';
 
 interface Props {
   app: App;
@@ -28,6 +29,7 @@ const Main: Component<Props> = props => {
             <Route path={'/'} component={IndexPage} />
             <Route path={'/settings'} component={SettingsPage} />
             <Route path={'/apps'} component={AppsPage} />
+            <Route path={'/calendar'} component={CalendarPage} />
             <Route component={NotesLayout}>
               <Route path={'/notes'} component={NotesBasePage} />
               <Route path={'/notes/:slug'} component={OpenNotesPage} />

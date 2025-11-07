@@ -1,0 +1,59 @@
+.calendarPage {
+  display: grid;
+  color: var(--color-off-white);
+  max-width: 500px;
+  margin: 0 auto;
+
+  .month {
+    .yearNumber {
+      margin-bottom: 0.375rem;
+      font-family: 'Vollkorn', serif;
+      font-size: 1.875rem;
+      line-height: 1.875rem;
+      color: var(--color-brown);
+      text-align: right;
+    }
+
+    .monthName {
+      margin-bottom: 0.75rem;
+      font-family: 'Vollkorn', serif;
+      font-size: 1.875rem;
+      line-height: 1.875rem;
+      text-align: right;
+    }
+
+    .week {
+      display: flex;
+      gap: 0.625rem;
+      margin-bottom: 0.625rem;
+
+      & > div {
+        flex: 1;
+        aspect-ratio: 1 / 1;
+        background-color: var(--color-black-2b);
+        display: flex;
+        justify-content: end;
+        align-items: start;
+        overflow-wrap: anywhere;
+
+        &.empty {
+          opacity: 0;
+        }
+
+        &.day {
+
+          .number {
+            width: 1.25rem;
+            height: 1.25rem;
+            font-size: 0.75rem;
+            line-height: 1.25rem;
+            font-weight: bold;
+            text-align: center;
+          }
+        }
+      }
+    }
+  }
+}
+
+

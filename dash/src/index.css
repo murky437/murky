@@ -1,4 +1,32 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Vollkorn:ital,wght@0,400..900;1,400..900&display=swap');
+
+@font-face {
+  font-family: 'Verdana';
+  src: url('fonts/verdana/verdana.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Verdana';
+  src: url('fonts/verdana/verdanab.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Verdana';
+  src: url('fonts/verdana/verdanai.ttf') format('truetype');
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Verdana';
+  src: url('fonts/verdana/verdanaz.ttf') format('truetype');
+  font-weight: bold;
+  font-style: italic;
+}
 
 :root {
   --color-black-18: #181818;
@@ -6,6 +34,7 @@
   --color-black-1f: #1f1f1f;
   --color-black-21: #212121;
   --color-black-28: #282828;
+  --color-black-2b: #2b2b2b;
   --color-black-40: #404040;
   --color-white-a8: #a8a8a8;
   --color-white-e8: #e8e8e8;
@@ -28,7 +57,8 @@
 
 :root {
   --font-sans: 'Open Sans';
-  --font-mono: 'Consolas';
+  --font-mono: Consolas;
+  --font-tiny: Verdana;
 }
 
 :root {
