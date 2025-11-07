@@ -37,5 +37,6 @@ func NewConfig() *Config {
 		AwsRegion:          os.Getenv("AWS_REGION"),
 		AwsEndpointUrl:     os.Getenv("AWS_ENDPOINT_URL"),
 		S3Bucket:           os.Getenv("S3_BUCKET"),
+		S3DbBackupPath:     os.Getenv("S3_DB_BACKUP_PATH"),
 	}
 }
