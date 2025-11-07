@@ -1,54 +1,122 @@
-.calendarPage {
+.calendarPage .calendar {
   display: grid;
   color: var(--color-off-white);
-  max-width: 500px;
-  margin: 0 auto;
+  padding: 0 5px;
 
-  .month {
-    .yearNumber {
-      margin-bottom: 0.375rem;
-      font-family: 'Vollkorn', serif;
-      font-size: 1.875rem;
-      line-height: 1.875rem;
-      color: var(--color-brown);
-      text-align: right;
-    }
+  .yearNumber {
+    margin-top: 20px;
+    margin-bottom: 6px;
+    font-family: 'Vollkorn', serif;
+    font-size: 1.875rem;
+    line-height: 1.875rem;
+    color: var(--color-brown);
+    text-align: right;
+  }
 
-    .monthName {
-      margin-bottom: 0.75rem;
-      font-family: 'Vollkorn', serif;
-      font-size: 1.875rem;
-      line-height: 1.875rem;
-      text-align: right;
-    }
+  .month.past .monthName {
+    color: var(--color-brown);
+  }
 
-    .week {
+  .month.past .day .number {
+    color: var(--color-brown);
+  }
+
+  .monthName {
+    margin-bottom: 12px;
+    font-family: 'Vollkorn', serif;
+    font-size: 1.875rem;
+    line-height: 1.875rem;
+    text-align: right;
+  }
+
+  .week {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 5px;
+
+    & > div {
+      flex: 1;
+      aspect-ratio: 1 / 1;
+      background-color: var(--color-black-2b);
       display: flex;
-      gap: 0.625rem;
-      margin-bottom: 0.625rem;
+      justify-content: end;
+      align-items: start;
+      overflow-wrap: anywhere;
+      border-radius: 2px;
+    }
 
-      & > div {
-        flex: 1;
-        aspect-ratio: 1 / 1;
-        background-color: var(--color-black-2b);
-        display: flex;
-        justify-content: end;
-        align-items: start;
-        overflow-wrap: anywhere;
+    .empty {
+      opacity: 0;
+    }
 
-        &.empty {
-          opacity: 0;
-        }
+    .day .number {
+      width: 1.25rem;
+      height: 1.25rem;
+      font-size: 0.75rem;
+      line-height: 1.25rem;
+      font-weight: bold;
+      text-align: center;
+    }
 
-        &.day {
+    .day.past .number {
+      color: var(--color-brown);
+    }
 
-          .number {
-            width: 1.25rem;
-            height: 1.25rem;
-            font-size: 0.75rem;
-            line-height: 1.25rem;
-            font-weight: bold;
-            text-align: center;
+    .day.today {
+      background-color: var(--color-brown);
+    }
+  }
+}
+
+@media (min-width: 48rem) {
+  .calendarPage {
+    margin-left: 150px;
+
+    .calendar {
+      padding: 0 50px;
+      max-width: 1000px;
+      margin: 0 auto;
+
+      .yearNumber {
+        margin: 20px -30px 6px 0;
+      }
+
+      .week {
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+    }
+  }
+}
+
+@media (min-width: 60rem) {
+  .calendarPage {
+    margin-left: 200px;
+
+    .calendar {
+      padding: 0 66px;
+      max-width: 1000px;
+      margin: 0 auto;
+
+      .yearNumber {
+        font-size: 2.25rem;
+        margin: 20px -30px 6px 0;
+      }
+
+      .monthName {
+        font-size: 2.25rem;
+      }
+
+      .week {
+        gap: 14px;
+        margin-bottom: 14px;
+
+        & > div {
+          &.day .number {
+            width: 1.5rem;
+            height: 1.5rem;
+            font-size: 1rem;
+            line-height: 1.5rem;
           }
         }
       }
