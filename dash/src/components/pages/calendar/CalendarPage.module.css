@@ -1,127 +1,180 @@
-.calendarPage .calendar {
+.calendar {
   display: grid;
   color: var(--color-off-white);
   padding: 0 5px;
+}
 
-  .yearNumber {
-    margin-top: 20px;
-    margin-bottom: 6px;
-    font-family: 'Vollkorn', serif;
-    font-size: 1.875rem;
-    line-height: 1.875rem;
-    color: var(--color-brown);
-    text-align: right;
+.yearNumber {
+  margin-top: 20px;
+  margin-bottom: 6px;
+  font-family: 'Vollkorn', serif;
+  font-size: 1.875rem;
+  line-height: 1.875rem;
+  color: var(--color-brown);
+  text-align: right;
+}
+
+.month.past .monthName {
+  color: var(--color-brown);
+}
+
+.month.past .day .number {
+  color: var(--color-brown);
+}
+
+.monthName {
+  margin-bottom: 12px;
+  font-family: 'Vollkorn', serif;
+  font-size: 1.875rem;
+  line-height: 1.875rem;
+  text-align: right;
+}
+
+.week {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 5px;
+  user-select: none;
+}
+
+.week > div {
+  flex: 1;
+  aspect-ratio: 1 / 1;
+  background-color: var(--color-black-2b);
+  display: flex;
+  justify-content: end;
+  align-items: start;
+  overflow-wrap: anywhere;
+  border-radius: 2px;
+}
+
+.empty {
+  opacity: 0;
+}
+
+.day .number {
+  width: 1.25rem;
+  height: 1.25rem;
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.day.past .number {
+  color: var(--color-brown);
+}
+
+.day.today {
+  background-color: var(--color-brown);
+}
+
+.layers {
+  color: var(--color-gray-7);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.layer {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  line-height: 1.5rem;
+}
+
+.layer.active {
+  color: var(--color-white-e8);
+}
+
+.layer .indicator {
+  width: 9px;
+  height: 9px;
+  background-color: var(--color-black-2b);
+  border-radius: 3px;
+  margin-left: 3px;
+}
+
+.layer.active .indicator {
+  &.brown {
+    background-color: var(--color-brown);
   }
 
-  .month.past .monthName {
-    color: var(--color-brown);
+  &.red {
+    background-color: var(--color-red);
   }
 
-  .month.past .day .number {
-    color: var(--color-brown);
+  &.yellow {
+    background-color: var(--color-yellow);
   }
 
-  .monthName {
-    margin-bottom: 12px;
-    font-family: 'Vollkorn', serif;
-    font-size: 1.875rem;
-    line-height: 1.875rem;
-    text-align: right;
+  &.green {
+    background-color: var(--color-meta-green);
   }
 
-  .week {
-    display: flex;
-    gap: 5px;
-    margin-bottom: 5px;
-
-    & > div {
-      flex: 1;
-      aspect-ratio: 1 / 1;
-      background-color: var(--color-black-2b);
-      display: flex;
-      justify-content: end;
-      align-items: start;
-      overflow-wrap: anywhere;
-      border-radius: 2px;
-    }
-
-    .empty {
-      opacity: 0;
-    }
-
-    .day .number {
-      width: 1.25rem;
-      height: 1.25rem;
-      font-size: 0.75rem;
-      line-height: 1.25rem;
-      font-weight: bold;
-      text-align: center;
-    }
-
-    .day.past .number {
-      color: var(--color-brown);
-    }
-
-    .day.today {
-      background-color: var(--color-brown);
-    }
+  &.white {
+    background-color: var(--color-off-white);
   }
 }
 
 @media (min-width: 48rem) {
   .calendarPage {
     margin-left: 150px;
+  }
 
-    .calendar {
-      padding: 0 50px;
-      max-width: 1000px;
-      margin: 0 auto;
+  .calendar {
+    padding: 0 50px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
 
-      .yearNumber {
-        margin: 20px -30px 6px 0;
-      }
+  .yearNumber {
+    margin: 20px -30px 6px 0;
+  }
 
-      .week {
-        gap: 10px;
-        margin-bottom: 10px;
-      }
-    }
+  .week {
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .layer:hover {
+    color: var(--color-white-e8);
   }
 }
 
 @media (min-width: 60rem) {
   .calendarPage {
     margin-left: 200px;
+  }
 
-    .calendar {
-      padding: 0 66px;
-      max-width: 1000px;
-      margin: 0 auto;
+  .calendar {
+    padding: 0 66px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
 
-      .yearNumber {
-        font-size: 2.25rem;
-        margin: 20px -30px 6px 0;
-      }
+  .yearNumber {
+    font-size: 2.25rem;
+    margin: 20px -30px 6px 0;
+  }
 
-      .monthName {
-        font-size: 2.25rem;
-      }
+  .monthName {
+    font-size: 2.25rem;
+  }
 
-      .week {
-        gap: 14px;
-        margin-bottom: 14px;
+  .week {
+    gap: 14px;
+    margin-bottom: 14px;
+  }
 
-        & > div {
-          &.day .number {
-            width: 1.5rem;
-            height: 1.5rem;
-            font-size: 1rem;
-            line-height: 1.5rem;
-          }
-        }
-      }
-    }
+  .day .number {
+    width: 1.5rem;
+    height: 1.5rem;
+    font-size: 1rem;
+    line-height: 1.5rem;
   }
 }
+
 
 

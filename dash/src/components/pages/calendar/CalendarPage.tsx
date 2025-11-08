@@ -32,6 +32,10 @@ const CalendarPage: Component = () => {
     return year === currentYear && month === currentMonth && day === currentDay;
   };
 
+  const toggleTodayLayer = () => {
+    state.todayLayer = !state.todayLayer;
+  };
+
   onMount(() => {
     if ('scrollRestoration' in history) {
       history.scrollRestoration = 'manual';
@@ -43,10 +47,28 @@ const CalendarPage: Component = () => {
     <div class={styles.calendarPage}>
       <Sidebar>
         <div>
-          <div>
-            <div>1asdasd</div>
-            <div>2asdasd</div>
-            <div>3asdasd</div>
+          <div class={styles.layers}>
+            <div
+              classList={{
+                [styles.layer]: true,
+                [styles.active]: state.todayLayer,
+              }}
+              onClick={toggleTodayLayer}
+            >
+              <div class={`${styles.indicator} ${styles.brown}`}></div>Today
+            </div>
+            <div class={styles.layer}>
+              <div class={`${styles.indicator} ${styles.red}`}></div>Holidays (TODO)
+            </div>
+            <div class={styles.layer}>
+              <div class={`${styles.indicator} ${styles.yellow}`}></div>Birthdays (TODO)
+            </div>
+            <div class={styles.layer}>
+              <div class={`${styles.indicator} ${styles.green}`}></div>Events (TODO)
+            </div>
+            <div class={styles.layer}>
+              <div class={`${styles.indicator} ${styles.white}`}></div>Other (TODO)
+            </div>
           </div>
         </div>
       </Sidebar>

@@ -36,6 +36,10 @@
   --color-black-28: #282828;
   --color-black-2b: #2b2b2b;
   --color-black-40: #404040;
+
+  --color-gray-5: #5c5a56;
+  --color-gray-7: #72716e;
+
   --color-white-a8: #a8a8a8;
   --color-white-e8: #e8e8e8;
 
@@ -48,11 +52,11 @@
   --color-brown: #665c54;
 
   /* TODO: move specific named colors to specific files */
-  --color-line-numbers: #5C5A56;
+  --color-line-numbers: var(--color-gray-5);
   --color-editor-fg: var(--color-off-white);
-  --color-menu-icon: #72716E;
-  --color-sidebar-list-inactive: #72716E;
-  --color-sidebar-list-active: #ffffff;
+  --color-menu-icon: var(--color-gray-7);
+  --color-sidebar-list-inactive: var(--color-gray-7);
+  --color-sidebar-list-active: var(--color-white-e8);
 }
 
 :root {
