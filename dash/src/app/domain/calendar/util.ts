@@ -1,4 +1,4 @@
-import type { CalendarData, Month, Week, Year } from './types.ts';
+import type { CalendarData, Layer, Month, Week, Year } from './types.ts';
 
 function getRelevantYears(): number[] {
   const now = new Date();
@@ -56,7 +56,7 @@ function generateCalendarMonth(year: number, month: number): Month {
   let week: Week = Array(firstDay).fill({});
 
   for (let day = 1; day <= daysInMonth; day++) {
-    week.push({ number: day });
+    week.push({ number: day, events: [] });
     if (week.length === 7) {
       weeks.push(week);
       week = [];
@@ -74,4 +74,46 @@ function generateCalendarMonth(year: number, month: number): Month {
   };
 }
 
-export { generateInitialCalendarData, generateCalendarYear };
+function applyLayers(calendarData: CalendarData, layers: Layer[]) {
+  // clear all existing events
+  for (const year of Object.values(calendarData.years)) {
+    for (const month of Object.values(year.months)) {
+      for (const week of month.weeks) {
+        for (const dayObj of week) {
+          if (dayObj.number) {
+            dayObj.events = [];
+          }
+        }
+      }
+    }
+  }
+
+  // set new events
+  for (const layer of layers) {
+    for (const event of layer.events) {
+      const [year, month, day] = event.date.split('-').map(Number);
+
+      const yearData = calendarData.years[year];
+      if (!yearData) {
+        continue;
+      }
+
+      const monthData = yearData.months[month];
+      if (!monthData) {
+        continue;
+      }
+
+      const coloredEvent = { ...event, color: layer.color };
+
+      for (const week of monthData.weeks) {
+        for (const dayObj of week) {
+          if (dayObj.number === day) {
+            dayObj.events.push(coloredEvent);
+          }
+        }
+      }
+    }
+  }
+}
+
+export { generateInitialCalendarData, generateCalendarYear, applyLayers };

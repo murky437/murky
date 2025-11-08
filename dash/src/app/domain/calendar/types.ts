@@ -1,4 +1,15 @@
-type Day = { number?: number };
+type EventColor = 'red' | 'yellow' | 'green' | 'white';
+
+interface CalendarEvent {
+  date: string;
+  title: string;
+  color?: EventColor;
+}
+
+interface Day {
+  number?: number;
+  events: CalendarEvent[];
+}
 
 type Week = Day[];
 
@@ -8,11 +19,18 @@ interface Month {
 }
 
 interface Year {
-  months: Record<number, Month>; // keys are month numbers 1-12
+  months: Record<number, Month>;
 }
 
 interface CalendarData {
   years: Record<number, Year>;
 }
 
-export type { CalendarData, Year, Month, Week, Day };
+interface Layer {
+  name: string;
+  color: EventColor;
+  events: CalendarEvent[];
+  active: boolean;
+}
+
+export type { CalendarData, Year, Month, Week, Day, CalendarEvent, Layer };

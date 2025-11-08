@@ -31,25 +31,28 @@
 }
 
 .week {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
   gap: 5px;
   margin-bottom: 5px;
   user-select: none;
 }
 
-.week > div {
-  flex: 1;
-  aspect-ratio: 1 / 1;
+.day {
   background-color: var(--color-black-2b);
   display: flex;
-  justify-content: end;
-  align-items: start;
-  overflow-wrap: anywhere;
+  flex-direction: column;
   border-radius: 2px;
+  overflow-x: hidden;
 }
 
-.empty {
-  opacity: 0;
+.day .inside {
+  aspect-ratio: 1 / 1;
+}
+
+.day .top {
+  display: flex;
+  justify-content: end;
 }
 
 .day .number {
@@ -59,6 +62,43 @@
   line-height: 1.25rem;
   font-weight: bold;
   text-align: center;
+}
+
+.events {
+  padding: 0 3px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.event {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: var(--font-sans), sans-serif;
+  font-size: 0.625rem;
+  line-height: 0.875rem;
+  height: 0.875rem;
+  padding: 0 2px;
+  border-radius: 3px;
+  font-weight: bold;
+  color: var(--color-black-1d);
+
+  &.red {
+    background-color: var(--color-red);
+  }
+
+  &.yellow {
+    background-color: var(--color-yellow);
+  }
+
+  &.green {
+    background-color: var(--color-meta-green);
+  }
+
+  &.white {
+    background-color: var(--color-off-white);
+  }
 }
 
 .day.past .number {
@@ -173,6 +213,10 @@
     height: 1.5rem;
     font-size: 1rem;
     line-height: 1.5rem;
+  }
+
+  .day {
+    padding: 3px;
   }
 }
 
