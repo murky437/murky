@@ -3,7 +3,7 @@ package constants
 import "time"
 
 const (
-	SqliteDateFormat     = "2006-01-02 15:04:05"
+	SqliteDateTimeFormat = "2006-01-02T15:04:05.000Z"
 	AccessTokenDuration  = time.Minute * 15
 	RefreshTokenDuration = time.Hour * 24 * 7
 )

@@ -24,7 +24,7 @@ func TestRefreshAccessTokenSuccess(t *testing.T) {
 		`INSERT INTO refresh_token (user_id, jwt, expires_at) VALUES (?, ?, ?)`,
 		1,
 		refreshToken,
-		expiresAt.Format(constants.SqliteDateFormat),
+		expiresAt.Format(constants.SqliteDateTimeFormat),
 	)
 	require.NoError(t, err)
 

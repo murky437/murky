@@ -58,7 +58,7 @@ func CreateTokens(db *sql.DB, jwtService jwt.Service) http.HandlerFunc {
 		refreshToken := model.RefreshToken{
 			UserId:    user.Id,
 			Jwt:       refreshTokenString,
-			ExpiresAt: expiresAt.Format(constants.SqliteDateFormat),
+			ExpiresAt: expiresAt.Format(constants.SqliteDateTimeFormat),
 		}
 
 		if err := model.SaveRefreshToken(db, refreshToken); err != nil {
@@ -112,7 +112,7 @@ func RefreshAccessToken(db *sql.DB, jwtService jwt.Service) http.HandlerFunc {
 			return
 		}
 
-		expiresAt, err := time.Parse(constants.SqliteDateFormat, dbToken.ExpiresAt)
+		expiresAt, err := time.Parse(constants.SqliteDateTimeFormat, dbToken.ExpiresAt)
 		if err != nil || time.Now().UTC().After(expiresAt) {
 			routing.WriteUnauthorizedResponse(w)
 			return
