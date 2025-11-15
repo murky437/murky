@@ -7,7 +7,7 @@
 .yearNumber {
   margin-top: 20px;
   margin-bottom: 6px;
-  font-family: 'Vollkorn', serif;
+  font-family: var(--font-serif), serif;
   font-size: 1.875rem;
   line-height: 1.875rem;
   color: var(--color-brown);
@@ -24,7 +24,7 @@
 
 .monthName {
   margin-bottom: 12px;
-  font-family: 'Vollkorn', serif;
+  font-family: var(--font-serif), serif;
   font-size: 1.875rem;
   line-height: 1.875rem;
   text-align: right;

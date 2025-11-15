@@ -34,6 +34,7 @@
 :root {
   --font-sans: 'Open Sans';
   --font-mono: Consolas;
+  --font-serif: Vollkorn;
 }
 
 :root {
@@ -64,4 +65,9 @@ input,
 button {
   font-family: var(--font-sans), sans-serif;
   font-size: inherit;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif), serif;
+  font-weight: normal;
 }

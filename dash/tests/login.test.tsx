@@ -71,7 +71,7 @@ test('Logging in', async () => {
   fireEvent.click(button);
   await waitFor(() => {
     expect(app.client.auth.isAuthenticated()).toBe(true);
-    expect(window.location.pathname).toBe('/notes');
+    expect(window.location.pathname).toBe('/apps');
   });
 
   expect(spy).toHaveBeenNthCalledWith(1, { username: '', password: '' });

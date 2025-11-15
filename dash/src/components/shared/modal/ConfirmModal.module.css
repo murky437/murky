@@ -1,0 +1,36 @@
+.confirmModal {
+  background-color: var(--color-black-28);
+  color: var(--color-off-white);
+  border-radius: 7px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+}
+
+.bottom {
+  display: flex;
+  margin-top: 20px;
+  gap: 20px;
+}
+
+.button {
+  flex: 1;
+  cursor: pointer;
+  display: inline-block;
+  border: 1px solid var(--color-off-white);
+  border-radius: 3px;
+  background: none;
+  color: var(--color-off-white);
+  padding: 5px;
+}
+
+.button:active {
+  background-color: var(--color-off-white);
+  color: var(--color-black-28);
+}
+
+@media (hover: hover) {
+  .button:hover {
+    background-color: var(--color-off-white);
+    color: var(--color-black-28);
+  }
+}

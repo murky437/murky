@@ -5,18 +5,31 @@ import { NotesRequests } from '../domain/notes/requests.ts';
 import type { AuthApi } from '../api/authApi.ts';
 import type { ProjectsApi } from '../api/projectsApi.ts';
 import type { StatusApi } from '../api/statusApi.ts';
+import type { LongRemindersApi } from '../api/longRemindersApi.ts';
+import { RemindersRequests } from '../domain/reminders/requests.ts';
 
 class ServerState {
   readonly queryClient: QueryClient;
   readonly auth: AuthRequests;
   readonly notes: NotesRequests;
   readonly status: StatusRequests;
+  readonly reminders: RemindersRequests;
 
-  constructor(authApi: AuthApi, projectsApi: ProjectsApi, statusApi: StatusApi) {
+  constructor(
+    authApi: AuthApi,
+    projectsApi: ProjectsApi,
+    statusApi: StatusApi,
+    longRemindersApi: LongRemindersApi
+  ) {
     this.queryClient = new QueryClient({
       defaultOptions: {
         queries: {
           retry: false,
+          // TODO: make this work better, it kind of blocks direct actions coming from out of focus
+          //  example: clicking on a link, but then the link target gets rerendered and click does nothing
+          refetchOnWindowFocus: false,
+          refetchOnMount: true,
+          refetchOnReconnect: true,
         },
       },
     });
@@ -41,6 +54,7 @@ class ServerState {
     this.auth = new AuthRequests(authApi);
     this.notes = new NotesRequests(this.queryClient, projectsApi);
     this.status = new StatusRequests(this.queryClient, statusApi);
+    this.reminders = new RemindersRequests(this.queryClient, longRemindersApi);
   }
 
   async reset(): Promise<void> {

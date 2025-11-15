@@ -1,0 +1,170 @@
+package model
+
+import (
+	"database/sql"
+	"murky_api/internal/constants"
+	"time"
+)
+
+type LongReminder struct {
+	Id             string
+	Title          string
+	IntervalDays   int
+	CreatedAt      time.Time
+	UpdatedAt      *time.Time
+	LastRemindedAt *time.Time
+	MarkedDoneAt   *time.Time
+	IsEnabled      bool
+}
+
+func CreateLongReminder(db *sql.DB, reminder LongReminder, userId int) (LongReminder, error) {
+	tx, err := db.Begin()
+	if err != nil {
+		return reminder, err
+	}
+	defer tx.Rollback()
+
+	_, err = tx.Exec("INSERT INTO long_reminder (id, title, interval_days, user_id) VALUES (?, ?, ?, ?)", reminder.Id, reminder.Title, reminder.IntervalDays, userId)
+	if err != nil {
+		return reminder, err
+	}
+
+	err = tx.Commit()
+	return reminder, err
+}
+
+func GetLongReminderByUserIdAndId(db *sql.DB, userId int, reminderId string) (LongReminder, error) {
+	var r LongReminder
+
+	var createdAt string
+	var updatedAt, lastRemindedAt, markedDoneAt sql.NullString
+
+	err := db.QueryRow(`
+		SELECT r.id, r.title, r.interval_days, r.created_at, r.updated_at, r.last_reminded_at, r.marked_done_at, r.is_enabled
+		FROM long_reminder r
+		WHERE r.user_id = ? AND r.id = ?
+	`, userId, reminderId).Scan(&r.Id, &r.Title, &r.IntervalDays, &createdAt, &updatedAt, &lastRemindedAt, &markedDoneAt, &r.IsEnabled)
+	if err != nil {
+		return r, err
+	}
+
+	r.CreatedAt, err = time.Parse(constants.SqliteDateTimeFormat, createdAt)
+	if err != nil {
+		return r, err
+	}
+
+	if updatedAt.Valid {
+		t, err := time.Parse(constants.SqliteDateTimeFormat, updatedAt.String)
+		if err != nil {
+			return r, err
+		}
+		r.UpdatedAt = &t
+	}
+	if lastRemindedAt.Valid {
+		t, err := time.Parse(constants.SqliteDateTimeFormat, lastRemindedAt.String)
+		if err != nil {
+			return r, err
+		}
+		r.LastRemindedAt = &t
+	}
+	if markedDoneAt.Valid {
+		t, err := time.Parse(constants.SqliteDateTimeFormat, markedDoneAt.String)
+		if err != nil {
+			return r, err
+		}
+		r.MarkedDoneAt = &t
+	}
+
+	return r, nil
+}
+
+func GetLongRemindersByUserId(db *sql.DB, userId int) ([]LongReminder, error) {
+	var reminders []LongReminder
+
+	rows, err := db.Query(`
+		SELECT r.id, r.title, r.interval_days, r.created_at, r.updated_at, r.last_reminded_at, r.marked_done_at, r.is_enabled
+		FROM long_reminder r
+		WHERE r.user_id = ?
+	`, userId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var r LongReminder
+
+		var createdAt string
+		var updatedAt, lastRemindedAt, markedDoneAt sql.NullString
+
+		if err := rows.Scan(&r.Id, &r.Title, &r.IntervalDays, &createdAt, &updatedAt, &lastRemindedAt, &markedDoneAt, &r.IsEnabled); err != nil {
+			return nil, err
+		}
+
+		r.CreatedAt, err = time.Parse(constants.SqliteDateTimeFormat, createdAt)
+		if err != nil {
+			return nil, err
+		}
+
+		if updatedAt.Valid {
+			t, err := time.Parse(constants.SqliteDateTimeFormat, updatedAt.String)
+			if err != nil {
+				return nil, err
+			}
+			r.UpdatedAt = &t
+		}
+		if lastRemindedAt.Valid {
+			t, err := time.Parse(constants.SqliteDateTimeFormat, lastRemindedAt.String)
+			if err != nil {
+				return nil, err
+			}
+			r.LastRemindedAt = &t
+		}
+		if markedDoneAt.Valid {
+			t, err := time.Parse(constants.SqliteDateTimeFormat, markedDoneAt.String)
+			if err != nil {
+				return nil, err
+			}
+			r.MarkedDoneAt = &t
+		}
+
+		reminders = append(reminders, r)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return reminders, nil
+}
+
+func DeleteLongReminderByUserIdAndId(db *sql.DB, userId int, id string) (int64, error) {
+	res, err := db.Exec(`
+		DELETE FROM long_reminder
+		WHERE user_id = ? AND id = ?
+	`, userId, id)
+	if err != nil {
+		return 0, err
+	}
+	return res.RowsAffected()
+}
+
+func UpdateLongReminder(db *sql.DB, id string, reminder LongReminder) error {
+	markedDoneAt := any(nil)
+	if reminder.MarkedDoneAt != nil {
+		markedDoneAt = reminder.MarkedDoneAt.Format(constants.SqliteDateTimeFormat)
+	}
+
+	_, err := db.Exec(`
+		UPDATE long_reminder 
+		SET title = :title, interval_days = :intervalDays, marked_done_at = :markedDoneAt, is_enabled = :isEnabled, updated_at = :updatedAt
+		WHERE id = :id
+	`,
+		sql.Named("title", reminder.Title),
+		sql.Named("intervalDays", reminder.IntervalDays),
+		sql.Named("markedDoneAt", markedDoneAt),
+		sql.Named("isEnabled", reminder.IsEnabled),
+		sql.Named("updatedAt", time.Now().UTC().Format(constants.SqliteDateTimeFormat)),
+		sql.Named("id", id),
+	)
+	return err
+}

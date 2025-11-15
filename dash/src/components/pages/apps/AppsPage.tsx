@@ -7,6 +7,7 @@ const AppsPage: Component = () => {
     <div class={styles.appsPage}>
       <A href={'/notes'}>Notes</A>
       <A href={'/calendar'}>Calendar</A>
+      <A href={'/reminders'}>Reminders</A>
     </div>
   );
 };

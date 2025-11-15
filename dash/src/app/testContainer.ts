@@ -5,6 +5,7 @@ import { vi } from 'vitest';
 import { StatusApi } from './api/statusApi.ts';
 import { ClientState } from './state/clientState.ts';
 import { ServerState } from './state/serverState.ts';
+import { LongRemindersApi } from './api/longRemindersApi.ts';
 
 function newTestContainer(): Container {
   const localStorageMock: Storage = {
@@ -41,8 +42,9 @@ function newTestContainer(): Container {
   const authApi = new AuthApi(api);
   const projectsApi = new ProjectsApi(api);
   const statusApi = new StatusApi(api);
+  const longRemindersApi = new LongRemindersApi(api);
 
-  const serverState = new ServerState(authApi, projectsApi, statusApi);
+  const serverState = new ServerState(authApi, projectsApi, statusApi, longRemindersApi);
 
   return {
     authApi,
@@ -50,6 +52,7 @@ function newTestContainer(): Container {
     projectsApi,
     storage,
     statusApi,
+    longRemindersApi,
     clientState,
     serverState,
   };

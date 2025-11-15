@@ -1,6 +1,6 @@
-import { Modal } from '../../../../shared/modal/Modal.tsx';
+import { ModalWithTitle } from '../../../../shared/modal/ModalWithTitle.tsx';
 import type { Project } from '../../../../../app/domain/notes/types.ts';
-import styles from '../../../../shared/modal/Modal.module.css';
+import styles from '../../../../shared/modal/ModalWithTitle.module.css';
 import { type Component, For, onMount } from 'solid-js';
 import { createMutable } from 'solid-js/store';
 import { isGeneralError, isValidationError } from '../../../../../app/api/api.ts';
@@ -64,7 +64,7 @@ const EditProjectModal: Component<Props> = props => {
   });
 
   return (
-    <Modal title="Edit project" onClose={props.onClose}>
+    <ModalWithTitle title="Edit project" onClose={props.onClose}>
       <form class={styles.form} onSubmit={handleSubmit} data-testid="edit-project-form">
         <For each={state.generalErrors}>
           {item => <div class={styles.generalError}>{item}</div>}
@@ -112,7 +112,7 @@ const EditProjectModal: Component<Props> = props => {
           </div>
         </div>
       </form>
-    </Modal>
+    </ModalWithTitle>
   );
 };
 

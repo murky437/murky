@@ -1,12 +1,14 @@
-import styles from './Modal.module.css';
+import styles from './ModalWithTitle.module.css';
 import { Portal } from 'solid-js/web';
 import { onCleanup, onMount, type ParentComponent } from 'solid-js';
 
 interface Props {
+  title: string;
   onClose: () => void;
 }
 
-const Modal: ParentComponent<Props> = props => {
+// TODO: refactor this to use the base modal and just add title here (maybe better to move the title to specific usages though)
+const ModalWithTitle: ParentComponent<Props> = props => {
   let modalDiv!: HTMLDivElement;
 
   const handleClickOutside = (e: MouseEvent) => {
@@ -31,6 +33,7 @@ const Modal: ParentComponent<Props> = props => {
     <Portal>
       <div class={styles.overlay}>
         <div ref={modalDiv} class={styles.modal} data-testid="modal">
+          <h2 class={styles.title}>{props.title}</h2>
           {props.children}
         </div>
       </div>
@@ -38,4 +41,4 @@ const Modal: ParentComponent<Props> = props => {
   );
 };
 
-export { Modal };
+export { ModalWithTitle };

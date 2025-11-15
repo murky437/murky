@@ -2,6 +2,7 @@ package app
 
 import (
 	"murky_api/internal/auth"
+	"murky_api/internal/longreminder"
 	"murky_api/internal/project"
 	"murky_api/internal/routing"
 	"murky_api/internal/status"
@@ -29,6 +30,7 @@ func NewMux(c *Container) *http.ServeMux {
 	protectedMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		routing.WriteNotFoundResponse(w)
 	})
+
 	protectedMux.HandleFunc("POST /projects", routing.Chain(project.Create(c.Db), routing.RequireJSON))
 	protectedMux.HandleFunc("GET /projects", project.GetList(c.Db))
 	protectedMux.HandleFunc("GET /projects/{slug}", project.Get(c.Db))
@@ -36,6 +38,11 @@ func NewMux(c *Container) *http.ServeMux {
 	protectedMux.HandleFunc("GET /projects/{slug}/notes", project.GetNotes(c.Db))
 	protectedMux.HandleFunc("PUT /projects/{slug}/notes", routing.Chain(project.UpdateNotes(c.Db), routing.RequireJSON))
 	protectedMux.HandleFunc("DELETE /projects/{slug}", project.Delete(c.Db))
+
+	protectedMux.HandleFunc("POST /long-reminders", routing.Chain(longreminder.Create(c.Db), routing.RequireJSON))
+	protectedMux.HandleFunc("GET /long-reminders", longreminder.GetList(c.Db))
+	protectedMux.HandleFunc("DELETE /long-reminders/{id}", longreminder.Delete(c.Db))
+	protectedMux.HandleFunc("PUT /long-reminders/{id}", routing.Chain(longreminder.Update(c.Db), routing.RequireJSON))
 
 	mux.HandleFunc("/", routing.Chain(
 		protectedMux.ServeHTTP,

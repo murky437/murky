@@ -1,0 +1,271 @@
+.remindersPage {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  max-width: 500px;
+  margin: 0 auto;
+  color: var(--color-off-white);
+}
+
+h1 {
+  font-size: 1.875rem;
+  line-height: 1.875rem;
+  text-align: center;
+}
+
+h2 {
+  font-size: 1.5rem;
+  line-height: 1.875rem;
+  text-align: center;
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-black-21);
+  padding: 0 15px;
+  margin: 0 5px 10px;
+  border-radius: 3px;
+  border: 1px solid var(--color-black-21);
+}
+
+.block.isDue {
+  border: 1px dashed var(--color-red);
+}
+
+.block.disabled {
+  opacity: 0.5;
+}
+
+.top {
+  padding-top: 10px;
+  font-size: 1rem;
+  line-height: 1.25rem;
+  text-align: left;
+}
+
+.bottom {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0 15px;
+  min-height: 55px;
+  color: var(--color-brown);
+  position: relative;
+}
+
+.bottom .left {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.bottom .right {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.bottom .right .detailsButton {
+  display: inline-block;
+  font-size: 0.875rem;
+  line-height: 1.063rem;
+  text-decoration: underline;
+  cursor: pointer;
+  user-select: none;
+}
+
+.bottom .right .detailsButton:active {
+  color: var(--color-off-white);
+}
+
+@media (hover: hover) {
+  .bottom .right .detailsButton:hover {
+    color: var(--color-off-white);
+  }
+}
+
+.bottom .left .timeDescription {
+  font-size: 0.625rem;
+  line-height: 0.625rem;
+  font-weight: bold;
+}
+
+.bottom .left .nextTime {
+  font-size: 0.625rem;
+  line-height: 0.875rem;
+  font-style: italic;
+}
+
+.bottom .center {
+  position: absolute;
+  top: 5px;
+  left: 50%;
+  text-align: center;
+  font-weight: bold;
+  transform: translateX(-50%);
+}
+
+.bottom .center .link {
+  text-decoration: underline;
+  display: inline-block;
+  cursor: pointer;
+}
+.bottom .center .link:active {
+  text-decoration: underline dashed;
+  opacity: 0.8;
+}
+
+@media (hover: hover) {
+  .bottom .center .link:hover {
+    text-decoration: underline dashed;
+  }
+}
+
+.block.isDue .center {
+  color: var(--color-red);
+}
+
+.block.isDue .nextTime {
+  color: var(--color-red);
+}
+
+.details {
+  border-top: 1px dashed var(--color-brown);
+  color: var(--color-brown);
+  font-size: 0.875rem;
+}
+
+.details .group {
+  margin: 20px 0;
+}
+
+.details .row {
+  display: flex;
+  margin: 5px 0;
+}
+.details .row .left {
+  margin-right: 10px;
+}
+
+.details .row .right {
+  display: flex;
+  justify-content: flex-end;
+  flex: 1;
+}
+
+.details .row .right .generalError {
+  font-size: 0.75rem;
+  line-height: 0.75rem;
+}
+
+.details .row .right .inputWrap .fieldError {
+  text-align: right;
+  color: var(--color-red);
+  font-size: 0.625rem;
+  line-height: 0.625rem;
+}
+
+.details .row.three > * {
+  flex: 1;
+  margin: 0;
+}
+
+.details .row.three > .middle {
+  text-align: center;
+}
+
+.details .saveButton {
+  border: none;
+  background: none;
+  text-decoration: underline;
+  color: var(--color-brown);
+  font-weight: bold;
+  padding: 0;
+  cursor: pointer;
+  user-select: none;
+}
+
+.details .saveButton:active {
+  color: var(--color-off-white);
+}
+
+@media (hover: hover) {
+  .details .saveButton:hover {
+    color: var(--color-off-white);
+  }
+}
+
+.details .link {
+  cursor: pointer;
+  text-decoration: underline;
+  display: inline-block;
+  user-select: none;
+}
+
+.details .link:active {
+  color: var(--color-off-white);
+}
+
+@media (hover: hover) {
+  .details .link:hover {
+    color: var(--color-off-white);
+  }
+}
+
+.details input {
+  border: none;
+  line-height: 1.125rem;
+  text-align: right;
+  padding: 0;
+  color: var(--color-brown);
+  background: none;
+  width: 100%;
+  outline: none;
+  border-bottom: 1px dotted var(--color-black-21);
+}
+
+.details input:focus {
+  border-bottom: 1px dotted var(--color-off-white) !important;
+  color: var(--color-off-white);
+}
+
+.details input:active {
+  border-bottom: 1px dotted var(--color-brown);
+}
+
+@media (hover: hover) {
+  .details input:hover {
+    border-bottom: 1px dotted var(--color-brown);
+  }
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.addNewButton {
+  border: none;
+  background: none;
+  color: var(--color-brown);
+  line-height: 1.25rem;
+  margin: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.addNewButton:active {
+  color: var(--color-off-white);
+}
+
+@media (hover: hover) {
+  .addNewButton:hover {
+    color: var(--color-off-white);
+  }
+}

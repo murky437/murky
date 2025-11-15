@@ -5,10 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"murky_api/internal/config"
+	"murky_api/internal/constants"
 	"murky_api/internal/jwt"
 	"path/filepath"
 	"runtime"
 	"testing"
+	"time"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/sqlite"
@@ -92,6 +94,27 @@ func insertBaseTestData(db *sql.DB, t *testing.T) {
 		require.NoError(t, err)
 
 		_, err = db.Exec(`INSERT INTO user_project (user_id, project_id) VALUES (?, ?)`, user2Id, projectId)
+		require.NoError(t, err)
+	}
+
+	insertReminderTestData(db, t, userId)
+}
+
+func insertReminderTestData(db *sql.DB, t *testing.T, userId int64) {
+	updateTime, err := time.Parse(constants.SqliteDateTimeFormat, "2025-11-11T10:20:30.321Z")
+	require.NoError(t, err)
+
+	for i := 1; i <= 2; i++ {
+		reminderId := fmt.Sprintf("longReminder%d", i)
+
+		_, err := db.Exec(
+			"INSERT INTO long_reminder (id, title, interval_days, user_id, updated_at) VALUES (?, ?, ?, ?, ?)",
+			reminderId,
+			fmt.Sprintf("Long reminder %d", i),
+			40,
+			userId,
+			updateTime.Format(constants.SqliteDateTimeFormat),
+		)
 		require.NoError(t, err)
 	}
 }

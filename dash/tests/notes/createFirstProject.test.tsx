@@ -13,6 +13,8 @@ test('Create first project through modal', async () => {
 
   render(() => <Main app={app} />);
 
+  app.navigate('/notes');
+
   await waitFor(() => {
     expect(window.location.pathname).toBe('/notes');
   });

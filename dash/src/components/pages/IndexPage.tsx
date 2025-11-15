@@ -3,7 +3,7 @@ import type { Component } from 'solid-js';
 
 const IndexPage: Component = () => {
   const navigate = useNavigate();
-  navigate('/notes', { replace: true });
+  navigate('/apps', { replace: true });
 
   return 'Hello, world';
 };

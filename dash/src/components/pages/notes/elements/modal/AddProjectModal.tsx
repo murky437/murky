@@ -1,5 +1,5 @@
-import { Modal } from '../../../../shared/modal/Modal.tsx';
-import styles from '../../../../shared/modal/Modal.module.css';
+import { ModalWithTitle } from '../../../../shared/modal/ModalWithTitle.tsx';
+import styles from '../../../../shared/modal/ModalWithTitle.module.css';
 import { type Component, For, onMount } from 'solid-js';
 import { createMutable } from 'solid-js/store';
 import { isGeneralError, isValidationError } from '../../../../../app/api/api.ts';
@@ -50,7 +50,7 @@ const AddProjectModal: Component<Props> = props => {
   });
 
   return (
-    <Modal title="Add project" onClose={props.onClose}>
+    <ModalWithTitle title="Add project" onClose={props.onClose}>
       <form class={styles.form} onSubmit={handleSubmit} data-testid="add-project-form">
         <For each={state.generalErrors}>
           {item => <div class={styles.generalError}>{item}</div>}
@@ -95,7 +95,7 @@ const AddProjectModal: Component<Props> = props => {
           </div>
         </div>
       </form>
-    </Modal>
+    </ModalWithTitle>
   );
 };
 
