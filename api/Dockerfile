@@ -15,7 +15,7 @@ RUN go install github.com/air-verse/air@latest
 RUN go install github.com/hibiken/asynq/tools/asynq@latest
 RUN go install -tags 'sqlite' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 
-CMD ["air"]
+CMD ["sh", "-c", "go run cmd/migrate/main.go -db db/db.sqlite3 -migrations migrations && air"]
 
 
 FROM base AS prod_builder

@@ -24,4 +24,5 @@ dist-ssr
 *.sw?
 
 .env.prod
+.env.staging
 public/deploy.json
