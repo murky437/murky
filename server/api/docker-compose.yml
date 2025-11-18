@@ -6,6 +6,7 @@ services:
     volumes:
       - ./deployments/current:/app
       - ./database_backups:/db_backups
+      - ./secrets:/secrets
     ports:
       - "8080:8080"
     env_file:

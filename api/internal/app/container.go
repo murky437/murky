@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"log"
 	"murky_api/internal/config"
+	"murky_api/internal/firebase"
 	"murky_api/internal/jwt"
 	"murky_api/internal/s3"
 
@@ -11,10 +12,11 @@ import (
 )
 
 type Container struct {
-	Config     *config.Config
-	Db         *sql.DB
-	JwtService jwt.Service
-	S3Client   *s3.Client
+	Config                 *config.Config
+	Db                     *sql.DB
+	JwtService             jwt.Service
+	S3Client               *s3.Client
+	FirebaseMessageService *firebase.MessageService
 }
 
 func NewContainer() *Container {
@@ -25,11 +27,14 @@ func NewContainer() *Container {
 	if err != nil {
 		log.Fatal(err)
 	}
+	firebaseMessageService := firebase.NewMessageService(conf)
+
 	return &Container{
-		Config:     conf,
-		Db:         db,
-		JwtService: jwtService,
-		S3Client:   s3Client,
+		Config:                 conf,
+		Db:                     db,
+		JwtService:             jwtService,
+		S3Client:               s3Client,
+		FirebaseMessageService: firebaseMessageService,
 	}
 }
 

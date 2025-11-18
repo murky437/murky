@@ -20,7 +20,7 @@ const (
 	NumOfDbBackupsToKeep = 7
 )
 
-func Handle(db *sql.DB, conf config.Config, s3Client s3.Client) asynq.HandlerFunc {
+func Handle(db *sql.DB, conf *config.Config, s3Client *s3.Client) asynq.HandlerFunc {
 	return func(ctx context.Context, t *asynq.Task) error {
 		backupFilePath, err := createDbBackup(db, conf)
 		if err != nil {
@@ -52,7 +52,7 @@ func Handle(db *sql.DB, conf config.Config, s3Client s3.Client) asynq.HandlerFun
 
 var backupMu sync.Mutex
 
-func createDbBackup(db *sql.DB, conf config.Config) (backupFilePath string, err error) {
+func createDbBackup(db *sql.DB, conf *config.Config) (backupFilePath string, err error) {
 	backupMu.Lock()
 	defer backupMu.Unlock()
 
@@ -73,7 +73,7 @@ func createDbBackup(db *sql.DB, conf config.Config) (backupFilePath string, err 
 	return backupFilePath, nil
 }
 
-func uploadBackupToS3(s3Client s3.Client, backupFilePath string, s3DbBackupPath string) error {
+func uploadBackupToS3(s3Client *s3.Client, backupFilePath string, s3DbBackupPath string) error {
 	f, err := os.Open(backupFilePath)
 	if err != nil {
 		return err
@@ -122,7 +122,7 @@ func deleteOldBackupsFromLocal(dbBackupDir string, keep int) error {
 	return nil
 }
 
-func deleteOldBackupsFromS3(client s3.Client, s3DbBackupPath string, keep int) error {
+func deleteOldBackupsFromS3(client *s3.Client, s3DbBackupPath string, keep int) error {
 	listOutput, err := client.ListObjects(s3DbBackupPath)
 	if err != nil {
 		return err

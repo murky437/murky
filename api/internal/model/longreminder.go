@@ -168,3 +168,105 @@ func UpdateLongReminder(db *sql.DB, id string, reminder LongReminder) error {
 	)
 	return err
 }
+
+func GetLongRemindersDueToday(db *sql.DB, timezone string) ([]LongReminder, error) {
+	var reminders []LongReminder
+
+	loc, err := time.LoadLocation(timezone)
+	if err != nil {
+		return nil, err
+	}
+	year, month, day := time.Now().In(loc).Date()
+	todayUtc := time.Date(year, month, day, 0, 0, 0, 0, loc).UTC()
+	tomorrowUtc := todayUtc.AddDate(0, 0, 1)
+
+	rows, err := db.Query(`
+		SELECT
+		    r.id, r.title, r.interval_days, r.created_at, r.updated_at, r.last_reminded_at, r.marked_done_at, r.is_enabled,
+			IIF(
+				r.marked_done_at IS NULL,
+				r.created_at,
+				STRFTIME('%Y-%m-%dT%H:%M:%fZ', r.marked_done_at, CONCAT('+', r.interval_days, ' days'))
+			) AS due_date
+		FROM long_reminder r
+		WHERE
+		    r.is_enabled = true
+		  	AND due_date < :tomorrowDate
+		  	AND (
+		  	    r.last_reminded_at IS NULL
+		  	    OR (
+		  	        due_date >= :todayDate
+		  	        AND r.last_reminded_at < :todayDate
+		  	    )
+		  	    OR (
+		  	        due_date < :todayDate
+		  	        AND r.last_reminded_at < due_date
+		  	    )
+		  	);
+	`,
+		sql.Named("todayDate", todayUtc.Format(constants.SqliteDateTimeFormat)),
+		sql.Named("tomorrowDate", tomorrowUtc.Format(constants.SqliteDateTimeFormat)),
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var r LongReminder
+
+		var createdAt string
+		var updatedAt, lastRemindedAt, markedDoneAt sql.NullString
+		var dueDate string
+
+		if err := rows.Scan(&r.Id, &r.Title, &r.IntervalDays, &createdAt, &updatedAt, &lastRemindedAt, &markedDoneAt, &r.IsEnabled, &dueDate); err != nil {
+			return nil, err
+		}
+
+		r.CreatedAt, err = time.Parse(constants.SqliteDateTimeFormat, createdAt)
+		if err != nil {
+			return nil, err
+		}
+
+		if updatedAt.Valid {
+			t, err := time.Parse(constants.SqliteDateTimeFormat, updatedAt.String)
+			if err != nil {
+				return nil, err
+			}
+			r.UpdatedAt = &t
+		}
+		if lastRemindedAt.Valid {
+			t, err := time.Parse(constants.SqliteDateTimeFormat, lastRemindedAt.String)
+			if err != nil {
+				return nil, err
+			}
+			r.LastRemindedAt = &t
+		}
+		if markedDoneAt.Valid {
+			t, err := time.Parse(constants.SqliteDateTimeFormat, markedDoneAt.String)
+			if err != nil {
+				return nil, err
+			}
+			r.MarkedDoneAt = &t
+		}
+
+		reminders = append(reminders, r)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return reminders, nil
+}
+
+func SetLongReminderLastRemindedAt(db *sql.DB, id string, lastRemindedAt time.Time) error {
+	_, err := db.Exec(`
+		UPDATE long_reminder 
+		SET last_reminded_at = :lastRemindedAt
+		WHERE id = :id
+	`,
+		sql.Named("lastRemindedAt", lastRemindedAt.Format(constants.SqliteDateTimeFormat)),
+		sql.Named("id", id),
+	)
+	return err
+}

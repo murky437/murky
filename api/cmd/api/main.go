@@ -15,7 +15,7 @@ func main() {
 		}
 	}(c)
 
-	go worker.StartServer(c.Db, *c.Config, *c.S3Client)
+	go worker.StartServer(c.Db, c.Config, c.S3Client, c.FirebaseMessageService)
 	go worker.StartScheduler(*c.Config)
 
 	app.StartApiServer(c)

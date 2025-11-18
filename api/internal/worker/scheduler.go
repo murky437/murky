@@ -29,6 +29,11 @@ func StartScheduler(conf config.Config) {
 		log.Println(err)
 		return
 	}
+	_, err = scheduler.Register("0 12 * * *", asynq.NewTask(TypeLongReminderPush, nil))
+	if err != nil {
+		log.Println(err)
+		return
+	}
 
 	err = scheduler.Run()
 	if err != nil {
