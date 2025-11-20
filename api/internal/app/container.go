@@ -6,6 +6,7 @@ import (
 	"murky_api/internal/config"
 	"murky_api/internal/firebase"
 	"murky_api/internal/jwt"
+	"murky_api/internal/migrations"
 	"murky_api/internal/s3"
 
 	_ "modernc.org/sqlite"
@@ -44,31 +45,41 @@ func setupDatabase(conf *config.Config) *sql.DB {
 		log.Fatal(err)
 	}
 
-	setDatabasePragmas(db)
+	err = setDatabasePragmas(db)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = migrations.Run(db, log.Default())
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	return db
 }
 
-func setDatabasePragmas(db *sql.DB) {
+func setDatabasePragmas(db *sql.DB) error {
 	if _, err := db.Exec("PRAGMA journal_mode=WAL;"); err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	if _, err := db.Exec("PRAGMA foreign_keys=ON;"); err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	if _, err := db.Exec("PRAGMA busy_timeout=5000;"); err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	if _, err := db.Exec("PRAGMA temp_store=MEMORY;"); err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	if _, err := db.Exec("PRAGMA synchronous=NORMAL;"); err != nil {
-		log.Fatal(err)
+		return err
 	}
+	
+	return nil
 }
 
 func (c *Container) Close() error {

@@ -5,7 +5,7 @@ cd "$(dirname "$0")"
 
 source functions.sh
 
-if [ ! -f deployments/new/deploy.json ] || [ ! -f deployments/new/api ] || [ ! -f deployments/new/migrate ]; then
+if [ ! -f deployments/new/deploy.json ] || [ ! -f deployments/new/api ] ]; then
   err "ERROR: new deployment is missing required files"
 fi
 
@@ -14,9 +14,6 @@ mkdir -p deployments/new/db
 if [ -f deployments/current/db/db.sqlite3 ]; then
     sqlite3 deployments/current/db/db.sqlite3 ".backup 'deployments/new/db/db.sqlite3'"
 fi
-
-info "Running migrations"
-deployments/new/migrate -db deployments/new/db/db.sqlite3 -migrations deployments/new/migrations
 
 info "Moving current deployment to previous deployments directory"
 if [ -f deployments/current/deploy.json ]; then

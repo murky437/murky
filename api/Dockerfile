@@ -13,14 +13,14 @@ RUN apt-get update && apt-get install sqlite3
 
 RUN go install github.com/air-verse/air@latest
 RUN go install github.com/hibiken/asynq/tools/asynq@latest
-RUN go install -tags 'sqlite' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 
-CMD ["sh", "-c", "go run cmd/migrate/main.go -db db/db.sqlite3 -migrations migrations && air"]
+CMD ["air"]
 
 
 FROM base AS prod_builder
 
 COPY . .
 
-CMD ["sh", "-c", "go build -o ./build/api ./cmd/api && go build -o ./build/migrate ./cmd/migrate && go build -o ./build/backupdb ./cmd/backupdb"]
+# TODO: remove backupdb command
+CMD ["sh", "-c", "go build -o ./build/api ./cmd/api && go build -o ./build/backupdb ./cmd/backupdb"]
 

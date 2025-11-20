@@ -11,6 +11,9 @@ import (
 	_ "modernc.org/sqlite"
 )
 
+// TODO: remove this from deploy pipeline
+// Maybe delete completely since it is handled by worker process already.
+// Weigh the usefulness of leaving it as a separate command.
 func main() {
 	if len(os.Args) != 3 {
 		fmt.Println("Usage: backupdb <db_file> <backup_dir>")
@@ -43,8 +46,4 @@ func main() {
 	}
 
 	log.Println("Backup created at:", backupPath)
-
-	// TODO: upload backup to s3
-	// TODO: prune old backups (keep min 7 latest, delete others that are older than week)
-	// TODO: also prune on s3
 }

@@ -32,9 +32,7 @@ build() {
   info "Moving new builds to new deployment directories"
   mkdir -p "$env/api"
   cp ../api/build/api "$env/api"
-  cp ../api/build/migrate "$env/api"
   cp ../api/build/backupdb "$env/api"
-  cp -r ../api/migrations "$env/api"
   mkdir -p "$env/dash"
   cp -r ../dash/dist/* "$env/dash"
 

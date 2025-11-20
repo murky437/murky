@@ -2,19 +2,16 @@ package app
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
+	"io"
+	"log"
 	"murky_api/internal/config"
 	"murky_api/internal/constants"
 	"murky_api/internal/jwt"
-	"path/filepath"
-	"runtime"
+	"murky_api/internal/migrations"
 	"testing"
 	"time"
 
-	"github.com/golang-migrate/migrate/v4"
-	"github.com/golang-migrate/migrate/v4/database/sqlite"
-	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/stretchr/testify/require"
 )
 
@@ -35,37 +32,22 @@ func setupTestDatabase(t *testing.T) *sql.DB {
 		t.Fatal(err)
 	}
 
-	setDatabasePragmas(db)
-
-	driver, err := sqlite.WithInstance(db, &sqlite.Config{})
+	err = setDatabasePragmas(db)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	_, filename, _, ok := runtime.Caller(0)
-	if !ok {
-		t.Fatal("cannot get current file path")
-	}
-	migrationsPath := filepath.Join(filepath.Dir(filename), "../../migrations")
-
-	m, err := migrate.NewWithDatabaseInstance(
-		"file://"+migrationsPath,
-		"sqlite", driver)
+	err = migrations.Run(db, log.New(io.Discard, "", 0))
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	err = m.Up()
-	if err != nil && !errors.Is(err, migrate.ErrNoChange) {
-		t.Fatal(err)
-	}
-
-	insertBaseTestData(db, t)
+	insertInitialTestData(db, t)
 
 	return db
 }
 
-func insertBaseTestData(db *sql.DB, t *testing.T) {
+func insertInitialTestData(db *sql.DB, t *testing.T) {
 	// password = "pass"
 	res, err := db.Exec(`INSERT INTO user (username, password) VALUES ('user', '$2a$10$U6X7NnivCljkduExJ9vqt.fqEGQrjxBczds1EbPrQjmLEw0eyUs9K')`)
 	require.NoError(t, err)
