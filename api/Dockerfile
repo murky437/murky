@@ -21,6 +21,5 @@ FROM base AS prod_builder
 
 COPY . .
 
-# TODO: remove backupdb command
-CMD ["sh", "-c", "go build -o ./build/api ./cmd/api && go build -o ./build/backupdb ./cmd/backupdb"]
+CMD ["sh", "-c", "go build -o ./build/api ./cmd/api"]
 
