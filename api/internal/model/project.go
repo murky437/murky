@@ -13,7 +13,7 @@ type ProjectNotes struct {
 }
 
 func CreateProject(db *sql.DB, project ProjectBasic, userId int) (ProjectBasic, error) {
-	res, err := db.Exec("INSERT INTO project (title, slug) VALUES (?, ?)", project.Title, project.Slug)
+	res, err := db.Exec("INSERT INTO project (title, slug, user_id) VALUES (?, ?, ?)", project.Title, project.Slug, userId)
 	if err != nil {
 		return project, err
 	}
@@ -23,11 +23,6 @@ func CreateProject(db *sql.DB, project ProjectBasic, userId int) (ProjectBasic, 
 	}
 	project.Id = int(id)
 
-	// link user <-> project
-	_, err = db.Exec("INSERT INTO user_project (user_id, project_id) VALUES (?, ?)", userId, project.Id)
-	if err != nil {
-		return project, err
-	}
 	return project, nil
 }
 
@@ -86,9 +81,7 @@ func GetProjectsByUserId(db *sql.DB, userId int) ([]ProjectBasic, error) {
 	rows, err := db.Query(`
 		SELECT p.id, p.title, p.slug
 		FROM project p
-		JOIN user_project up ON up.project_id = p.id
-		JOIN user u ON u.id = up.user_id
-		WHERE u.id = ?
+		WHERE p.user_id = ?
 	`, userId)
 	if err != nil {
 		return nil, err
@@ -111,8 +104,7 @@ func GetProjectByUserIdAndSlug(db *sql.DB, userId int, slug string) (ProjectBasi
 	err := db.QueryRow(`
 		SELECT p.id, p.title, p.slug
 		FROM project p
-		JOIN user_project up ON up.project_id = p.id
-		WHERE up.user_id = ? AND p.slug = ?
+		WHERE p.user_id = ? AND p.slug = ?
 	`, userId, slug).Scan(&p.Id, &p.Title, &p.Slug)
 
 	return p, err
@@ -123,8 +115,7 @@ func GetProjectNotesByUserIdAndSlug(db *sql.DB, userId int, slug string) (Projec
 	err := db.QueryRow(`
 		SELECT p.notes
 		FROM project p
-		JOIN user_project up ON up.project_id = p.id
-		WHERE up.user_id = ? AND p.slug = ?
+		WHERE p.user_id = ? AND p.slug = ?
 	`, userId, slug).Scan(&p.Notes)
 
 	return p, err
@@ -133,12 +124,7 @@ func GetProjectNotesByUserIdAndSlug(db *sql.DB, userId int, slug string) (Projec
 func DeleteProjectByUserIdAndSlug(db *sql.DB, userId int, slug string) (int64, error) {
 	res, err := db.Exec(`
 		DELETE FROM project
-		WHERE id IN (
-			SELECT p.id
-			FROM project p
-			JOIN user_project up ON up.project_id = p.id
-			WHERE up.user_id = ? AND p.slug = ?
-		)
+		WHERE user_id = ? AND slug = ?;
 	`, userId, slug)
 	if err != nil {
 		return 0, err

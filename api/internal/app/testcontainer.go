@@ -55,12 +55,7 @@ func insertInitialTestData(db *sql.DB, t *testing.T) {
 	require.NoError(t, err)
 
 	for i := 1; i <= 3; i++ {
-		res, err := db.Exec(`INSERT INTO project (title, slug) VALUES (?, ?)`, fmt.Sprintf("Project %d", i), fmt.Sprintf("project-%d", i))
-		require.NoError(t, err)
-		projectId, err := res.LastInsertId()
-		require.NoError(t, err)
-
-		_, err = db.Exec(`INSERT INTO user_project (user_id, project_id) VALUES (?, ?)`, userId, projectId)
+		_, err := db.Exec(`INSERT INTO project (title, slug, user_id) VALUES (?, ?, ?)`, fmt.Sprintf("Project %d", i), fmt.Sprintf("project-%d", i), userId)
 		require.NoError(t, err)
 	}
 
@@ -70,12 +65,7 @@ func insertInitialTestData(db *sql.DB, t *testing.T) {
 	require.NoError(t, err)
 
 	for i := 4; i <= 6; i++ {
-		res, err := db.Exec(`INSERT INTO project (title, slug) VALUES (?, ?)`, fmt.Sprintf("Project %d", i), fmt.Sprintf("project-%d", i))
-		require.NoError(t, err)
-		projectId, err := res.LastInsertId()
-		require.NoError(t, err)
-
-		_, err = db.Exec(`INSERT INTO user_project (user_id, project_id) VALUES (?, ?)`, user2Id, projectId)
+		_, err := db.Exec(`INSERT INTO project (title, slug, user_id) VALUES (?, ?, ?)`, fmt.Sprintf("Project %d", i), fmt.Sprintf("project-%d", i), user2Id)
 		require.NoError(t, err)
 	}
 

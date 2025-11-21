@@ -18,7 +18,7 @@ func FindUserByUsername(db *sql.DB, username string) (*User, error) {
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, nil // Return nil instead of an error
+			return nil, nil
 		}
 		return nil, err
 	}
