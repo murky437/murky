@@ -15,6 +15,7 @@ var migrations = []func(tx *sql.Tx) error{
 	v6,
 	v7,
 	v8,
+	v9,
 }
 
 func Run(db *sql.DB, logger *log.Logger) error {

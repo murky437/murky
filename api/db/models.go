@@ -6,7 +6,6 @@ package queries
 
 import (
 	"database/sql"
-	"time"
 )
 
 type LongReminder struct {
@@ -14,10 +13,10 @@ type LongReminder struct {
 	Title          string
 	IntervalDays   int64
 	UserId         int64
-	CreatedAt      time.Time
-	UpdatedAt      sql.NullTime
-	LastRemindedAt sql.NullTime
-	MarkedDoneAt   sql.NullTime
+	CreatedAt      string
+	UpdatedAt      sql.NullString
+	LastRemindedAt sql.NullString
+	MarkedDoneAt   sql.NullString
 	IsEnabled      bool
 }
 
@@ -27,16 +26,16 @@ type Project struct {
 	Title     string
 	Slug      string
 	Notes     string
-	CreatedAt time.Time
-	UpdatedAt sql.NullTime
+	CreatedAt string
+	UpdatedAt sql.NullString
 }
 
 type RefreshToken struct {
 	Id        int64
 	UserId    sql.NullInt64
 	Jwt       string
-	ExpiresAt time.Time
-	CreatedAt time.Time
+	ExpiresAt string
+	CreatedAt string
 }
 
 type SqliteSequence struct {
@@ -48,11 +47,11 @@ type User struct {
 	Id        int64
 	Username  string
 	Password  string
-	CreatedAt time.Time
-	UpdatedAt sql.NullTime
+	CreatedAt string
+	UpdatedAt sql.NullString
 }
 
 type Version struct {
 	Number    int64
-	AppliedAt time.Time
+	AppliedAt string
 }
