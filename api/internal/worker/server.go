@@ -3,6 +3,7 @@ package worker
 import (
 	"database/sql"
 	"log"
+	"murky_api/internal/clock"
 	"murky_api/internal/config"
 	"murky_api/internal/firebase"
 	"murky_api/internal/s3"
@@ -12,7 +13,7 @@ import (
 	"github.com/hibiken/asynq"
 )
 
-func StartServer(db *sql.DB, conf *config.Config, s3Client *s3.Client, firebaseMessageService *firebase.MessageService) {
+func StartServer(db *sql.DB, conf *config.Config, s3Client s3.Client, firebaseMessageService *firebase.MessageService) {
 	log.Println("Starting worker server...")
 
 	server := asynq.NewServer(
@@ -23,7 +24,7 @@ func StartServer(db *sql.DB, conf *config.Config, s3Client *s3.Client, firebaseM
 	)
 
 	mux := asynq.NewServeMux()
-	mux.HandleFunc(TypeDbBackup, dbbackup.Handle(db, conf, s3Client))
+	mux.HandleFunc(TypeDbBackup, dbbackup.Handle(db, conf, s3Client, clock.New()))
 	mux.HandleFunc(TypeLongReminderPush, longreminderpush.Handle(db, conf, firebaseMessageService))
 
 	err := server.Run(mux)

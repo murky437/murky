@@ -10,13 +10,19 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
-type Client struct {
+type Client interface {
+	Upload(key string, bodyReader io.Reader) error
+	ListObjectKeys(path string) ([]string, error)
+	DeleteObject(key string) error
+}
+
+type defaultClient struct {
 	ctx      context.Context
 	s3Client *s3.Client
 	bucket   string
 }
 
-func NewClient(conf *config.Config) (*Client, error) {
+func NewClient(conf *config.Config) (Client, error) {
 	ctx := context.TODO()
 
 	// Credentials are loaded from env / shared config
@@ -31,7 +37,7 @@ func NewClient(conf *config.Config) (*Client, error) {
 		o.UsePathStyle = true
 	})
 
-	client := &Client{
+	client := &defaultClient{
 		ctx:      ctx,
 		s3Client: s3client,
 		bucket:   conf.S3Bucket,
@@ -40,7 +46,7 @@ func NewClient(conf *config.Config) (*Client, error) {
 	return client, nil
 }
 
-func (client *Client) Upload(key string, bodyReader io.Reader) error {
+func (client *defaultClient) Upload(key string, bodyReader io.Reader) error {
 	_, err := client.s3Client.PutObject(client.ctx, &s3.PutObjectInput{
 		Bucket: &client.bucket,
 		Key:    &key,
@@ -49,16 +55,27 @@ func (client *Client) Upload(key string, bodyReader io.Reader) error {
 	return err
 }
 
-func (client *Client) ListObjects(path string) (*s3.ListObjectsV2Output, error) {
-	return client.s3Client.ListObjectsV2(client.ctx, &s3.ListObjectsV2Input{
+func (client *defaultClient) ListObjectKeys(path string) ([]string, error) {
+	objects, err := client.s3Client.ListObjectsV2(client.ctx, &s3.ListObjectsV2Input{
 		Bucket: &client.bucket,
 		Prefix: &path,
 	})
+	if err != nil {
+		return nil, err
+	}
+
+	keys := make([]string, len(objects.Contents))
+	for i, object := range objects.Contents {
+		keys[i] = *object.Key
+	}
+
+	return keys, nil
 }
 
-func (client *Client) DeleteObject(key string) (*s3.DeleteObjectOutput, error) {
-	return client.s3Client.DeleteObject(client.ctx, &s3.DeleteObjectInput{
+func (client *defaultClient) DeleteObject(key string) error {
+	_, err := client.s3Client.DeleteObject(client.ctx, &s3.DeleteObjectInput{
 		Bucket: &client.bucket,
 		Key:    &key,
 	})
+	return err
 }

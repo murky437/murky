@@ -16,7 +16,7 @@ type Container struct {
 	Config                 *config.Config
 	Db                     *sql.DB
 	JwtService             jwt.Service
-	S3Client               *s3.Client
+	S3Client               s3.Client
 	FirebaseMessageService *firebase.MessageService
 }
 
