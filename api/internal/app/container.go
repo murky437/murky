@@ -17,7 +17,7 @@ type Container struct {
 	Db                     *sql.DB
 	JwtService             jwt.Service
 	S3Client               s3.Client
-	FirebaseMessageService *firebase.MessageService
+	FirebaseMessageService firebase.MessageService
 }
 
 func NewContainer() *Container {
@@ -78,7 +78,6 @@ func setDatabasePragmas(db *sql.DB) error {
 	if _, err := db.Exec("PRAGMA synchronous=NORMAL;"); err != nil {
 		return err
 	}
-	
 	return nil
 }
 

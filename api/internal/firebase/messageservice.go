@@ -9,24 +9,28 @@ import (
 	"google.golang.org/api/option"
 )
 
-type MessageService struct {
+type MessageService interface {
+	Send(message string) error
+}
+
+type defaultMessageService struct {
 	ctx    context.Context
 	client *messaging.Client
 }
 
-func NewMessageService(conf *config.Config) *MessageService {
+func NewMessageService(conf *config.Config) MessageService {
 	ctx := context.TODO()
 
 	app, _ := firebase.NewApp(ctx, nil, option.WithCredentialsFile(conf.GoogleServiceAccountKeyFilePath))
 	client, _ := app.Messaging(ctx)
 
-	return &MessageService{
+	return &defaultMessageService{
 		ctx:    ctx,
 		client: client,
 	}
 }
 
-func (ms *MessageService) Send(message string) error {
+func (ms *defaultMessageService) Send(message string) error {
 	msg := &messaging.Message{
 		Topic: "reminders",
 		Data: map[string]string{

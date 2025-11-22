@@ -180,6 +180,7 @@ func GetLongRemindersDueToday(db *sql.DB, timezone string) ([]LongReminder, erro
 	todayUtc := time.Date(year, month, day, 0, 0, 0, 0, loc).UTC()
 	tomorrowUtc := todayUtc.AddDate(0, 0, 1)
 
+	// TODO: fix this after writing a test, using SELECT alias in WHERE isn't technically valid sql (but sqlite allows it)
 	rows, err := db.Query(`
 		SELECT
 		    r.id, r.title, r.interval_days, r.created_at, r.updated_at, r.last_reminded_at, r.marked_done_at, r.is_enabled,

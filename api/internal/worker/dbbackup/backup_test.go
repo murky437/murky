@@ -51,9 +51,9 @@ func (m *mockClient) DeleteObject(key string) error {
 	return nil
 }
 
-type fakeClock struct{}
+type mockClock struct{}
 
-func (f fakeClock) Now() time.Time {
+func (f mockClock) Now() time.Time {
 	return time.Date(2025, 11, 22, 12, 0, 0, 0, time.UTC)
 }
 
@@ -69,7 +69,7 @@ func TestHandleSuccess(t *testing.T) {
 
 	mockS3Client := newMockClient()
 
-	err = Handle(c.Db, c.Config, mockS3Client, fakeClock{})(context.Background(), nil)
+	err = Handle(c.Db, c.Config, mockS3Client, mockClock{})(context.Background(), nil)
 	require.NoError(t, err)
 
 	_, err = os.Stat("test_backup_dir/20251122T120000.sqlite3")
