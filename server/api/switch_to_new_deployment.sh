@@ -5,7 +5,7 @@ cd "$(dirname "$0")"
 
 source functions.sh
 
-if [ ! -f deployments/new/deploy.json ] || [ ! -f deployments/new/api ] ]; then
+if [ ! -f deployments/new/deploy.json ] || [ ! -f deployments/new/api ]; then
   err "ERROR: new deployment is missing required files"
 fi
 
