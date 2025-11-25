@@ -2,7 +2,7 @@ deploy_mirror:
   stage: deploy
   script:
     - TMP_DIR=$(mktemp -d)
-    - cp -r ./* "$TMP_DIR"/
+    - tar --exclude=.git -cf - . | tar -xf - -C "$TMP_DIR"
     - cd "$TMP_DIR"
     - git init
     - git remote add origin https://$GH_USER:$GH_TOKEN@github.com/$GH_USER/$GH_REPO.git
