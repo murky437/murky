@@ -8,7 +8,7 @@ import (
 	"github.com/hibiken/asynq"
 )
 
-func StartScheduler(conf config.Config) {
+func StartScheduler(conf *config.Config) {
 	log.Println("Scheduling worker tasks...")
 
 	loc, err := time.LoadLocation(conf.Timezone)
@@ -24,12 +24,17 @@ func StartScheduler(conf config.Config) {
 		},
 	)
 
-	_, err = scheduler.Register("0 3 * * *", asynq.NewTask(TypeDbBackup, nil))
+	_, err = scheduler.Register("0 3 * * *", asynq.NewTask(TypeDbBackup, nil), asynq.MaxRetry(10))
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	_, err = scheduler.Register("0 12 * * *", asynq.NewTask(TypeLongReminderPush, nil))
+	_, err = scheduler.Register("0 12 * * *", asynq.NewTask(TypeLongReminderPush, nil), asynq.MaxRetry(3))
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	_, err = scheduler.Register("0 * * * *", asynq.NewTask(TypeGuestDbClear, nil), asynq.MaxRetry(3))
 	if err != nil {
 		log.Println(err)
 		return

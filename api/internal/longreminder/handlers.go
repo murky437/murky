@@ -1,7 +1,6 @@
 package longreminder
 
 import (
-	"database/sql"
 	"encoding/json"
 	"log"
 	"murky_api/internal/constants"
@@ -12,12 +11,18 @@ import (
 	"time"
 )
 
-func Create(db *sql.DB) http.HandlerFunc {
+func Create() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		db, err := context.GetDb(r)
+		if err != nil {
+			log.Println(err)
+			routing.WriteInternalServerErrorResponse(w)
+			return
+		}
 		user := context.GetCurrentUser(r)
 
 		var req CreateRequest
-		err := json.NewDecoder(r.Body).Decode(&req)
+		err = json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
 			routing.WriteInvalidJsonResponse(w)
 			return
@@ -46,8 +51,14 @@ func Create(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-func GetList(db *sql.DB) http.HandlerFunc {
+func GetList() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		db, err := context.GetDb(r)
+		if err != nil {
+			log.Println(err)
+			routing.WriteInternalServerErrorResponse(w)
+			return
+		}
 		user := context.GetCurrentUser(r)
 
 		reminders, err := model.GetLongRemindersByUserId(db, user.Id)
@@ -91,8 +102,14 @@ func GetList(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-func Delete(db *sql.DB) http.HandlerFunc {
+func Delete() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		db, err := context.GetDb(r)
+		if err != nil {
+			log.Println(err)
+			routing.WriteInternalServerErrorResponse(w)
+			return
+		}
 		user := context.GetCurrentUser(r)
 
 		rowsDeleted, err := model.DeleteLongReminderByUserIdAndId(db, user.Id, r.PathValue("id"))
@@ -105,8 +122,14 @@ func Delete(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-func Update(db *sql.DB) http.HandlerFunc {
+func Update() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		db, err := context.GetDb(r)
+		if err != nil {
+			log.Println(err)
+			routing.WriteInternalServerErrorResponse(w)
+			return
+		}
 		user := context.GetCurrentUser(r)
 		id := r.PathValue("id")
 

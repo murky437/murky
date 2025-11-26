@@ -5,7 +5,7 @@ CREATE TABLE user (
 	password TEXT NOT NULL,
 	created_at TEXT NOT NULL DEFAULT(STRFTIME('%Y-%m-%dT%H:%M:%fZ', 'NOW')),
 	updated_at TEXT
-);
+, is_guest BOOLEAN NOT NULL DEFAULT 0);
 CREATE TABLE refresh_token (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	user_id INTEGER REFERENCES user(id) ON DELETE CASCADE,
@@ -39,3 +39,15 @@ CREATE TABLE long_reminder (
 	is_enabled BOOLEAN NOT NULL DEFAULT 1
 );
 CREATE INDEX idx_long_reminder_user_id ON long_reminder(user_id);
+CREATE TABLE guest_login_token (
+	token TEXT PRIMARY KEY,
+	email TEXT NOT NULL UNIQUE,
+	created_at TEXT NOT NULL DEFAULT(STRFTIME('%Y-%m-%dT%H:%M:%fZ','NOW'))
+);
+CREATE TABLE daily_brevo_sends (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+    number INTEGER NOT NULL,
+    date TEXT NOT NULL UNIQUE,
+	created_at TEXT NOT NULL DEFAULT(STRFTIME('%Y-%m-%dT%H:%M:%fZ','NOW')),
+    updated_at TEXT NOT NULL
+);

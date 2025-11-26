@@ -15,6 +15,9 @@ import { AppsPage } from './pages/apps/AppsPage.tsx';
 import { NotFoundPage } from './pages/404/NotFoundPage.tsx';
 import { CalendarPage } from './pages/calendar/CalendarPage.tsx';
 import { RemindersPage } from './pages/reminders/RemindersPage.tsx';
+import {GuestLoginPage} from "./pages/guest-login/GuestLoginPage.tsx";
+import {NoAuthGuard} from "./pages/layout/NoAuthGuard.tsx";
+import {TokenLoginPage} from "./pages/guest-login/TokenLoginPage.tsx";
 
 interface Props {
   app: App;
@@ -25,7 +28,11 @@ const Main: Component<Props> = props => {
     <AppContext.Provider value={props.app}>
       <QueryClientProvider client={props.app.server.queryClient}>
         <Router root={Root}>
-          <Route path={'/login'} component={LoginPage} />
+          <Route component={NoAuthGuard} >
+            <Route path={'/login'} component={LoginPage} />
+            <Route path={'/guest-login'} component={GuestLoginPage} />
+            <Route path={'/token-login/:token'} component={TokenLoginPage} />
+          </Route>
           <Route component={AuthGuard}>
             <Route path={'/'} component={IndexPage} />
             <Route path={'/settings'} component={SettingsPage} />

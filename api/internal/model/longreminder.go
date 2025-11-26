@@ -190,8 +190,10 @@ func GetLongRemindersDueToday(db *sql.DB, timezone string) ([]LongReminder, erro
 				STRFTIME('%Y-%m-%dT%H:%M:%fZ', r.marked_done_at, CONCAT('+', r.interval_days, ' days'))
 			) AS due_date
 		FROM long_reminder r
+		JOIN user u ON r.user_id = u.id
 		WHERE
-		    r.is_enabled = true
+		    u.is_guest = false
+		    AND r.is_enabled = true
 		  	AND due_date < :tomorrowDate
 		  	AND (
 		  	    r.last_reminded_at IS NULL
@@ -201,6 +203,7 @@ func GetLongRemindersDueToday(db *sql.DB, timezone string) ([]LongReminder, erro
 		  	    )
 		  	    OR (
 		  	        due_date < :todayDate
+		  	        	-- TODO: rethink the query, this part is wrong, this will repeat yesterdays reminder 1 time next day
 		  	        AND r.last_reminded_at < due_date
 		  	    )
 		  	);

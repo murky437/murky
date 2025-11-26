@@ -2,4 +2,4 @@ tmp
 build
 secrets
 .env.local
-db/db.sqlite3*
+db/*.sqlite3*

@@ -12,6 +12,7 @@
     height: 100%;
     width: 100%;
     max-width: 12.5rem;
+    flex-direction: column;
 
     form {
       width: 100%;
@@ -76,5 +77,9 @@
     color: var(--color-brown);
     font-size: 0.875rem;
     text-decoration: underline;
+  }
+
+  .bottom a {
+    color: var(--color-brown);
   }
 }

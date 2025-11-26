@@ -1,12 +1,17 @@
 package context
 
 import (
+	"database/sql"
+	"errors"
 	"murky_api/internal/jwt"
 	"net/http"
 )
 
+type ctxKey int
+
 const (
-	AccessToken = "accessToken"
+	AccessTokenKey ctxKey = iota
+	DbKey
 )
 
 type AuthUser struct {
@@ -15,7 +20,7 @@ type AuthUser struct {
 }
 
 func GetAccessTokenClaims(r *http.Request) *jwt.AccessTokenClaims {
-	if claims, ok := r.Context().Value(AccessToken).(*jwt.AccessTokenClaims); ok {
+	if claims, ok := r.Context().Value(AccessTokenKey).(*jwt.AccessTokenClaims); ok {
 		return claims
 	}
 	return nil
@@ -30,4 +35,12 @@ func GetCurrentUser(r *http.Request) AuthUser {
 		Id:       claims.Id,
 		Username: claims.Username,
 	}
+}
+
+func GetDb(r *http.Request) (*sql.DB, error) {
+	db, ok := r.Context().Value(DbKey).(*sql.DB)
+	if !ok {
+		return nil, errors.New("db not found in context")
+	}
+	return db, nil
 }

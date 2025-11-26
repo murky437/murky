@@ -1,5 +1,5 @@
-import { type RouteSectionProps, useNavigate } from '@solidjs/router';
-import { type Component, createEffect, For, onMount } from 'solid-js';
+import { A, type RouteSectionProps } from '@solidjs/router';
+import { type Component, For, onMount } from 'solid-js';
 import styles from './LoginPage.module.css';
 import { createMutable } from 'solid-js/store';
 import { isGeneralError, isValidationError } from '../../../app/api/api.ts';
@@ -14,7 +14,6 @@ const LoginPage: Component<RouteSectionProps> = () => {
     generalErrors: [] as string[],
     fieldErrors: {} as Record<string, string[]>,
   });
-  const navigate = useNavigate();
   let usernameInputRef!: HTMLInputElement;
 
   const handleSubmit = async (e: SubmitEvent) => {
@@ -47,15 +46,10 @@ const LoginPage: Component<RouteSectionProps> = () => {
     usernameInputRef.focus();
   });
 
-  createEffect(() => {
-    if (app.client.auth.isAuthenticated()) {
-      navigate('/', { replace: true });
-    }
-  });
-
   return (
     <div class={styles.loginPage}>
       <div class={styles.formContainer}>
+        <h1>Login</h1>
         <form onSubmit={handleSubmit} data-testid="login-form">
           <For each={state.generalErrors}>
             {item => <div class={styles.generalError}>{item}</div>}
@@ -81,14 +75,11 @@ const LoginPage: Component<RouteSectionProps> = () => {
           <For each={state.fieldErrors.password}>
             {item => <div class={styles.fieldError}>{item}</div>}
           </For>
-          <button type="submit">Log in</button>
+          <button type="submit" disabled={state.loading}>Log in</button>
         </form>
       </div>
       <div class={styles.bottom}>
-        <em>
-          <strong>Coming soon:</strong>
-        </em>{' '}
-        Try out the app as a guest.
+        <A href={'/guest-login'}>Try out the app as a guest.</A>
       </div>
     </div>
   );

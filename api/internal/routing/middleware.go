@@ -6,6 +6,7 @@ import (
 	"murky_api/internal/config"
 	mycontext "murky_api/internal/context"
 	"murky_api/internal/jwt"
+	"murky_api/internal/model"
 	"net/http"
 	"slices"
 	"strings"
@@ -30,7 +31,7 @@ func RequireJSON(next http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
-func RequireAuth(db *sql.DB, jwtService jwt.Service) Middleware {
+func RequireAuth(db *sql.DB, jwtService jwt.Service, guestDb *sql.DB) Middleware {
 	return func(next http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
 			auth := r.Header.Get("Authorization")
@@ -44,14 +45,21 @@ func RequireAuth(db *sql.DB, jwtService jwt.Service) Middleware {
 				WriteUnauthorizedResponse(w)
 				return
 			}
+
+			currentDb := db
+			if claims.IsGuest {
+				currentDb = guestDb
+			}
+
 			var exists bool
-			err = db.QueryRow("SELECT EXISTS(SELECT 1 FROM user WHERE username = ?)", claims.Username).Scan(&exists)
+			exists, err = model.UserExists(currentDb, claims.Username)
 			if err != nil || !exists {
 				WriteUnauthorizedResponse(w)
 				return
 			}
 
-			ctx := context.WithValue(r.Context(), mycontext.AccessToken, claims)
+			ctx := context.WithValue(r.Context(), mycontext.AccessTokenKey, claims)
+			ctx = context.WithValue(ctx, mycontext.DbKey, currentDb)
 			next(w, r.WithContext(ctx))
 		}
 	}

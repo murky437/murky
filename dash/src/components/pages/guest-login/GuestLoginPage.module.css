@@ -1,0 +1,94 @@
+.guestLoginPage {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  height: 100vh;
+  
+  .formContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    max-width: 400px;
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  p {
+    width: 100%;
+  }
+
+  form {
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 30px;
+  }
+
+  label {
+    color: var(--color-brown);
+    font-size: 0.875rem;
+    display: block;
+    padding: 5px;
+    line-height: 0.875rem;
+    margin-top: 10px;
+  }
+
+  input {
+    display: block;
+    width: 100%;
+    background-color: var(--color-black-21);
+    color: var(--color-white-e8);
+    padding: 0 5px;
+    border: none;
+    outline: none;
+    line-height: 2.5rem;
+    margin-bottom: 5px;
+
+    &:focus {
+      outline: 1px dashed var(--color-brown);
+    }
+  }
+
+  button {
+    padding: 10px;
+    margin-top: 35px;
+    width: 100%;
+    border: none;
+    cursor: pointer;
+    background-color: var(--color-brown);
+    color: var(--color-black-21);
+    font-weight: bold;
+    line-height: 2.5rem;
+
+    &:focus {
+      outline: 1px dashed var(--color-brown);
+    }
+  }
+
+  .fieldError, .generalError {
+    color: var(--color-red);
+    font-size: 0.875rem;
+    margin: 0 0 5px 5px;
+  }
+
+  .successMessage {
+    text-align: center;
+    color: var(--color-meta-green);
+    font-size: 0.875rem;
+    margin: 0 0 5px;
+  }
+
+  .bottom {
+    flex-basis: 100px;
+    text-align: center;
+    font-size: 0.875rem;
+    padding: 20px;
+  }
+
+  .bottom a {
+    color: var(--color-brown);
+    text-decoration: underline;
+  }
+}

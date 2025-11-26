@@ -1,4 +1,9 @@
-import { AuthApi, type CreateTokensRequest } from '../../api/authApi.ts';
+import {
+  AuthApi,
+  type CreateTokensRequest,
+  type CreateTokenWithGuestTokenRequest,
+  type SendGuestLoginLinkRequest,
+} from '../../api/authApi.ts';
 
 class AuthRequests {
   readonly #authApi: AuthApi;
@@ -13,6 +18,14 @@ class AuthRequests {
 
   deleteRefreshToken() {
     return this.#authApi.deleteRefreshToken();
+  }
+
+  sendGuestLoginLink(request: SendGuestLoginLinkRequest) {
+    return this.#authApi.sendGuestLoginLink(request);
+  }
+
+  createTokenWithGuestToken(request: CreateTokenWithGuestTokenRequest) {
+    return this.#authApi.createTokenWithGuestToken(request);
   }
 }
 

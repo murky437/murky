@@ -8,6 +8,20 @@ import (
 	"database/sql"
 )
 
+type DailyBrevoSend struct {
+	Id        int64
+	Number    int64
+	Date      string
+	CreatedAt string
+	UpdatedAt string
+}
+
+type GuestLoginToken struct {
+	Token     string
+	Email     string
+	CreatedAt string
+}
+
 type LongReminder struct {
 	Id             string
 	Title          string
@@ -49,6 +63,7 @@ type User struct {
 	Password  string
 	CreatedAt string
 	UpdatedAt sql.NullString
+	IsGuest   bool
 }
 
 type Version struct {

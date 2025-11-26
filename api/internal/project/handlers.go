@@ -1,7 +1,6 @@
 package project
 
 import (
-	"database/sql"
 	"encoding/json"
 	"log"
 	"murky_api/internal/context"
@@ -10,12 +9,19 @@ import (
 	"net/http"
 )
 
-func Create(db *sql.DB) http.HandlerFunc {
+func Create() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		db, err := context.GetDb(r)
+		if err != nil {
+			log.Println(err)
+			routing.WriteInternalServerErrorResponse(w)
+			return
+		}
+
 		user := context.GetCurrentUser(r)
 
 		var req CreateRequest
-		err := json.NewDecoder(r.Body).Decode(&req)
+		err = json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
 			routing.WriteInvalidJsonResponse(w)
 			return
@@ -48,8 +54,14 @@ func Create(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-func GetList(db *sql.DB) http.HandlerFunc {
+func GetList() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		db, err := context.GetDb(r)
+		if err != nil {
+			log.Println(err)
+			routing.WriteInternalServerErrorResponse(w)
+			return
+		}
 		user := context.GetCurrentUser(r)
 
 		projects, err := model.GetProjectsByUserId(db, user.Id)
@@ -73,8 +85,14 @@ func GetList(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-func Get(db *sql.DB) http.HandlerFunc {
+func Get() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		db, err := context.GetDb(r)
+		if err != nil {
+			log.Println(err)
+			routing.WriteInternalServerErrorResponse(w)
+			return
+		}
 		user := context.GetCurrentUser(r)
 
 		project, err := model.GetProjectByUserIdAndSlug(db, user.Id, r.PathValue("slug"))
@@ -92,8 +110,14 @@ func Get(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-func GetNotes(db *sql.DB) http.HandlerFunc {
+func GetNotes() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		db, err := context.GetDb(r)
+		if err != nil {
+			log.Println(err)
+			routing.WriteInternalServerErrorResponse(w)
+			return
+		}
 		user := context.GetCurrentUser(r)
 
 		project, err := model.GetProjectNotesByUserIdAndSlug(db, user.Id, r.PathValue("slug"))
@@ -110,8 +134,14 @@ func GetNotes(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-func Update(db *sql.DB) http.HandlerFunc {
+func Update() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		db, err := context.GetDb(r)
+		if err != nil {
+			log.Println(err)
+			routing.WriteInternalServerErrorResponse(w)
+			return
+		}
 		user := context.GetCurrentUser(r)
 		currentSlug := r.PathValue("slug")
 
@@ -148,8 +178,14 @@ func Update(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-func Delete(db *sql.DB) http.HandlerFunc {
+func Delete() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		db, err := context.GetDb(r)
+		if err != nil {
+			log.Println(err)
+			routing.WriteInternalServerErrorResponse(w)
+			return
+		}
 		user := context.GetCurrentUser(r)
 
 		rowsDeleted, err := model.DeleteProjectByUserIdAndSlug(db, user.Id, r.PathValue("slug"))
@@ -162,8 +198,14 @@ func Delete(db *sql.DB) http.HandlerFunc {
 	}
 }
 
-func UpdateNotes(db *sql.DB) http.HandlerFunc {
+func UpdateNotes() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		db, err := context.GetDb(r)
+		if err != nil {
+			log.Println(err)
+			routing.WriteInternalServerErrorResponse(w)
+			return
+		}
 		user := context.GetCurrentUser(r)
 		currentSlug := r.PathValue("slug")
 

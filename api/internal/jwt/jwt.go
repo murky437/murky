@@ -24,6 +24,7 @@ func NewService(conf *config.Config) Service {
 type AccessTokenClaims struct {
 	Id       int    `json:"id"`
 	Username string `json:"username"`
+	IsGuest  bool   `json:"is_guest"`
 	jwt.RegisteredClaims
 }
 
@@ -36,6 +37,7 @@ func (service Service) CreateAccessToken(user model.User, expiresAt time.Time) (
 	claims := AccessTokenClaims{
 		user.Id,
 		user.Username,
+		user.IsGuest,
 		jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expiresAt),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),

@@ -9,6 +9,7 @@ import (
 type Config struct {
 	AllowedOrigins                  []string
 	DbFilePath                      string
+	GuestDbFilePath                 string
 	AccessTokenSecret               string
 	RefreshTokenSecret              string
 	DeployFilePath                  string
@@ -20,6 +21,7 @@ type Config struct {
 	S3Bucket                        string
 	S3DbBackupPath                  string
 	GoogleServiceAccountKeyFilePath string
+	BrevoApiKey                     string
 }
 
 func NewConfig() *Config {
@@ -29,6 +31,7 @@ func NewConfig() *Config {
 	return &Config{
 		AllowedOrigins:                  strings.Split(os.Getenv("ALLOWED_ORIGINS"), ";"),
 		DbFilePath:                      os.Getenv("DB_FILE_PATH"),
+		GuestDbFilePath:                 os.Getenv("GUEST_DB_FILE_PATH"),
 		AccessTokenSecret:               os.Getenv("ACCESS_TOKEN_SECRET"),
 		RefreshTokenSecret:              os.Getenv("REFRESH_TOKEN_SECRET"),
 		DeployFilePath:                  deployFilePath,
@@ -40,5 +43,6 @@ func NewConfig() *Config {
 		S3Bucket:                        os.Getenv("S3_BUCKET"),
 		S3DbBackupPath:                  os.Getenv("S3_DB_BACKUP_PATH"),
 		GoogleServiceAccountKeyFilePath: os.Getenv("GOOGLE_SERVICE_ACCOUNT_KEY_FILE_PATH"),
+		BrevoApiKey:                     os.Getenv("BREVO_API_KEY"),
 	}
 }
