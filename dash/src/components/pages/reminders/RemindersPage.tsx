@@ -61,7 +61,6 @@ const RemindersPage: Component = () => {
       markedDoneAt: null,
       isEnabled: true,
     };
-    console.log(newReminder);
     state.longReminders.push(newReminder);
 
     await app.server.reminders.createLongReminder({

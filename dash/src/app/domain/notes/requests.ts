@@ -74,6 +74,10 @@ class NotesRequests {
   updateProjectNotes(slug: string, notes: string) {
     return this.#projectsApi.updateNotes(slug, { notes: notes });
   }
+
+  updateProjectSortIndex(slug: string, sortIndex: number) {
+    return this.#projectsApi.updateSortIndex(slug, { sortIndex: sortIndex });
+  }
 }
 
 export { NotesRequests };

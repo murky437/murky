@@ -28,6 +28,10 @@ interface UpdateProjectRequest {
   slug: string;
 }
 
+interface UpdateSortIndexRequest {
+  sortIndex: number;
+}
+
 class ProjectsApi {
   #api: Api;
 
@@ -76,6 +80,14 @@ class ProjectsApi {
   async delete(slug: string): Promise<void> {
     return this.#api.fetch(`/projects/${slug}`, {
       method: 'DELETE',
+    });
+  }
+
+  async updateSortIndex(slug: string, request: UpdateSortIndexRequest): Promise<void> {
+    return this.#api.fetch(`/projects/${slug}/sort-index`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request),
     });
   }
 }

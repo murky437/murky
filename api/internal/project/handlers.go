@@ -27,7 +27,12 @@ func Create() http.HandlerFunc {
 			return
 		}
 
-		validationResult := req.Validate(db)
+		validationResult, err := req.Validate(db)
+		if err != nil {
+			log.Println(err)
+			routing.WriteInternalServerErrorResponse(w)
+			return
+		}
 		if validationResult != nil {
 			routing.WriteValidationErrorResponse(w, *validationResult)
 			return
@@ -158,7 +163,12 @@ func Update() http.HandlerFunc {
 			return
 		}
 
-		validationResult := req.Validate(db, currentSlug)
+		validationResult, err := req.Validate(db, currentSlug)
+		if err != nil {
+			log.Println(err)
+			routing.WriteInternalServerErrorResponse(w)
+			return
+		}
 		if validationResult != nil {
 			routing.WriteValidationErrorResponse(w, *validationResult)
 			return
@@ -225,6 +235,52 @@ func UpdateNotes() http.HandlerFunc {
 		projectNotes.Notes = req.Notes
 
 		err = model.UpdateProjectNotes(db, currentSlug, projectNotes)
+		if err != nil {
+			log.Println(err)
+			routing.WriteInternalServerErrorResponse(w)
+			return
+		}
+
+		routing.WriteJsonResponse(w, http.StatusNoContent, nil)
+	}
+}
+
+func UpdateSortIndex() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		db, err := context.GetDb(r)
+		if err != nil {
+			log.Println(err)
+			routing.WriteInternalServerErrorResponse(w)
+			return
+		}
+		user := context.GetCurrentUser(r)
+		currentSlug := r.PathValue("slug")
+
+		_, err = model.GetProjectByUserIdAndSlug(db, user.Id, currentSlug)
+		if err != nil {
+			routing.WriteNotFoundResponse(w)
+			return
+		}
+
+		var req UpdateSortIndexRequest
+		err = json.NewDecoder(r.Body).Decode(&req)
+		if err != nil {
+			routing.WriteInvalidJsonResponse(w)
+			return
+		}
+
+		validationResult, err := req.Validate(db, user.Id)
+		if err != nil {
+			log.Println(err)
+			routing.WriteInternalServerErrorResponse(w)
+			return
+		}
+		if validationResult != nil {
+			routing.WriteValidationErrorResponse(w, *validationResult)
+			return
+		}
+
+		err = model.UpdateProjectSortIndex(db, user.Id, currentSlug, req.SortIndex)
 		if err != nil {
 			log.Println(err)
 			routing.WriteInternalServerErrorResponse(w)

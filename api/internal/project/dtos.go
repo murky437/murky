@@ -13,7 +13,7 @@ type CreateRequest struct {
 	Slug  string `json:"slug"`
 }
 
-func (request *CreateRequest) Validate(db *sql.DB) *validation.Result {
+func (request *CreateRequest) Validate(db *sql.DB) (*validation.Result, error) {
 	result := &validation.Result{
 		GeneralErrors: []string{},
 		FieldErrors:   make(map[string][]string),
@@ -46,10 +46,14 @@ func (request *CreateRequest) Validate(db *sql.DB) *validation.Result {
 	}
 
 	if len(result.GeneralErrors) > 0 || len(result.FieldErrors) > 0 {
-		return result
+		return result, nil
 	}
 
-	if isUnique, _ := model.IsProjectSlugUnique(db, request.Slug, model.SlugCheckOptions{}); !isUnique {
+	isUnique, err := model.IsProjectSlugUnique(db, request.Slug, model.SlugCheckOptions{})
+	if err != nil {
+		return nil, err
+	}
+	if !isUnique {
 		result.FieldErrors["slug"] = append(
 			result.FieldErrors["slug"],
 			"A project with this slug already exists. Slug must be unique.",
@@ -57,10 +61,10 @@ func (request *CreateRequest) Validate(db *sql.DB) *validation.Result {
 	}
 
 	if len(result.GeneralErrors) > 0 || len(result.FieldErrors) > 0 {
-		return result
+		return result, nil
 	}
 
-	return nil
+	return nil, nil
 }
 
 type CreateResponse struct {
@@ -91,7 +95,7 @@ type UpdateRequest struct {
 	Slug  string `json:"slug"`
 }
 
-func (request *UpdateRequest) Validate(db *sql.DB, currentSlug string) *validation.Result {
+func (request *UpdateRequest) Validate(db *sql.DB, currentSlug string) (*validation.Result, error) {
 	result := &validation.Result{
 		GeneralErrors: []string{},
 		FieldErrors:   make(map[string][]string),
@@ -124,10 +128,14 @@ func (request *UpdateRequest) Validate(db *sql.DB, currentSlug string) *validati
 	}
 
 	if len(result.GeneralErrors) > 0 || len(result.FieldErrors) > 0 {
-		return result
+		return result, nil
 	}
 
-	if isUnique, _ := model.IsProjectSlugUnique(db, request.Slug, model.SlugCheckOptions{CurrentSlug: currentSlug}); !isUnique {
+	isUnique, err := model.IsProjectSlugUnique(db, request.Slug, model.SlugCheckOptions{CurrentSlug: currentSlug})
+	if err != nil {
+		return nil, err
+	}
+	if !isUnique {
 		result.FieldErrors["slug"] = append(
 			result.FieldErrors["slug"],
 			"A project with this slug already exists. Slug must be unique.",
@@ -135,12 +143,38 @@ func (request *UpdateRequest) Validate(db *sql.DB, currentSlug string) *validati
 	}
 
 	if len(result.GeneralErrors) > 0 || len(result.FieldErrors) > 0 {
-		return result
+		return result, nil
 	}
 
-	return nil
+	return nil, nil
 }
 
 type UpdateNotesRequest struct {
 	Notes string `json:"notes"`
+}
+
+type UpdateSortIndexRequest struct {
+	SortIndex int `json:"sortIndex"`
+}
+
+func (request *UpdateSortIndexRequest) Validate(db *sql.DB, userId int) (*validation.Result, error) {
+	result := &validation.Result{
+		GeneralErrors: []string{},
+		FieldErrors:   make(map[string][]string),
+	}
+
+	projectCount, err := model.GetProjectCount(db, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	if request.SortIndex < 0 || request.SortIndex >= projectCount {
+		result.FieldErrors["sortIndex"] = append(result.FieldErrors["sortIndex"], "Invalid sort index.")
+	}
+
+	if len(result.GeneralErrors) > 0 || len(result.FieldErrors) > 0 {
+		return result, nil
+	}
+
+	return nil, nil
 }

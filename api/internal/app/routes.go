@@ -47,6 +47,7 @@ func NewMux(c *Container) *http.ServeMux {
 	protectedMux.HandleFunc("GET /projects/{slug}/notes", project.GetNotes())
 	protectedMux.HandleFunc("PUT /projects/{slug}/notes", routing.Chain(project.UpdateNotes(), routing.RequireJSON))
 	protectedMux.HandleFunc("DELETE /projects/{slug}", project.Delete())
+	protectedMux.HandleFunc("PUT /projects/{slug}/sort-index", routing.Chain(project.UpdateSortIndex(), routing.RequireJSON))
 
 	protectedMux.HandleFunc("POST /long-reminders", routing.Chain(longreminder.Create(), routing.RequireJSON))
 	protectedMux.HandleFunc("GET /long-reminders", longreminder.GetList())

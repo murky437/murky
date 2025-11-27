@@ -13,7 +13,10 @@ type ProjectNotes struct {
 }
 
 func CreateProject(db *sql.DB, project ProjectBasic, userId int) (ProjectBasic, error) {
-	res, err := db.Exec("INSERT INTO project (title, slug, user_id) VALUES (?, ?, ?)", project.Title, project.Slug, userId)
+	res, err := db.Exec(`
+		INSERT INTO project (title, slug, user_id, sort_index)
+		VALUES (?, ?, ?, (SELECT COUNT(*) FROM project WHERE user_id = ?))
+	`, project.Title, project.Slug, userId, userId)
 	if err != nil {
 		return project, err
 	}
@@ -82,6 +85,7 @@ func GetProjectsByUserId(db *sql.DB, userId int) ([]ProjectBasic, error) {
 		SELECT p.id, p.title, p.slug
 		FROM project p
 		WHERE p.user_id = ?
+		ORDER BY p.sort_index
 	`, userId)
 	if err != nil {
 		return nil, err
@@ -122,12 +126,134 @@ func GetProjectNotesByUserIdAndSlug(db *sql.DB, userId int, slug string) (Projec
 }
 
 func DeleteProjectByUserIdAndSlug(db *sql.DB, userId int, slug string) (int64, error) {
+	var delIndex int
+	err := db.QueryRow(`
+		SELECT
+		    sort_index
+		FROM
+		    project
+		WHERE
+		    user_id = ?
+		  	AND slug = ?
+	`, userId, slug).Scan(&delIndex)
+	if err != nil {
+		return 0, err
+	}
+
 	res, err := db.Exec(`
 		DELETE FROM project
-		WHERE user_id = ? AND slug = ?;
+		WHERE 
+		    user_id = ?
+		  	AND slug = ?;
 	`, userId, slug)
 	if err != nil {
 		return 0, err
 	}
+
+	_, err = db.Exec(`
+		UPDATE
+		    project
+		SET
+		    sort_index = sort_index - 1
+		WHERE 
+		    user_id = ?
+			AND sort_index > ?;
+	`, userId, delIndex)
+	if err != nil {
+		return 0, err
+	}
+
 	return res.RowsAffected()
+}
+
+func UpdateProjectSortIndex(db *sql.DB, userId int, slug string, newIndex int) error {
+	var oldIndex int
+	err := db.QueryRow(`
+		SELECT
+		    sort_index
+		FROM
+		    project
+		WHERE
+		    user_id = ?
+		    AND slug = ?
+	`, userId, slug).Scan(&oldIndex)
+	if err != nil {
+		return err
+	}
+
+	if newIndex > oldIndex {
+		_, err = db.Exec(`
+			UPDATE
+			    project
+			SET
+			    sort_index = sort_index - 1
+			WHERE
+			    user_id = :userId
+			    AND sort_index > :oldIndex
+			  	AND sort_index <= :newIndex;
+		`,
+			sql.Named("userId", userId),
+			sql.Named("oldIndex", oldIndex),
+			sql.Named("newIndex", newIndex),
+		)
+		if err != nil {
+			return err
+		}
+	}
+
+	if newIndex < oldIndex {
+		_, err = db.Exec(`
+			UPDATE
+			    project
+			SET
+			    sort_index = sort_index + 1
+			WHERE
+			    user_id = :userId
+			    AND sort_index >= :newIndex
+			  	AND sort_index < :oldIndex;
+		`,
+			sql.Named("userId", userId),
+			sql.Named("oldIndex", oldIndex),
+			sql.Named("newIndex", newIndex),
+		)
+		if err != nil {
+			return err
+		}
+	}
+
+	_, err = db.Exec(`
+		UPDATE
+			project
+		SET
+			sort_index = :newIndex
+		WHERE
+			user_id = :userId
+			AND slug = :slug;
+	`,
+		sql.Named("newIndex", newIndex),
+		sql.Named("userId", userId),
+		sql.Named("slug", slug),
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func GetProjectCount(db *sql.DB, userId int) (int, error) {
+	var count int
+	err := db.QueryRow(`
+		SELECT
+		    COUNT(*)
+		FROM
+		    project
+		WHERE
+		    user_id = ?
+	`, userId).Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
 }

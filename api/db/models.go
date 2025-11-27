@@ -42,6 +42,7 @@ type Project struct {
 	Notes     string
 	CreatedAt string
 	UpdatedAt sql.NullString
+	SortIndex int64
 }
 
 type RefreshToken struct {

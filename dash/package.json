@@ -19,6 +19,7 @@
     "@tanstack/solid-query": "^5.90.6",
     "codemirror": "^6.0.2",
     "solid-js": "^1.9.9",
+    "sortablejs": "^1.15.6",
     "uuid": "^13.0.0"
   },
   "devDependencies": {
@@ -27,6 +28,7 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/user-event": "^14.6.1",
     "@types/node": "^24.6.0",
+    "@types/sortablejs": "^1.15.9",
     "eslint": "^9.37.0",
     "jsdom": "^27.0.1",
     "prettier": "3.6.2",

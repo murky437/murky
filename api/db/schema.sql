@@ -21,7 +21,7 @@ CREATE TABLE project (
 	notes TEXT NOT NULL DEFAULT '',
 	created_at TEXT NOT NULL DEFAULT(STRFTIME('%Y-%m-%dT%H:%M:%fZ','NOW')),
 	updated_at TEXT
-);
+, sort_index INTEGER NOT NULL DEFAULT 0);
 CREATE INDEX idx_project_user_id ON project(user_id);
 CREATE TABLE version (
 	number INTEGER PRIMARY KEY,
