@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -eu
 
 cd "$(dirname "$0")"
 
@@ -27,5 +27,8 @@ rm -rf deployments/new
 
 info "Reloading with docker compose"
 docker compose up -d --build
+
+info "Deleting old previous deployments"
+deleteOldPreviousDeployments
 
 info "Switch complete"

@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -eu
 
 cd "$(dirname "$0")"
 
@@ -14,5 +14,8 @@ fi
 info "Moving new deployment to current deployment directory"
 rsync -av --delete --mkpath deployments/new/ deployments/current/
 rm -rf deployments/new
+
+info "Deleting old previous deployments"
+deleteOldPreviousDeployments
 
 info "Switch complete"

@@ -13,3 +13,27 @@ NC='\033[0m' # No Color
 info() {
     echo -e "${CYAN}[$(date '+%Y-%m-%d %H:%M:%S')][server]${NC} $*"
 }
+
+
+deleteOldPreviousDeployments() {
+  local BASE="./deployments/previous"
+
+  local dirs
+  dirs=$(printf "%s\n" "$BASE"/*/ | xargs --max-args=1 basename | sort --reverse)
+
+  local latest3dirs
+  latest3dirs=$(printf "%s\n" "$dirs" | head --lines=3)
+
+  local timestampWeekAgo
+  timestampWeekAgo=$(date --date="7 days ago" +"%Y%m%dT%H%M%S")
+  local latestWeekDirs
+  latestWeekDirs=$(printf "%s\n" "$dirs" | awk --assign c="$timestampWeekAgo" '$0 >= c')
+
+  local keepDirs
+  keepDirs=$(printf "%s\n%s\n" "$latest3dirs" "$latestWeekDirs" | sort --unique)
+
+  local d
+  for d in $dirs; do
+    printf "%s\n" "$keepDirs" | grep --quiet --line-regexp "$d" || rm --recursive --force "${BASE:?}/$d"
+  done
+}
