@@ -256,7 +256,7 @@ func UpdateSortIndex() http.HandlerFunc {
 		user := context.GetCurrentUser(r)
 		currentSlug := r.PathValue("slug")
 
-		_, err = model.GetProjectByUserIdAndSlug(db, user.Id, currentSlug)
+		project, err := model.GetProjectByUserIdAndSlug(db, user.Id, currentSlug)
 		if err != nil {
 			routing.WriteNotFoundResponse(w)
 			return
@@ -280,11 +280,13 @@ func UpdateSortIndex() http.HandlerFunc {
 			return
 		}
 
-		err = model.UpdateProjectSortIndex(db, user.Id, currentSlug, req.SortIndex)
-		if err != nil {
-			log.Println(err)
-			routing.WriteInternalServerErrorResponse(w)
-			return
+		if req.SortIndex != project.SortIndex {
+			err = model.UpdateProjectSortIndex(db, user.Id, currentSlug, req.SortIndex)
+			if err != nil {
+				log.Println(err)
+				routing.WriteInternalServerErrorResponse(w)
+				return
+			}
 		}
 
 		routing.WriteJsonResponse(w, http.StatusNoContent, nil)

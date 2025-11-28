@@ -156,14 +156,13 @@ func UpdateLongReminder(db *sql.DB, id string, reminder LongReminder) error {
 
 	_, err := db.Exec(`
 		UPDATE long_reminder 
-		SET title = :title, interval_days = :intervalDays, marked_done_at = :markedDoneAt, is_enabled = :isEnabled, updated_at = :updatedAt
+		SET title = :title, interval_days = :intervalDays, marked_done_at = :markedDoneAt, is_enabled = :isEnabled, updated_at = STRFTIME('%Y-%m-%dT%H:%M:%fZ','NOW')
 		WHERE id = :id
 	`,
 		sql.Named("title", reminder.Title),
 		sql.Named("intervalDays", reminder.IntervalDays),
 		sql.Named("markedDoneAt", markedDoneAt),
 		sql.Named("isEnabled", reminder.IsEnabled),
-		sql.Named("updatedAt", time.Now().UTC().Format(constants.SqliteDateTimeFormat)),
 		sql.Named("id", id),
 	)
 	return err

@@ -3,9 +3,10 @@ package model
 import "database/sql"
 
 type ProjectBasic struct {
-	Id    int
-	Title string
-	Slug  string
+	Id        int
+	Title     string
+	Slug      string
+	SortIndex int
 }
 
 type ProjectNotes struct {
@@ -32,7 +33,7 @@ func CreateProject(db *sql.DB, project ProjectBasic, userId int) (ProjectBasic, 
 func UpdateProject(db *sql.DB, currentSlug string, project ProjectBasic) error {
 	_, err := db.Exec(`
 		UPDATE project 
-		SET title = :title, slug = :slug
+		SET title = :title, slug = :slug, updated_at = STRFTIME('%Y-%m-%dT%H:%M:%fZ','NOW')
 		WHERE slug = :currentSlug
 	`,
 		sql.Named("title", project.Title),
@@ -45,7 +46,7 @@ func UpdateProject(db *sql.DB, currentSlug string, project ProjectBasic) error {
 func UpdateProjectNotes(db *sql.DB, currentSlug string, project ProjectNotes) error {
 	_, err := db.Exec(`
 		UPDATE project 
-		SET notes = :notes
+		SET notes = :notes, updated_at = STRFTIME('%Y-%m-%dT%H:%M:%fZ','NOW')
 		WHERE slug = :currentSlug
 	`,
 		sql.Named("notes", project.Notes),
@@ -82,7 +83,7 @@ func IsProjectSlugUnique(db *sql.DB, slug string, opts SlugCheckOptions) (bool, 
 
 func GetProjectsByUserId(db *sql.DB, userId int) ([]ProjectBasic, error) {
 	rows, err := db.Query(`
-		SELECT p.id, p.title, p.slug
+		SELECT p.id, p.title, p.slug, p.sort_index
 		FROM project p
 		WHERE p.user_id = ?
 		ORDER BY p.sort_index
@@ -95,7 +96,7 @@ func GetProjectsByUserId(db *sql.DB, userId int) ([]ProjectBasic, error) {
 	var projects []ProjectBasic
 	for rows.Next() {
 		var p ProjectBasic
-		if err := rows.Scan(&p.Id, &p.Title, &p.Slug); err != nil {
+		if err := rows.Scan(&p.Id, &p.Title, &p.Slug, &p.SortIndex); err != nil {
 			return nil, err
 		}
 		projects = append(projects, p)
@@ -106,10 +107,10 @@ func GetProjectsByUserId(db *sql.DB, userId int) ([]ProjectBasic, error) {
 func GetProjectByUserIdAndSlug(db *sql.DB, userId int, slug string) (ProjectBasic, error) {
 	var p ProjectBasic
 	err := db.QueryRow(`
-		SELECT p.id, p.title, p.slug
+		SELECT p.id, p.title, p.slug, p.sort_index
 		FROM project p
 		WHERE p.user_id = ? AND p.slug = ?
-	`, userId, slug).Scan(&p.Id, &p.Title, &p.Slug)
+	`, userId, slug).Scan(&p.Id, &p.Title, &p.Slug, &p.SortIndex)
 
 	return p, err
 }
@@ -154,7 +155,8 @@ func DeleteProjectByUserIdAndSlug(db *sql.DB, userId int, slug string) (int64, e
 		UPDATE
 		    project
 		SET
-		    sort_index = sort_index - 1
+		    sort_index = sort_index - 1,
+		    updated_at = STRFTIME('%Y-%m-%dT%H:%M:%fZ','NOW')
 		WHERE 
 		    user_id = ?
 			AND sort_index > ?;
@@ -186,7 +188,8 @@ func UpdateProjectSortIndex(db *sql.DB, userId int, slug string, newIndex int) e
 			UPDATE
 			    project
 			SET
-			    sort_index = sort_index - 1
+			    sort_index = sort_index - 1,
+			    updated_at = STRFTIME('%Y-%m-%dT%H:%M:%fZ','NOW')
 			WHERE
 			    user_id = :userId
 			    AND sort_index > :oldIndex
@@ -206,7 +209,8 @@ func UpdateProjectSortIndex(db *sql.DB, userId int, slug string, newIndex int) e
 			UPDATE
 			    project
 			SET
-			    sort_index = sort_index + 1
+			    sort_index = sort_index + 1,
+			    updated_at = STRFTIME('%Y-%m-%dT%H:%M:%fZ','NOW')
 			WHERE
 			    user_id = :userId
 			    AND sort_index >= :newIndex
@@ -225,7 +229,8 @@ func UpdateProjectSortIndex(db *sql.DB, userId int, slug string, newIndex int) e
 		UPDATE
 			project
 		SET
-			sort_index = :newIndex
+			sort_index = :newIndex,
+			updated_at = STRFTIME('%Y-%m-%dT%H:%M:%fZ','NOW')
 		WHERE
 			user_id = :userId
 			AND slug = :slug;
