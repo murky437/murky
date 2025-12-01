@@ -1,68 +1,72 @@
-.wrapper {
-  flex: 1;
-  max-width: 100%;
-  margin-top: 40vh;
+.openNotesPage {
+  .wrapper {
+    flex: 1;
+    max-width: 100%;
+    margin-top: 40vh;
 
-  :global(.cm-editor) {
-    width: 100%;
-  }
+    :global(.cm-editor) {
+      width: 100%;
+    }
 
-  :global(.cm-editor.cm-focused) {
-    outline: none;
-  }
+    :global(.cm-editor.cm-focused) {
+      outline: none;
+    }
 
-  :global(.cm-scroller) {
-    font-family: var(--font-mono), monospace;
-    font-size: 14px;
-    line-height: 18px;
-    color: var(--color-editor-fg);
-  }
+    :global(.cm-scroller) {
+      font-family: var(--font-mono), monospace;
+      font-size: 14px;
+      line-height: 18px;
+      color: var(--color-editor-fg);
+    }
 
-  :global(.cm-activeLine) {
-    background-color: #ffffff11;
-  }
+    :global(.cm-activeLine) {
+      background-color: #ffffff11;
+    }
 
-  :global(.cm-activeLineGutter) {
-    background-color: #ffffff11;
-  }
+    :global(.cm-activeLineGutter) {
+      background-color: #ffffff11;
+    }
 
-  :global(.cm-gutters) {
-    background-color: var(--color-black-21);
-    border: none;
-    font-size: 12px;
-    line-height: 18px;
-    color: var(--color-line-numbers);
-  }
+    :global(.cm-gutters) {
+      background-color: var(--color-black-21);
+      border: none;
+      font-size: 12px;
+      line-height: 18px;
+      color: var(--color-line-numbers);
+    }
 
-  :global(.cm-cursor) {
-    border-left-color: var(--color-red);
-  }
+    :global(.cm-cursor) {
+      border-left-color: var(--color-red);
+    }
 
-  :global(.cm-editor):not(:global(.cm-focused)) :global(.cm-fat-cursor) {
-    outline: solid 1px var(--color-red);
-  }
+    :global(.cm-editor):not(:global(.cm-focused)) :global(.cm-fat-cursor) {
+      outline: solid 1px var(--color-red);
+    }
 
-  :global(.cm-fat-cursor) {
-    background: var(--color-red);
-  }
+    :global(.cm-fat-cursor) {
+      background: var(--color-red);
+    }
 
-  :global(.cm-selectionBackground) {
-    background: #ffffff44 !important;
+    :global(.cm-selectionBackground) {
+      background: #ffffff44 !important;
+    }
   }
 }
 
 @media (min-width: 48rem) {
-  .wrapper {
-    margin-top: 0;
+  .openNotesPage {
+    .wrapper {
+      margin-top: 0;
 
-    :global(.cm-scroller) {
-      font-size: 16px;
-      line-height: 20px;
-    }
+      :global(.cm-scroller) {
+        font-size: 16px;
+        line-height: 20px;
+      }
 
-    :global(.cm-gutters) {
-      font-size: 12px;
-      line-height: 20px;
+      :global(.cm-gutters) {
+        font-size: 12px;
+        line-height: 20px;
+      }
     }
   }
 }

@@ -7,6 +7,7 @@ import { ProjectContextMenu } from './contextmenu/ProjectContextMenu.tsx';
 import { SidebarContextMenu } from './contextmenu/SidebarContextMenu.tsx';
 import { useApp } from '../../../../app/appContext.tsx';
 import { SortableList } from './SortableList.tsx';
+import {Logo} from "./Logo.tsx";
 
 type ContextMenuState = 'Closed' | 'Sidebar' | 'Project';
 
@@ -110,6 +111,9 @@ const Sidebar: Component = () => {
           ref={sidebarContentRef}
         >
           <div class={styles.inside}>
+            <div class={styles.logoWrapper}>
+              <Logo />
+            </div>
             <div class={styles.projects}>
               <SortableList
                 items={state.projects}

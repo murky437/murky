@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Vollkorn:ital,wght@0,400..900;1,400..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Vollkorn:ital,wght@0,400..900;1,400..900&family=Pirata+One&display=swap');
+
 
 :root {
   --color-black-18: #181818;
@@ -28,13 +29,14 @@
   --color-editor-fg: var(--color-off-white);
   --color-menu-icon: var(--color-gray-7);
   --color-sidebar-list-inactive: var(--color-gray-7);
-  --color-sidebar-list-active: var(--color-white-e8);
+  --color-sidebar-list-active: var(--color-off-white);
 }
 
 :root {
   --font-sans: 'Open Sans';
   --font-mono: Consolas;
   --font-serif: Vollkorn;
+  --font-logo: 'Pirata One';
 }
 
 :root {

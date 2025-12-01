@@ -5,7 +5,6 @@ import { AddProjectModal } from '../elements/modal/AddProjectModal.tsx';
 import { useNavigate, useParams } from '@solidjs/router';
 import { useApp } from '../../../../app/appContext.tsx';
 import { Sidebar } from '../elements/Sidebar.tsx';
-import { Logo } from '../elements/Logo.tsx';
 
 const NotesLayout: ParentComponent = props => {
   const app = useApp();
@@ -44,7 +43,6 @@ const NotesLayout: ParentComponent = props => {
   return (
     <>
       <div class={styles.wrapper}>
-        <Logo />
         <Sidebar />
         {props.children}
       </div>

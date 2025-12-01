@@ -1,28 +1,20 @@
 .logo {
-  width: calc(60px + calc(18px / tan(60deg) / 2));
-  padding-right: calc(18px / tan(60deg) / 2);
-  height: 18px;
-  background-color: var(--color-black-1d);
-  clip-path: polygon(0 0, 100% 0, calc(100% - calc(18px / tan(60deg))) 100%, 0 100%);
-  color: #fff;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 50;
-  font-size: 12px;
-  line-height: 18px;
-  font-weight: bold;
-  font-style: italic;
-  text-align: center;
-}
 
-@media (min-width: 48rem) {
-  .logo {
-    width: calc(76px + calc(24px / tan(60deg) / 2));
-    padding-right: calc(24px / tan(60deg) / 2);
-    height: 24px;
-    clip-path: polygon(0 0, 100% 0, calc(100% - calc(24px / tan(60deg))) 100%, 0 100%);
-    font-size: 16px;
-    line-height: 24px;
+  :global(.st0) {
+    fill: var(--color-off-white);
+  }
+
+  :global(svg) {
+    overflow: visible;
+  }
+
+  :global(#text) {
+    transition: transform 0.2s;
+    pointer-events: bounding-box;
+    transform-origin: center;
+  }
+
+  :global(#text:hover) {
+    transform: scale(1.1) translateY(-1px);
   }
 }

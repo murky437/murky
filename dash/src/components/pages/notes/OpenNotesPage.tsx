@@ -104,10 +104,10 @@ const OpenNotesPage: Component<RouteSectionProps> = () => {
   });
 
   return (
-    <>
+    <div class={styles.openNotesPage}>
       <Breadcrumbs projectName={state.project.title} />
       <div class={styles.wrapper} ref={wrapperDiv} onClick={focusEditor}></div>
-    </>
+    </div>
   );
 };
 
