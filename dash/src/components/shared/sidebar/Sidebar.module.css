@@ -63,7 +63,7 @@
 .content {
   display: none;
   position: fixed;
-  bottom: 0;
+  top: 0;
   left: 0;
   width: 80%;
   background-color: var(--color-black-1f);
@@ -73,6 +73,7 @@
   overscroll-behavior: contain;
   font-size: 18px;
   line-height: 24px;
+  padding: 16px;
 }
 
 .inside {
@@ -85,8 +86,15 @@
   width: 100%;
 }
 
+.inside .logoWrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 16px;
+}
+
 .bottom {
-  margin-top: 100px;
+  margin: 100px 0;
   text-align: right;
   display: flex;
   flex-direction: column;
@@ -136,7 +144,7 @@
   }
 
   .inside {
-    margin-top: 0;
+    margin-top: 140px;
     padding: 60px 15px 30px;
   }
 

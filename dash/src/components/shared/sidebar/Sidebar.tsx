@@ -1,9 +1,13 @@
 import { A, useLocation } from '@solidjs/router';
 import styles from './Sidebar.module.css';
 import { createMutable } from 'solid-js/store';
-import { createEffect, on, onMount, type ParentComponent } from 'solid-js';
+import { createEffect, type JSX, on, onMount, type ParentComponent } from 'solid-js';
 
-const Sidebar: ParentComponent = props => {
+interface Props {
+  logo?: JSX.Element;
+}
+
+const Sidebar: ParentComponent<Props> = props => {
   const state = createMutable({
     isSidebarVisible: false,
   });
@@ -41,7 +45,8 @@ const Sidebar: ParentComponent = props => {
       </div>
       <div class={styles.content} data-testid="sidebar">
         <div class={styles.inside}>
-          <div class={styles.top}>{props.children}</div>
+          <div class={styles.logoWrapper}>{props.logo}</div>
+          <div>{props.children}</div>
           <div class={styles.bottom}>
             <A href={'/apps'} onClick={hideSidebar}>
               Other apps

@@ -5,6 +5,7 @@ import { applyLayers, generateInitialCalendarData } from '../../../app/domain/ca
 import { createMutable } from 'solid-js/store';
 import type { Layer } from '../../../app/domain/calendar/types.ts';
 import holidays from '../../../assets/holidays.json';
+import {CalendaraLogo} from "../../shared/logos/CalendaraLogo.tsx";
 
 const CalendarPage: Component = () => {
   const state = createMutable({
@@ -80,41 +81,39 @@ const CalendarPage: Component = () => {
 
   return (
     <div class={styles.calendarPage}>
-      <Sidebar>
-        <div>
-          <div class={styles.layers}>
-            <div
-              classList={{
-                [styles.layer]: true,
-                [styles.active]: state.showToday,
-              }}
-              onClick={toggleShowToday}
-            >
-              <div class={`${styles.indicator} ${styles.brown}`}></div>Today
-            </div>
-            <For each={state.layers}>
-              {layer => (
+      <Sidebar logo={<CalendaraLogo/>}>
+        <div class={styles.layers}>
+          <div
+            classList={{
+              [styles.layer]: true,
+              [styles.active]: state.showToday,
+            }}
+            onClick={toggleShowToday}
+          >
+            <div class={`${styles.indicator} ${styles.brown}`}></div>Today
+          </div>
+          <For each={state.layers}>
+            {layer => (
+              <div
+                classList={{
+                  [styles.layer]: true,
+                  [styles.active]: layer.active,
+                }}
+                onClick={_ => toggleLayer(layer.name)}
+              >
                 <div
                   classList={{
-                    [styles.layer]: true,
-                    [styles.active]: layer.active,
+                    [styles.indicator]: true,
+                    [styles.red]: layer.color === 'red',
+                    [styles.yellow]: layer.color === 'yellow',
+                    [styles.green]: layer.color === 'green',
+                    [styles.white]: layer.color === 'white',
                   }}
-                  onClick={_ => toggleLayer(layer.name)}
-                >
-                  <div
-                    classList={{
-                      [styles.indicator]: true,
-                      [styles.red]: layer.color === 'red',
-                      [styles.yellow]: layer.color === 'yellow',
-                      [styles.green]: layer.color === 'green',
-                      [styles.white]: layer.color === 'white',
-                    }}
-                  ></div>
-                  {layer.name}
-                </div>
-              )}
-            </For>
-          </div>
+                ></div>
+                {layer.name}
+              </div>
+            )}
+          </For>
         </div>
       </Sidebar>
       <div class={styles.calendar}>

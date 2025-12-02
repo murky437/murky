@@ -1,10 +1,9 @@
-import styles from './Logo.module.css';
+import styles from './NotesLogo.module.css';
 import  {type Component, onMount} from 'solid-js';
 import { gsap } from "gsap";
 
-const Logo: Component = () => {
+const NotesLogo: Component = () => {
   let svgRef!: SVGSVGElement;
-
 
   onMount(() => {
     const ids = ["l1","l2","l3","l4","l5"];
@@ -55,4 +54,4 @@ const Logo: Component = () => {
   );
 };
 
-export { Logo };
+export { NotesLogo };
