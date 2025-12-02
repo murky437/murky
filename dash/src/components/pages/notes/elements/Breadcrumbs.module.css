@@ -1,5 +1,6 @@
 .breadcrumbs {
   display: flex;
+  width: fit-content;
   background-color: var(--color-black-1f);
   align-items: center;
   clip-path: polygon(0 0, 100% 0, calc(100% - calc(18px / tan(60deg))) 100%, 0 100%);
@@ -25,6 +26,7 @@
     line-height: 18px;
     text-align: center;
     padding-right: 18px;
+    display: inline-block;
   }
 }
 

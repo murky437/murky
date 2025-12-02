@@ -5,54 +5,69 @@ import { createEffect, type JSX, on, onMount, type ParentComponent } from 'solid
 
 interface Props {
   logo?: JSX.Element;
+  isVisible?: boolean;
+  setIsVisible?: (isVisible: boolean) => void;
+  onContextMenu?: (e: MouseEvent) => void;
 }
 
 const Sidebar: ParentComponent<Props> = props => {
   const state = createMutable({
-    isSidebarVisible: false,
+    isVisible: false,
   });
   const location = useLocation();
 
-  const toggleSidebarVisibility = () => {
-    state.isSidebarVisible = !state.isSidebarVisible;
+  const toggleVisibility = () => {
+    state.isVisible = !state.isVisible;
+    if (props.setIsVisible) {
+      props.setIsVisible(state.isVisible);
+    }
   };
 
-  const hideSidebar = () => {
-    state.isSidebarVisible = false;
+  const hide = () => {
+    state.isVisible = false;
+    if (props.setIsVisible) {
+      props.setIsVisible(state.isVisible);
+    }
   };
 
   onMount(() => {
-    hideSidebar();
+    hide();
   });
 
   createEffect(
     on(
       () => [location.pathname],
       () => {
-        hideSidebar();
+        hide();
       }
     )
   );
 
+  createEffect(() => {
+    if (props.isVisible !== undefined) {
+      state.isVisible = props.isVisible;
+    }
+  })
+
   return (
-    <div classList={{ [styles.sidebar]: true, [styles.visible]: state.isSidebarVisible }}>
-      <div class={styles.revealButtonArea} onClick={toggleSidebarVisibility}>
+    <div classList={{ [styles.sidebar]: true, [styles.visible]: state.isVisible }}>
+      <div class={styles.revealButtonArea} onClick={toggleVisibility}>
         <div class={styles.revealButton}>
           <div class={styles.circle}></div>
           <div class={styles.circle}></div>
           <div class={styles.circle}></div>
         </div>
       </div>
-      <div class={styles.content} data-testid="sidebar">
+      <div class={styles.content} data-testid="sidebar" onContextMenu={props.onContextMenu}>
         <div class={styles.inside}>
           <div class={styles.logoWrapper}>{props.logo}</div>
           <div>{props.children}</div>
           <div class={styles.bottom}>
-            <A href={'/apps'} onClick={hideSidebar}>
+            <A href={'/apps'} onClick={hide}>
               Other apps
             </A>
             <div class={styles.separator}></div>
-            <A href={'/settings'} onClick={hideSidebar}>
+            <A href={'/settings'} onClick={hide}>
               Settings
             </A>
           </div>

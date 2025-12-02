@@ -1,0 +1,38 @@
+.projects {
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+      a {
+        text-decoration: none;
+        color: var(--color-sidebar-list-inactive);
+        user-select: none;
+        cursor: pointer;
+
+        &:hover,
+        &[class='active'] {
+          text-decoration: underline;
+          color: var(--color-sidebar-list-active);
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 48rem) {
+  .projects {
+    padding: 60px 0 30px;
+    margin-top: 0;
+
+    ul {
+      li {
+        a {
+          font-size: 14px;
+        }
+      }
+    }
+  }
+}

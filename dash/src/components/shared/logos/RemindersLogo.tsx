@@ -27,7 +27,7 @@ const RemindersLogo: Component = () => {
       }
     });
 
-    cIds.forEach((id, i) => {
+    cIds.forEach((id) => {
       const el = svgRef.querySelector(`#${id}`);
       gsap.set(el, { scale: 0, transformOrigin: 'center' });
       tl.to(el, { scale: 1, duration: 0.15 }, `+=0`);
