@@ -5,6 +5,8 @@ import type { LongReminder } from '../../../app/domain/reminders/types.ts';
 import { useApp } from '../../../app/appContext.tsx';
 import { v4 as uuidv4 } from 'uuid';
 import { isGeneralError, isValidationError } from '../../../app/api/api.ts';
+import {Sidebar} from "../../shared/sidebar/Sidebar.tsx";
+import {RemindersLogo} from "../../shared/logos/RemindersLogo.tsx";
 
 const RemindersPage: Component = () => {
   const app = useApp();
@@ -86,6 +88,7 @@ const RemindersPage: Component = () => {
 
   return (
     <div class={styles.remindersPage}>
+      <Sidebar logo={<RemindersLogo/>}/>
       <h1>Reminders</h1>
       <h2>Long interval tasks</h2>
       <For each={state.longReminders}>

@@ -148,6 +148,10 @@
     padding: 60px 15px 30px;
   }
 
+  .bottom {
+    margin: 100px 0 0;
+  }
+
   .bottom .separator {
     width: 66px;
     height: 1px;
